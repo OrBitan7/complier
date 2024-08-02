@@ -10,6 +10,13 @@ void yyerror(char *s)
 	exit(1);
 }
 
+
+set<string> addStringToCollection(set<string> collection, string str)
+{
+	collection.insert(str);
+	return collection;
+}
+
 int main()
 {
 }

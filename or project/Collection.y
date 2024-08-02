@@ -294,18 +294,17 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 
 %}
 
-%union {string type_string;
+%union {std::string* type_string;
 		int type_number;
-		set<string> type_collection;
-		set<int> type_set;
+		std::set<std::string> type_collection;
+		std::set<int> type_set;
 		}         /* Yacc definitions */
 %token <type_string> t_STRING t_ID
 %token <type_number> t_INT
 %token t_COLLECTION_CMD t_OUTPUT_CMD t_SET_CMD
 %type <type_collection> STRING_LIST
 %type <str> VAR  
-%type <str> COLLECTION 
-%type <str> SET
+%type <type_collection> COLLECTION 
 
 
 %%
@@ -314,19 +313,13 @@ Prog :				SENTENCE
 	|				Prog SENTENCE
 SENTENCE :			t_COLLECTION_CMD VAR ';'				{GenerateColDef($2);}
 	|				t_SET_CMD VAR ';'						{GenerateSetDef($2);}
-	|				VAR '=' COLLECTION ';'					{GenerateColAssign($1,$3);}
-//	|				VAR '=' SET ';'							
+	|				VAR '=' COLLECTION ';'					{GenerateColAssign($1,$3);}			
 	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'			{GenerateColOut($2, $4);}
 	|				VAR '=' VAR '+' COLLECTION ';'			{GenerateColUnify($1, $3, $5);}
 	|				VAR '=' VAR '-' COLLECTION ';'			{GenerateColDifference($1, $3, $5);}
 COLLECTION :		VAR										{$$=CopyStr($1);}
 	|				'{' '}'									{$$ = "\"";}
 	|				'{' STRING_LIST '}'						{$$ = $2;}
-// SET :				VAR										{$$=CopyStr($1);}
-//	|				'[' ']'									{$$ = "\"";}
-//	|				'[' INT_LIST ']'						{$$ = $2;}
 VAR :				t_ID									{$$ = CopyStr(yytext);}
 STRING_LIST :		STRING_LIST ',' t_STRING				{$$ = AddStrToList($1, yytext);}
 	|				t_STRING								{$$ = CopyStr(yytext);}
-// INT_LIST :			INT_LIST ',' t_INT
-//	|				t_INT	

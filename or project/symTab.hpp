@@ -6,3 +6,4 @@ class SymTable {
 	string name;
 	varType typ;
 } SymTable[100];
+
