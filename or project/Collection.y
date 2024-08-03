@@ -1,16 +1,14 @@
 %{
 void yyerror (char *s);
 int yylex();
+#include <stdio.h>     /* C declarations used in actions */
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
-#include <string>
-#include <set>
-#include <iostream>
 
-#include "symTab.hpp"
+#include "symTab.h"
 
 extern char* yytext;
-
 
 //	===	YACC Helper Functions	============================
 
@@ -72,12 +70,6 @@ void GenerateColDef(char* colVar)
 {
 	fprintf(stdout, "char* %s=NULL;\n", colVar);
 	insert(colVar, Collection);
-}
-
-void GenerateSetDef(char* setVar)
-{
-	fprintf(stdout, "char* %s=NULL;\n", setVar);
-	insert(setVar, Set);
 }
 
 void GenerateColAssign(char* var, char* coll)
@@ -195,119 +187,13 @@ void GenerateColUnify(char* varResultName, char* varName, char* coll)
 	fprintf(stdout, "}\n");
 }
 
-char *RT_RemoveStrToCollection(char *collection, char *str)
-{
-
-	if (collection == NULL || str == NULL)
-	{
-		return collection;
-	}
-	
-
-	char *pos = strstr(collection, str);
-	if (pos != NULL)
-	{
-		printf("pos:%s\n", pos);
-		printf("str:%s\n", str);
-		printf("next:%c\n", pos[strlen(str)]);
-		printf("beffor:%c\n", pos[-1]);
-		int lenStr = strlen(str);
-		int lenColl = strlen(collection);
-		int lenRemain = lenColl - lenStr;
-		fprintf(stdout, "itration\n");
-		if (pos[strlen(str)] == '@')
-		{
-			lenStr++;
-			memmove(pos, pos + lenStr , strlen(pos + lenStr) + 1);
-		}
-		else if (pos[-1] == '@')
-		{
-			lenStr++;
-			pos--;
-			memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-		}
-		else
-		{
-			memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-		}
-
-		collection = realloc(collection, lenRemain + 1);
-	}
-
-	return collection;
-}
-
-char *RT_DifferenceCollections(char *var, char *coll)
-{
-	char *temp = malloc(strlen(coll) + 1);
-	strcpy(temp, coll);
-	char *token;
-	token = strtok(temp + 1, "@");
-	do
-	{
-		if (token && (strstr(var, token) != NULL))
-			var = RT_RemoveStrToCollection(var, token);
-		token = strtok(NULL, "@");
-	} while (token);
-	free(temp);
-
-	return var;
-}
-
-void GenerateColDifference(char *varResultName, char *varName, char *coll)
-{
-    char msg[32];
-
-    if (getTyp(varResultName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varResultName);
-        yyerror(msg);
-    }
-
-    if (getTyp(varName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varName);
-        yyerror(msg);
-    }
-
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-
-    fprintf(stdout, "{\n");
-    if (coll[0] == '\"')
-        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, \"\\%s\");\n", varName, coll);
-    else
-        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, %s);\n", varName, coll);
-
-    fprintf(stdout, "int len = strlen(unified);\n");
-
-    fprintf(stdout, "if (%s == NULL)	%s=malloc(len+1);\n", varResultName, varResultName);
-    fprintf(stdout, "else	%s = realloc(%s,len+1);\n", varResultName, varResultName);
-
-    fprintf(stdout, "strcpy(%s, unified);\n", varResultName);
-    fprintf(stdout, "}\n");
-}
-
 %}
-%code requires {
-#include <iostream>
-#include <string>
-#include <set>
-}
-%union {std::string type_string;
-		int type_number;
-		std::set<std::string> type_collection;
-		std::set<int> type_set;
-		}  
-%token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_INT t_STRING t_ID
-%token <type_string> t_STRING t_ID
-%token <type_number> t_INT
-%type <type_collection> STRING_LIST
-%type <str> VAR  
-%type <type_collection> COLLECTION 
+
+%union {char *str;}         /* Yacc definitions */
+%token <str> t_STRING t_ID
+%token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_INT  
+%type <str> STRING_LIST
+%type <str> VAR COLLECTION
 
 
 %%
@@ -315,14 +201,12 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 Prog :				SENTENCE
 	|				Prog SENTENCE
 SENTENCE :			t_COLLECTION_CMD VAR ';'				{GenerateColDef($2);}
-	|				t_SET_CMD VAR ';'						{GenerateSetDef($2);}
-	|				VAR '=' COLLECTION ';'					{GenerateColAssign($1,$3);}			
+	|				VAR '=' COLLECTION ';'					{GenerateColAssign($1,$3);}
 	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'			{GenerateColOut($2, $4);}
 	|				VAR '=' VAR '+' COLLECTION ';'			{GenerateColUnify($1, $3, $5);}
-	|				VAR '=' VAR '-' COLLECTION ';'			{GenerateColDifference($1, $3, $5);}
 COLLECTION :		VAR										{$$=CopyStr($1);}
 	|				'{' '}'									{$$ = "\"";}
 	|				'{' STRING_LIST '}'						{$$ = $2;}
-VAR :				t_ID									{$$ = CopyStr(yytext);}
+VAR :				t_ID									{$$ = CopyStr(yytext)}
 STRING_LIST :		STRING_LIST ',' t_STRING				{$$ = AddStrToList($1, yytext);}
 	|				t_STRING								{$$ = CopyStr(yytext);}

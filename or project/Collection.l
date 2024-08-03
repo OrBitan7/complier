@@ -1,5 +1,5 @@
 %{
-#include "Collection.tab.hpp"
+#include "Collection.tab.h"
 void yyerror (char *s);
 int yylex();
 %}

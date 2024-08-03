@@ -1,14 +1,14 @@
 parse.exe: lex.yy.c TestYacc.c Collection.tab.c
-	g++ lex.yy.c  Collection.tab.cpp TestYacc.c -o parse.exe
+	gcc lex.yy.c  Collection.tab.c TestYacc.c -o parse.exe
 
 lex.yy.c: Collection.tab.c collection.l
 	flex Collection.l
 
-Collection.tab.c: Collection.ypp
-	bison -d Collection.ypp -o Collection.tab.cpp
+Collection.tab.c: Collection.y
+	bison -d Collection.y
 	
 clean: 
-	del lex.yy.c Collection.tab.cpp Collection.tab.hpp parse.exe test.exe
+	del lex.yy.c Collection.tab.c Collection.tab.h parse.exe test.exe
 
 test.exe: test.c
-	g++ test.cpp -o test.exe
+	gcc test.c -o test.exe

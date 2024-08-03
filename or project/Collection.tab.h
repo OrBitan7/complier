@@ -32,19 +32,6 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* "%code requires" blocks.  */
-
-/* Line 1676 of yacc.c  */
-#line 295 "Collection.ypp"
-
-#include <iostream>
-#include <string>
-#include <set>
-
-
-
-/* Line 1676 of yacc.c  */
-#line 48 "Collection.tab.hpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -52,23 +39,23 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     t_IF_CMD = 258,
-     t_ELSE_CMD = 259,
-     t_FOR_CMD = 260,
-     t_WHILE_CMD = 261,
-     t_BIGGER_EQUAL = 262,
-     t_LOWER_EQUAL = 263,
-     t_EQUAL = 264,
-     t_NOT = 265,
-     t_COLLECTION_CMD = 266,
-     t_SET_CMD = 267,
-     t_INT_CMD = 268,
-     t_STRING_CMD = 269,
-     t_INPUT_CMD = 270,
-     t_OUTPUT_CMD = 271,
-     t_INT = 272,
-     t_STRING = 273,
-     t_ID = 274
+     t_STRING = 258,
+     t_ID = 259,
+     t_IF_CMD = 260,
+     t_ELSE_CMD = 261,
+     t_FOR_CMD = 262,
+     t_WHILE_CMD = 263,
+     t_BIGGER_EQUAL = 264,
+     t_LOWER_EQUAL = 265,
+     t_EQUAL = 266,
+     t_NOT = 267,
+     t_COLLECTION_CMD = 268,
+     t_SET_CMD = 269,
+     t_INT_CMD = 270,
+     t_STRING_CMD = 271,
+     t_INPUT_CMD = 272,
+     t_OUTPUT_CMD = 273,
+     t_INT = 274
    };
 #endif
 
@@ -79,16 +66,12 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 300 "Collection.ypp"
-std::string type_string;
-		int type_number;
-		std::set<std::string> type_collection;
-		std::set<int> type_set;
-		
+#line 192 "Collection.y"
+char *str;
 
 
 /* Line 1676 of yacc.c  */
-#line 92 "Collection.tab.hpp"
+#line 75 "Collection.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
