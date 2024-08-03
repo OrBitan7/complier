@@ -1,0 +1,10 @@
+
+collection a;
+collection b;
+collection c;
+a = {"hi", "lol"};
+b = {"hi", "ldsadaol"};
+c = b + a;
+output "a:" a;
+output "b:" b;
+output "c:" c;

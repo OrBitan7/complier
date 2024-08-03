@@ -235,7 +235,7 @@ void GenerateColUnionWithString(char *varResultName, char *varName, char *string
         fprintf(stdout, "}\n");
     }
 }
-
+// GenerateColDifference done
 void GenerateColDifference(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
@@ -282,3 +282,5 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 
     fprintf(stdout, "}\n");
 }
+
+

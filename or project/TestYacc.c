@@ -10,20 +10,20 @@ extern int yyparse(void);
 
 void yyerror (char *s) {fprintf (stderr, "%s\n", s); exit(1);} 
 
-int main(void)
-{
-    fprintf(stdout, "#include <stdio.h>\n");
-    fprintf(stdout, "#include <stdlib.h>\n");
-    fprintf(stdout, "#include <string.h>\n");
-    fprintf(stdout, "#include <iostream>\n");
-    fprintf(stdout, "#include <string>\n");
-    fprintf(stdout, "#include <set>\n\n");
-    fprintf(stdout, "using namespace std;\n\n");
-    fprintf(stdout, "int main()\n");
-    fprintf(stdout, "{\n");
+// int main(void)
+// {
+//     fprintf(stdout, "#include <stdio.h>\n");
+//     fprintf(stdout, "#include <stdlib.h>\n");
+//     fprintf(stdout, "#include <string.h>\n");
+//     fprintf(stdout, "#include <iostream>\n");
+//     fprintf(stdout, "#include <string>\n");
+//     fprintf(stdout, "#include <set>\n\n");
+//     fprintf(stdout, "using namespace std;\n\n");
+//     fprintf(stdout, "int main()\n");
+//     fprintf(stdout, "{\n");
 
-    yyparse();
+//     yyparse();
 
-    fprintf(stdout, "}\n");
-    return 0;
-}
+//     fprintf(stdout, "}\n");
+//     return 0;
+// }

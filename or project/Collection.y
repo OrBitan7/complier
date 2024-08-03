@@ -10,6 +10,8 @@ int yylex();
 
 extern char* yytext;
 
+FILE *outputFile, *inputFile;
+
 //	===	YACC Helper Functions	============================
 
 char* CopyStr(char* str)
@@ -233,8 +235,7 @@ void GenerateColUnionWithString(char *varResultName, char *varName, char *string
         fprintf(stdout, "}\n");
     }
 }
-
-
+// GenerateColDifference done
 void GenerateColDifference(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
@@ -308,3 +309,35 @@ COLLECTION :		VAR															{$$=CopyStr($1);}
 VAR :				t_ID														{$$ = CopyStr(yytext)}
 STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
 	|				t_STRING													{$$ = CopyStr(yytext);}
+
+
+
+
+%%
+int main(void) {
+    outputFile = freopen("test.cpp", "w", stdout);
+    if (outputFile == NULL) {
+        fprintf(stderr, "Error opening output file.\n");
+        return 1;
+    }
+
+    inputFile = freopen("INPUT.txt", "r", stdin);
+    if (inputFile == NULL) {
+        fprintf(stderr, "Error opening input file.\n");
+        return 1;
+    }
+
+    fprintf(stdout, "#include <stdio.h>\n");
+    fprintf(stdout, "#include <stdlib.h>\n");
+    fprintf(stdout, "#include <string.h>\n");
+    fprintf(stdout, "#include <iostream>\n");
+    fprintf(stdout, "#include <string>\n");
+    fprintf(stdout, "#include <set>\n\n");
+    fprintf(stdout, "using namespace std;\n\n");
+    fprintf(stdout, "int main()\n");
+    fprintf(stdout, "{\n");
+
+    yyparse();
+
+    fprintf(stdout, "}\n");
+}

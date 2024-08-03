@@ -81,6 +81,8 @@ int yylex();
 
 extern char* yytext;
 
+FILE *outputFile, *inputFile;
+
 //	===	YACC Helper Functions	============================
 
 char* CopyStr(char* str)
@@ -304,8 +306,7 @@ void GenerateColUnionWithString(char *varResultName, char *varName, char *string
         fprintf(stdout, "}\n");
     }
 }
-
-
+// GenerateColDifference done
 void GenerateColDifference(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
@@ -357,7 +358,7 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 
 
 /* Line 189 of yacc.c  */
-#line 361 "Collection.tab.c"
+#line 362 "Collection.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -411,12 +412,12 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 288 "Collection.y"
+#line 289 "Collection.y"
 char *str;
 
 
 /* Line 214 of yacc.c  */
-#line 420 "Collection.tab.c"
+#line 421 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -428,7 +429,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 432 "Collection.tab.c"
+#line 433 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -718,8 +719,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   297,   297,   298,   299,   300,   301,   301,   302,   303,
-     303,   304,   305,   306,   307,   308,   309,   310
+       0,   298,   298,   299,   300,   301,   302,   302,   303,   304,
+     304,   305,   306,   307,   308,   309,   310,   311
 };
 #endif
 
@@ -1638,105 +1639,105 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 299 "Collection.y"
+#line 300 "Collection.y"
     {GenerateColDef((yyvsp[(2) - (3)].str));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 300 "Collection.y"
+#line 301 "Collection.y"
     {GenerateColAssign((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 301 "Collection.y"
+#line 302 "Collection.y"
     {(yyvsp[(2) - (2)].str)=CopyStr(yytext);;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 301 "Collection.y"
+#line 302 "Collection.y"
     {GenerateColOut((yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].str));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 302 "Collection.y"
+#line 303 "Collection.y"
     {GenerateColUnion((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 303 "Collection.y"
+#line 304 "Collection.y"
     {(yyvsp[(5) - (5)].str)=CopyStr(yytext);;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 303 "Collection.y"
+#line 304 "Collection.y"
     {GenerateColUnionWithString((yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].str), (yyvsp[(5) - (7)].str));;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 304 "Collection.y"
+#line 305 "Collection.y"
     {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 305 "Collection.y"
+#line 306 "Collection.y"
     {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 306 "Collection.y"
+#line 307 "Collection.y"
     {(yyval.str) = "\"";;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 307 "Collection.y"
+#line 308 "Collection.y"
     {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 308 "Collection.y"
+#line 309 "Collection.y"
     {(yyval.str) = CopyStr(yytext);}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 309 "Collection.y"
+#line 310 "Collection.y"
     {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 310 "Collection.y"
+#line 311 "Collection.y"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1740 "Collection.tab.c"
+#line 1741 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1947,3 +1948,33 @@ yyreturn:
 
 
 
+/* Line 1675 of yacc.c  */
+#line 316 "Collection.y"
+
+int main(void) {
+    outputFile = freopen("test.cpp", "w", stdout);
+    if (outputFile == NULL) {
+        fprintf(stderr, "Error opening output file.\n");
+        return 1;
+    }
+
+    inputFile = freopen("INPUT.txt", "r", stdin);
+    if (inputFile == NULL) {
+        fprintf(stderr, "Error opening input file.\n");
+        return 1;
+    }
+
+    fprintf(stdout, "#include <stdio.h>\n");
+    fprintf(stdout, "#include <stdlib.h>\n");
+    fprintf(stdout, "#include <string.h>\n");
+    fprintf(stdout, "#include <iostream>\n");
+    fprintf(stdout, "#include <string>\n");
+    fprintf(stdout, "#include <set>\n\n");
+    fprintf(stdout, "using namespace std;\n\n");
+    fprintf(stdout, "int main()\n");
+    fprintf(stdout, "{\n");
+
+    yyparse();
+
+    fprintf(stdout, "}\n");
+}
