@@ -52,105 +52,113 @@ int main()
 {
 	// collection a;
 	set<string> a;
+	// collection b;
+	set<string> b;
+	// collection c;
+	set<string> c;
 	// a = {"hi", "lol"};
 	{
 		a.insert("hi");
 		a.insert("lol");
 	}
-	// collection b;
-	set<string> b;
-	// b = {"hello"};
+	// b = {"hi", "ldsadaol"};
 	{
-		b.insert("hello");
 		b.insert("hi");
+		b.insert("ldsadaol");
 	}
-	//	collection c;
-	set<string> c;
 
-	//	c = a + b ;
-	{
-		c.insert(a.begin(), a.end());
-		c.insert(b.begin(), b.end());
-	}
-	//  collection d;
-	set<string> d;
-	//	d = b + {"workinggg","yessss"} ;
-	{
-		d.insert(b.begin(), b.end());
-		d.insert("workinggg");
-		d.insert("yessss");
-		d.insert("yessss");
-	}
-	// output "a: " a;
-	{
-		cout << "a: ";
-		cout << "{";
-		bool first = true;
-		for (const auto &item : a)
-		{
-			if (!first)
-			{
-				cout << ", ";
-			}
-			cout << item;
-			first = false;
-		}
-		cout << "}" << endl;
-	}
-	// output "b: " b;
-	{
-		cout << "b: ";
-		cout << "{";
-		bool first = true;
-		for (const auto &item : b)
-		{
-			if (!first)
-			{
-				cout << ", ";
-			}
-			cout << item;
-			first = false;
-		}
-		cout << "}" << endl;
-	}
-	// output "new one: " {"or","laodsae"} ;
-	{
-		cout << "new one: ";
-		cout << "{";
-		cout << "or";
-		cout << ", laodsae";
-		cout << "}" << endl;
-	}
-	// output "c: " c;
-	{
-		cout << "c: ";
-		cout << "{";
-		bool first = true;
-		for (const auto &item : c)
-		{
-			if (!first)
-			{
-				cout << ", ";
-			}
-			cout << item;
-			first = false;
-		}
-		cout << "}" << endl;
-	}
-	// output "d: " d;
-	{
-		cout << "d: ";
-		cout << "{";
-		bool first = true;
-		for (const auto &item : d)
-		{
-			if (!first)
-			{
-				cout << ", ";
-			}
-			cout << item;
-			first = false;
-		}
-		cout << "}" << endl;
-	}
+	// // b = {"hello"};
+	// {
+	// 	b.insert("hello");
+	// 	b.insert("hi");
+	// }
+	// //	collection c;
+	// set<string> c;
+
+	// //	c = a + b ;
+	// {
+	// 	c.insert(a.begin(), a.end());
+	// 	c.insert(b.begin(), b.end());
+	// }
+	// //  collection d;
+	// set<string> d;
+	// //	d = b + {"workinggg","yessss"} ;
+	// {
+	// 	d.insert(b.begin(), b.end());
+	// 	d.insert("workinggg");
+	// 	d.insert("yessss");
+	// 	d.insert("yessss");
+	// }
+	// // output "a: " a;
+	// {
+	// 	cout << "a: ";
+	// 	cout << "{";
+	// 	bool first = true;
+	// 	for (const auto &item : a)
+	// 	{
+	// 		if (!first)
+	// 		{
+	// 			cout << ", ";
+	// 		}
+	// 		cout << item;
+	// 		first = false;
+	// 	}
+	// 	cout << "}" << endl;
+	// }
+	// // output "b: " b;
+	// {
+	// 	cout << "b: ";
+	// 	cout << "{";
+	// 	bool first = true;
+	// 	for (const auto &item : b)
+	// 	{
+	// 		if (!first)
+	// 		{
+	// 			cout << ", ";
+	// 		}
+	// 		cout << item;
+	// 		first = false;
+	// 	}
+	// 	cout << "}" << endl;
+	// }
+	// // output "new one: " {"or","laodsae"} ;
+	// {
+	// 	cout << "new one: ";
+	// 	cout << "{";
+	// 	cout << "or";
+	// 	cout << ", laodsae";
+	// 	cout << "}" << endl;
+	// }
+	// // output "c: " c;
+	// {
+	// 	cout << "c: ";
+	// 	cout << "{";
+	// 	bool first = true;
+	// 	for (const auto &item : c)
+	// 	{
+	// 		if (!first)
+	// 		{
+	// 			cout << ", ";
+	// 		}
+	// 		cout << item;
+	// 		first = false;
+	// 	}
+	// 	cout << "}" << endl;
+	// }
+	// // output "d: " d;
+	// {
+	// 	cout << "d: ";
+	// 	cout << "{";
+	// 	bool first = true;
+	// 	for (const auto &item : d)
+	// 	{
+	// 		if (!first)
+	// 		{
+	// 			cout << ", ";
+	// 		}
+	// 		cout << item;
+	// 		first = false;
+	// 	}
+	// 	cout << "}" << endl;
+	// }
 }

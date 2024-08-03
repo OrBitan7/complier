@@ -272,6 +272,7 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
     }
     fprintf(stdout, "}\n");
 }
+// GenerateColUnionWithString done
 void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
 {
     char msg[32];
@@ -305,65 +306,6 @@ void GenerateColUnionWithString(char *varResultName, char *varName, char *string
 }
 
 
-// collection - collection:
-char *RT_RemoveStrToCollection(char *collection, char *str)
-{
-
-	if (collection == NULL || str == NULL)
-	{
-		return collection;
-	}
-	
-
-	char *pos = strstr(collection, str);
-	if (pos != NULL)
-	{
-		printf("pos:%s\n", pos);
-		printf("str:%s\n", str);
-		printf("next:%c\n", pos[strlen(str)]);
-		printf("beffor:%c\n", pos[-1]);
-		int lenStr = strlen(str);
-		int lenColl = strlen(collection);
-		int lenRemain = lenColl - lenStr;
-		fprintf(stdout, "itration\n");
-		if (pos[strlen(str)] == '@')
-		{
-			lenStr++;
-			memmove(pos, pos + lenStr , strlen(pos + lenStr) + 1);
-		}
-		else if (pos[-1] == '@')
-		{
-			lenStr++;
-			pos--;
-			memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-		}
-		else
-		{
-			memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-		}
-
-		collection = realloc(collection, lenRemain + 1);
-	}
-
-	return collection;
-}
-
-char *RT_DifferenceCollections(char *var, char *coll)
-{
-	char *temp = malloc(strlen(coll) + 1);
-	strcpy(temp, coll);
-	char *token;
-	token = strtok(temp + 1, "@");
-	do
-	{
-		if (token && (strstr(var, token) != NULL))
-			var = RT_RemoveStrToCollection(var, token);
-		token = strtok(NULL, "@");
-	} while (token);
-	free(temp);
-
-	return var;
-}
 void GenerateColDifference(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
@@ -387,24 +329,35 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
     }
 
     fprintf(stdout, "{\n");
+    fprintf(stdout, "   %s = %s;\n", varResultName, varName);
     if (coll[0] == '\"')
-        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, \"\\%s\");\n", varName, coll);
+    {
+        char *temp = malloc(strlen(coll) + 1);
+        strcpy(temp, coll);
+        char *token;
+        token = strtok(temp + 1, "@");
+        while (token)
+        {
+            fprintf(stdout, "   %s.erase(\"%s\");\n", varResultName, token);
+            token = strtok(NULL, "@");
+        }
+        free(temp);
+    }
     else
-        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, %s);\n", varName, coll);
+    {
+        fprintf(stdout, "for (const auto& element : %s) {\n", coll);
+        fprintf(stdout, "    %s.erase(element);\n", varResultName);
+        fprintf(stdout, "}\n");
+    }
 
-    fprintf(stdout, "int len = strlen(unified);\n");
-
-    fprintf(stdout, "if (%s == NULL)	%s=malloc(len+1);\n", varResultName, varResultName);
-    fprintf(stdout, "else	%s = realloc(%s,len+1);\n", varResultName, varResultName);
-
-    fprintf(stdout, "strcpy(%s, unified);\n", varResultName);
     fprintf(stdout, "}\n");
 }
 
 
 
+
 /* Line 189 of yacc.c  */
-#line 408 "Collection.tab.c"
+#line 361 "Collection.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -458,12 +411,12 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 335 "Collection.y"
+#line 288 "Collection.y"
 char *str;
 
 
 /* Line 214 of yacc.c  */
-#line 467 "Collection.tab.c"
+#line 420 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -475,7 +428,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 479 "Collection.tab.c"
+#line 432 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -765,8 +718,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   344,   344,   345,   346,   347,   348,   348,   349,   350,
-     350,   351,   352,   353,   354,   355,   356,   357
+       0,   297,   297,   298,   299,   300,   301,   301,   302,   303,
+     303,   304,   305,   306,   307,   308,   309,   310
 };
 #endif
 
@@ -1685,105 +1638,105 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 346 "Collection.y"
+#line 299 "Collection.y"
     {GenerateColDef((yyvsp[(2) - (3)].str));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 347 "Collection.y"
+#line 300 "Collection.y"
     {GenerateColAssign((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 348 "Collection.y"
+#line 301 "Collection.y"
     {(yyvsp[(2) - (2)].str)=CopyStr(yytext);;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 348 "Collection.y"
+#line 301 "Collection.y"
     {GenerateColOut((yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].str));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 349 "Collection.y"
+#line 302 "Collection.y"
     {GenerateColUnion((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 350 "Collection.y"
+#line 303 "Collection.y"
     {(yyvsp[(5) - (5)].str)=CopyStr(yytext);;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 350 "Collection.y"
+#line 303 "Collection.y"
     {GenerateColUnionWithString((yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].str), (yyvsp[(5) - (7)].str));;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 351 "Collection.y"
+#line 304 "Collection.y"
     {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 352 "Collection.y"
+#line 305 "Collection.y"
     {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 353 "Collection.y"
+#line 306 "Collection.y"
     {(yyval.str) = "\"";;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 354 "Collection.y"
+#line 307 "Collection.y"
     {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 355 "Collection.y"
+#line 308 "Collection.y"
     {(yyval.str) = CopyStr(yytext);}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 356 "Collection.y"
+#line 309 "Collection.y"
     {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 357 "Collection.y"
+#line 310 "Collection.y"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1787 "Collection.tab.c"
+#line 1740 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

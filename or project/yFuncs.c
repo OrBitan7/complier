@@ -203,11 +203,11 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
     }
     fprintf(stdout, "}\n");
 }
-
+// GenerateColUnionWithString done
 void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
 {
     char msg[32];
-
+    printf("%s", string);
     if (getTyp(varResultName) != Collection)
     {
         sprintf(msg, "%s not defined as a collection", varResultName);
@@ -236,64 +236,6 @@ void GenerateColUnionWithString(char *varResultName, char *varName, char *string
     }
 }
 
-// collection - collection:
-char *RT_RemoveStrToCollection(char *collection, char *str)
-{
-
-    if (collection == NULL || str == NULL)
-    {
-        return collection;
-    }
-
-    char *pos = strstr(collection, str);
-    if (pos != NULL)
-    {
-        printf("pos:%s\n", pos);
-        printf("str:%s\n", str);
-        printf("next:%c\n", pos[strlen(str)]);
-        printf("beffor:%c\n", pos[-1]);
-        int lenStr = strlen(str);
-        int lenColl = strlen(collection);
-        int lenRemain = lenColl - lenStr;
-        fprintf(stdout, "itration\n");
-        if (pos[strlen(str)] == '@')
-        {
-            lenStr++;
-            memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-        }
-        else if (pos[-1] == '@')
-        {
-            lenStr++;
-            pos--;
-            memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-        }
-        else
-        {
-            memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
-        }
-
-        collection = realloc(collection, lenRemain + 1);
-    }
-
-    return collection;
-}
-
-char *RT_DifferenceCollections(char *var, char *coll)
-{
-    char *temp = malloc(strlen(coll) + 1);
-    strcpy(temp, coll);
-    char *token;
-    token = strtok(temp + 1, "@");
-    do
-    {
-        if (token && (strstr(var, token) != NULL))
-            var = RT_RemoveStrToCollection(var, token);
-        token = strtok(NULL, "@");
-    } while (token);
-    free(temp);
-
-    return var;
-}
 void GenerateColDifference(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
@@ -317,16 +259,26 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
     }
 
     fprintf(stdout, "{\n");
+    fprintf(stdout, "   %s = %s;\n", varResultName, varName);
     if (coll[0] == '\"')
-        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, \"\\%s\");\n", varName, coll);
+    {
+        char *temp = malloc(strlen(coll) + 1);
+        strcpy(temp, coll);
+        char *token;
+        token = strtok(temp + 1, "@");
+        while (token)
+        {
+            fprintf(stdout, "   %s.erase(\"%s\");\n", varResultName, token);
+            token = strtok(NULL, "@");
+        }
+        free(temp);
+    }
     else
-        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, %s);\n", varName, coll);
+    {
+        fprintf(stdout, "for (const auto& element : %s) {\n", coll);
+        fprintf(stdout, "    %s.erase(element);\n", varResultName);
+        fprintf(stdout, "}\n");
+    }
 
-    fprintf(stdout, "int len = strlen(unified);\n");
-
-    fprintf(stdout, "if (%s == NULL)	%s=malloc(len+1);\n", varResultName, varResultName);
-    fprintf(stdout, "else	%s = realloc(%s,len+1);\n", varResultName, varResultName);
-
-    fprintf(stdout, "strcpy(%s, unified);\n", varResultName);
     fprintf(stdout, "}\n");
 }
