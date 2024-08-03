@@ -314,6 +314,9 @@ STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
 
 
 %%
+
+void yyerror (char *s) {fprintf (stderr, "%s\n", s); exit(1);} 
+
 int main(void) {
     outputFile = freopen("test.cpp", "w", stdout);
     if (outputFile == NULL) {
