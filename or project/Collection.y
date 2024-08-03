@@ -293,7 +293,7 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 }
 
 %}
-
+%code requires {#include <iostream>}
 %union {std::string* type_string;
 		int type_number;
 		std::set<std::string> type_collection;
@@ -301,7 +301,7 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 		}         /* Yacc definitions */
 %token <type_string> t_STRING t_ID
 %token <type_number> t_INT
-%token t_COLLECTION_CMD t_OUTPUT_CMD t_SET_CMD
+%token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_INT t_STRING t_ID
 %type <type_collection> STRING_LIST
 %type <str> VAR  
 %type <type_collection> COLLECTION 

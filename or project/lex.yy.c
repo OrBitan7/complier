@@ -407,7 +407,7 @@ char *yytext;
 #line 1 "Collection.l"
 #define INITIAL 0
 #line 2 "Collection.l"
-#include "Collection.tab.h"
+#include "Collection.tab.hpp"
 void yyerror (char *s);
 int yylex();
 #line 414 "lex.yy.c"

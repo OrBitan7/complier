@@ -32,6 +32,15 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* "%code requires" blocks.  */
+
+/* Line 1676 of yacc.c  */
+#line 296 "Collection.y"
+#include <iostream>
+
+
+/* Line 1676 of yacc.c  */
+#line 44 "Collection.tab.hpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -42,9 +51,20 @@
      t_STRING = 258,
      t_ID = 259,
      t_INT = 260,
-     t_COLLECTION_CMD = 261,
-     t_OUTPUT_CMD = 262,
-     t_SET_CMD = 263
+     t_IF_CMD = 261,
+     t_ELSE_CMD = 262,
+     t_FOR_CMD = 263,
+     t_WHILE_CMD = 264,
+     t_BIGGER_EQUAL = 265,
+     t_LOWER_EQUAL = 266,
+     t_EQUAL = 267,
+     t_NOT = 268,
+     t_COLLECTION_CMD = 269,
+     t_SET_CMD = 270,
+     t_INT_CMD = 271,
+     t_STRING_CMD = 272,
+     t_INPUT_CMD = 273,
+     t_OUTPUT_CMD = 274
    };
 #endif
 
@@ -64,7 +84,7 @@ std::string* type_string;
 
 
 /* Line 1676 of yacc.c  */
-#line 68 "Collection.tab.h"
+#line 88 "Collection.tab.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
