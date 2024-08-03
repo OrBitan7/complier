@@ -14,7 +14,11 @@ int main(void)
 {
     fprintf(stdout, "#include <stdio.h>\n");
     fprintf(stdout, "#include <stdlib.h>\n");
-    fprintf(stdout, "#include <string.h>\n\n");
+    fprintf(stdout, "#include <string.h>\n");
+    fprintf(stdout, "#include <iostream>\n");
+    fprintf(stdout, "#include <string>\n");
+    fprintf(stdout, "#include <set>\n\n");
+    fprintf(stdout, "using namespace std;\n\n");
     fprintf(stdout, "int main()\n");
     fprintf(stdout, "{\n");
 

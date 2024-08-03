@@ -10,5 +10,5 @@ Collection.tab.c: Collection.y
 clean: 
 	del lex.yy.c Collection.tab.c Collection.tab.h parse.exe test.exe
 
-test.exe: test.c
-	gcc test.c -o test.exe
+test.exe: test.cpp
+	g++ test.cpp -o test.exe

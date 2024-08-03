@@ -139,41 +139,45 @@ varType getTyp(char* var)
 
 void GenerateColDef(char* colVar)
 {
-	fprintf(stdout, "char* %s=NULL;\n", colVar);
+	//fprintf(stdout, "char* %s=NULL;\n", colVar);
+	fprintf(stdout, "set<string> %s;\n", colVar);
 	insert(colVar, Collection);
 }
 
-void GenerateColAssign(char* var, char* coll)
+void GenerateColAssign(char *var, char *coll)
 {
-	char msg[32];
-	
-	if (getTyp(var)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", var);
-		yyerror(msg);
-	}
+    char msg[32];
 
-	if ((coll[0]!='\"') && getTyp(coll)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", coll);
-		yyerror(msg);
-	}
+    if (getTyp(var) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", var);
+        yyerror(msg);
+    }
 
-	fprintf(stdout, "{\n");
-	fprintf(stdout, "int len;\n");
+    if ((coll[0] != '\"') && getTyp(coll) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", coll);
+        yyerror(msg);
+    }
 
-	if (coll[0]=='\"')
-		fprintf(stdout, "len = strlen(\"\\%s\");\n", coll);
-	else
-		fprintf(stdout, "len = strlen(%s);\n", coll);
+    fprintf(stdout, "{\n");
+    if (coll[0] == '\"')
+    {
+        char *temp = malloc(strlen(coll) + 1);
+        strcpy(temp, coll);
+        char *token;
+        token = strtok(temp + 1, "@");
+        while (token)
+        {
+            fprintf(stdout, "%s.insert(\"%s\");\n", var, token);
+            token = strtok(NULL, "@");
+        }
+        free(temp);
+    }
+    else
+        fprintf(stdout, "%s = %s;\n", var, coll);
 
-	fprintf(stdout, "if (%s == NULL) %s=malloc(len+1);\n", var, var);
-	fprintf(stdout, "else 	%s=realloc(%s, len+1);\n", var, var);
-
-	if (coll[0]=='\"')
-		fprintf(stdout, "strcpy(%s,\"\\%s\");\n", var, coll);
-	else
-		fprintf(stdout, "strcpy(%s, %s);\n", var, coll);
-
-	fprintf(stdout, "}\n");
+    fprintf(stdout, "}\n");
 }
 
 void GenerateColOut(char* str, char* coll)
@@ -258,10 +262,106 @@ void GenerateColUnify(char* varResultName, char* varName, char* coll)
 	fprintf(stdout, "}\n");
 }
 
+// collection - collection:
+char *RT_RemoveStrToCollection(char *collection, char *str)
+{
+
+	if (collection == NULL || str == NULL)
+	{
+		return collection;
+	}
+	
+
+	char *pos = strstr(collection, str);
+	if (pos != NULL)
+	{
+		printf("pos:%s\n", pos);
+		printf("str:%s\n", str);
+		printf("next:%c\n", pos[strlen(str)]);
+		printf("beffor:%c\n", pos[-1]);
+		int lenStr = strlen(str);
+		int lenColl = strlen(collection);
+		int lenRemain = lenColl - lenStr;
+		fprintf(stdout, "itration\n");
+		if (pos[strlen(str)] == '@')
+		{
+			lenStr++;
+			memmove(pos, pos + lenStr , strlen(pos + lenStr) + 1);
+		}
+		else if (pos[-1] == '@')
+		{
+			lenStr++;
+			pos--;
+			memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
+		}
+		else
+		{
+			memmove(pos, pos + lenStr, strlen(pos + lenStr) + 1);
+		}
+
+		collection = realloc(collection, lenRemain + 1);
+	}
+
+	return collection;
+}
+
+char *RT_DifferenceCollections(char *var, char *coll)
+{
+	char *temp = malloc(strlen(coll) + 1);
+	strcpy(temp, coll);
+	char *token;
+	token = strtok(temp + 1, "@");
+	do
+	{
+		if (token && (strstr(var, token) != NULL))
+			var = RT_RemoveStrToCollection(var, token);
+		token = strtok(NULL, "@");
+	} while (token);
+	free(temp);
+
+	return var;
+}
+void GenerateColDifference(char *varResultName, char *varName, char *coll)
+{
+    char msg[32];
+
+    if (getTyp(varResultName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varResultName);
+        yyerror(msg);
+    }
+
+    if (getTyp(varName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varName);
+        yyerror(msg);
+    }
+
+    if ((coll[0] != '\"') && getTyp(coll) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", coll);
+        yyerror(msg);
+    }
+
+    fprintf(stdout, "{\n");
+    if (coll[0] == '\"')
+        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, \"\\%s\");\n", varName, coll);
+    else
+        fprintf(stdout, "char* unified = RT_DifferenceCollections(%s, %s);\n", varName, coll);
+
+    fprintf(stdout, "int len = strlen(unified);\n");
+
+    fprintf(stdout, "if (%s == NULL)	%s=malloc(len+1);\n", varResultName, varResultName);
+    fprintf(stdout, "else	%s = realloc(%s,len+1);\n", varResultName, varResultName);
+
+    fprintf(stdout, "strcpy(%s, unified);\n", varResultName);
+    fprintf(stdout, "}\n");
+}
+
 
 
 /* Line 189 of yacc.c  */
-#line 265 "Collection.tab.c"
+#line 365 "Collection.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -315,12 +415,12 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 192 "Collection.y"
+#line 292 "Collection.y"
 char *str;
 
 
 /* Line 214 of yacc.c  */
-#line 324 "Collection.tab.c"
+#line 424 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -332,7 +432,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 336 "Collection.tab.c"
+#line 436 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -547,16 +647,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  9
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   28
+#define YYLAST   31
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  26
+#define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  7
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  14
+#define YYNRULES  15
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  30
+#define YYNSTATES  33
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -572,7 +672,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    22,    25,     2,     2,     2,     2,     2,
+       2,     2,     2,    22,    26,    23,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,    20,
        2,    21,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -580,7 +680,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    23,     2,    24,     2,     2,     2,     2,
+       2,     2,     2,    24,     2,    25,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -604,24 +704,25 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     8,    12,    17,    18,    24,    31,
-      33,    36,    40,    42,    46
+      38,    40,    43,    47,    49,    53
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      27,     0,    -1,    28,    -1,    27,    28,    -1,    13,    31,
-      20,    -1,    31,    21,    30,    20,    -1,    -1,    18,     3,
-      29,    30,    20,    -1,    31,    21,    31,    22,    30,    20,
-      -1,    31,    -1,    23,    24,    -1,    23,    32,    24,    -1,
-       4,    -1,    32,    25,     3,    -1,     3,    -1
+      28,     0,    -1,    29,    -1,    28,    29,    -1,    13,    32,
+      20,    -1,    32,    21,    31,    20,    -1,    -1,    18,     3,
+      30,    31,    20,    -1,    32,    21,    32,    22,    31,    20,
+      -1,    32,    21,    32,    23,    31,    20,    -1,    32,    -1,
+      24,    25,    -1,    24,    33,    25,    -1,     4,    -1,    33,
+      26,     3,    -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
-       0,   201,   201,   202,   203,   204,   205,   205,   206,   207,
-     208,   209,   210,   211,   212
+       0,   301,   301,   302,   303,   304,   305,   305,   306,   307,
+     308,   309,   310,   311,   312,   313
 };
 #endif
 
@@ -634,8 +735,8 @@ static const char *const yytname[] =
   "t_ELSE_CMD", "t_FOR_CMD", "t_WHILE_CMD", "t_BIGGER_EQUAL",
   "t_LOWER_EQUAL", "t_EQUAL", "t_NOT", "t_COLLECTION_CMD", "t_SET_CMD",
   "t_INT_CMD", "t_STRING_CMD", "t_INPUT_CMD", "t_OUTPUT_CMD", "t_INT",
-  "';'", "'='", "'+'", "'{'", "'}'", "','", "$accept", "Prog", "SENTENCE",
-  "$@1", "COLLECTION", "VAR", "STRING_LIST", 0
+  "';'", "'='", "'+'", "'-'", "'{'", "'}'", "','", "$accept", "Prog",
+  "SENTENCE", "$@1", "COLLECTION", "VAR", "STRING_LIST", 0
 };
 #endif
 
@@ -646,22 +747,22 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-      59,    61,    43,   123,   125,    44
+      59,    61,    43,    45,   123,   125,    44
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    26,    27,    27,    28,    28,    29,    28,    28,    30,
-      30,    30,    31,    32,    32
+       0,    27,    28,    28,    29,    29,    30,    29,    29,    29,
+      31,    31,    31,    32,    33,    33
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     2,     3,     4,     0,     5,     6,     1,
-       2,     3,     1,     3,     1
+       0,     2,     1,     2,     3,     4,     0,     5,     6,     6,
+       1,     2,     3,     1,     3,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -669,31 +770,33 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    12,     0,     0,     0,     2,     0,     0,     6,     1,
-       3,     0,     4,     0,     0,     0,     9,     0,     9,    14,
-      10,     0,     5,     0,     7,    11,     0,     0,    13,     8
+       0,    13,     0,     0,     0,     2,     0,     0,     6,     1,
+       3,     0,     4,     0,     0,     0,    10,     0,    10,    15,
+      11,     0,     5,     0,     0,     7,    12,     0,     0,     0,
+      14,     8,     9
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,    13,    15,     6,    21
+      -1,     4,     5,    13,    15,    18,    21
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -19
+#define YYPACT_NINF -14
 static const yytype_int8 yypact[] =
 {
-       1,   -19,     6,     9,     4,   -19,    -6,    -4,   -19,   -19,
-     -19,    -3,   -19,    -3,    -1,     5,     2,     7,   -19,   -19,
-     -19,   -18,   -19,    -3,   -19,   -19,    15,     8,   -19,   -19
+      -2,   -14,     8,    10,     1,   -14,     3,     5,   -14,   -14,
+     -14,    -1,   -14,    -1,    -3,     6,   -13,     7,   -14,   -14,
+     -14,    -5,   -14,    -1,    -1,   -14,   -14,    25,     9,    11,
+     -14,   -14,   -14
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -19,   -19,    22,   -19,   -10,    -2,   -19
+     -14,   -14,    26,   -14,    -6,     4,   -14
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -703,25 +806,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       7,     1,    19,    17,     9,     1,    25,    26,     1,    16,
-       1,    18,     8,    27,     2,    11,    12,     2,    28,     3,
-      14,    18,     3,    20,    23,    22,    10,    24,    29
+      19,     9,     1,     1,     6,     1,     7,    17,     6,    23,
+      24,     2,     1,     8,     2,    16,     3,    28,    29,     3,
+      26,    27,    20,    14,    11,    12,    22,    25,    30,    31,
+      10,    32
 };
 
 static const yytype_uint8 yycheck[] =
 {
-       2,     4,     3,    13,     0,     4,    24,    25,     4,    11,
-       4,    13,     3,    23,    13,    21,    20,    13,     3,    18,
-      23,    23,    18,    24,    22,    20,     4,    20,    20
+       3,     0,     4,     4,     0,     4,     2,    13,     4,    22,
+      23,    13,     4,     3,    13,    11,    18,    23,    24,    18,
+      25,    26,    25,    24,    21,    20,    20,    20,     3,    20,
+       4,    20
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     4,    13,    18,    27,    28,    31,    31,     3,     0,
-      28,    21,    20,    29,    23,    30,    31,    30,    31,     3,
-      24,    32,    20,    22,    20,    24,    25,    30,     3,    20
+       0,     4,    13,    18,    28,    29,    32,    32,     3,     0,
+      29,    21,    20,    30,    24,    31,    32,    31,    32,     3,
+      25,    33,    20,    22,    23,    20,    25,    26,    31,    31,
+       3,    20,    20
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1535,84 +1641,91 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 203 "Collection.y"
+#line 303 "Collection.y"
     {GenerateColDef((yyvsp[(2) - (3)].str));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 204 "Collection.y"
+#line 304 "Collection.y"
     {GenerateColAssign((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 205 "Collection.y"
+#line 305 "Collection.y"
     {(yyvsp[(2) - (2)].str)=CopyStr(yytext);;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 205 "Collection.y"
+#line 305 "Collection.y"
     {GenerateColOut((yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].str));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 206 "Collection.y"
+#line 306 "Collection.y"
     {GenerateColUnify((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 207 "Collection.y"
-    {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
+#line 307 "Collection.y"
+    {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 208 "Collection.y"
-    {(yyval.str) = "\"";;}
+#line 308 "Collection.y"
+    {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 209 "Collection.y"
-    {(yyval.str) = (yyvsp[(2) - (3)].str);;}
+#line 309 "Collection.y"
+    {(yyval.str) = "\"";;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 210 "Collection.y"
-    {(yyval.str) = CopyStr(yytext);}
+#line 310 "Collection.y"
+    {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 211 "Collection.y"
-    {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
+#line 311 "Collection.y"
+    {(yyval.str) = CopyStr(yytext);}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 212 "Collection.y"
+#line 312 "Collection.y"
+    {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
+    break;
+
+  case 15:
+
+/* Line 1455 of yacc.c  */
+#line 313 "Collection.y"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1616 "Collection.tab.c"
+#line 1729 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
