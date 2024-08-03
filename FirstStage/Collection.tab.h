@@ -41,7 +41,21 @@
    enum yytokentype {
      t_STRING = 258,
      t_ID = 259,
-     t_COLLECTION_CMD = 260
+     t_IF_CMD = 260,
+     t_ELSE_CMD = 261,
+     t_FOR_CMD = 262,
+     t_WHILE_CMD = 263,
+     t_BIGGER_EQUAL = 264,
+     t_LOWER_EQUAL = 265,
+     t_EQUAL = 266,
+     t_NOT = 267,
+     t_COLLECTION_CMD = 268,
+     t_SET_CMD = 269,
+     t_INT_CMD = 270,
+     t_STRING_CMD = 271,
+     t_INPUT_CMD = 272,
+     t_OUTPUT_CMD = 273,
+     t_INT = 274
    };
 #endif
 
@@ -57,7 +71,7 @@ char *str;
 
 
 /* Line 1676 of yacc.c  */
-#line 61 "Collection.tab.h"
+#line 75 "Collection.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

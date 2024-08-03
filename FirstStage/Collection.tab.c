@@ -107,7 +107,21 @@ int yylex();
    enum yytokentype {
      t_STRING = 258,
      t_ID = 259,
-     t_COLLECTION_CMD = 260
+     t_IF_CMD = 260,
+     t_ELSE_CMD = 261,
+     t_FOR_CMD = 262,
+     t_WHILE_CMD = 263,
+     t_BIGGER_EQUAL = 264,
+     t_LOWER_EQUAL = 265,
+     t_EQUAL = 266,
+     t_NOT = 267,
+     t_COLLECTION_CMD = 268,
+     t_SET_CMD = 269,
+     t_INT_CMD = 270,
+     t_STRING_CMD = 271,
+     t_INPUT_CMD = 272,
+     t_OUTPUT_CMD = 273,
+     t_INT = 274
    };
 #endif
 
@@ -123,7 +137,7 @@ char *str;
 
 
 /* Line 214 of yacc.c  */
-#line 127 "Collection.tab.c"
+#line 141 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -135,7 +149,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 139 "Collection.tab.c"
+#line 153 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -353,7 +367,7 @@ union yyalloc
 #define YYLAST   1
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  6
+#define YYNTOKENS  20
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  2
 /* YYNRULES -- Number of rules.  */
@@ -363,7 +377,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   260
+#define YYMAXUTOK   274
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -397,7 +411,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19
 };
 
 #if YYDEBUG
@@ -411,13 +426,13 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-       7,     0,    -1,     3,    -1
+      21,     0,    -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    16,    16
+       0,    17,    17
 };
 #endif
 
@@ -426,7 +441,10 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "t_STRING", "t_ID", "t_COLLECTION_CMD",
+  "$end", "error", "$undefined", "t_STRING", "t_ID", "t_IF_CMD",
+  "t_ELSE_CMD", "t_FOR_CMD", "t_WHILE_CMD", "t_BIGGER_EQUAL",
+  "t_LOWER_EQUAL", "t_EQUAL", "t_NOT", "t_COLLECTION_CMD", "t_SET_CMD",
+  "t_INT_CMD", "t_STRING_CMD", "t_INPUT_CMD", "t_OUTPUT_CMD", "t_INT",
   "$accept", "SENTENCE", 0
 };
 #endif
@@ -436,14 +454,15 @@ static const char *const yytname[] =
    token YYLEX-NUM.  */
 static const yytype_uint16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,     6,     7
+       0,    20,    21
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -499,7 +518,7 @@ static const yytype_uint8 yycheck[] =
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     7,     0
+       0,     3,    21,     0
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1313,7 +1332,7 @@ yyreduce:
       
 
 /* Line 1455 of yacc.c  */
-#line 1317 "Collection.tab.c"
+#line 1336 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1525,7 +1544,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 18 "Collection.y"
+#line 19 "Collection.y"
                      /* C code */
 
 
