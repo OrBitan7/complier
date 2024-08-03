@@ -70,14 +70,13 @@ varType getTyp(char *var)
 }
 
 //	===	Code Generation Functions	===========================================
-//GenerateColDef done
+// GenerateColDef done
 void GenerateColDef(char *colVar)
 {
     fprintf(stdout, "set<string> %s;\n", colVar);
     insert(colVar, Collection);
 }
-
-//GenerateColAssign done
+// GenerateColAssign done
 void GenerateColAssign(char *var, char *coll)
 {
     char msg[32];
@@ -113,7 +112,7 @@ void GenerateColAssign(char *var, char *coll)
 
     fprintf(stdout, "}\n");
 }
-
+//GenerateColOut done
 void GenerateColOut(char *str, char *coll)
 {
     char msg[32];
@@ -123,10 +122,10 @@ void GenerateColOut(char *str, char *coll)
         sprintf(msg, "%s not defined as a collection", coll);
         yyerror(msg);
     }
+    printf("{ \n");
+    fprintf(stdout, "   cout << %s\";\n", str); // Command to print 1st string
 
-    fprintf(stdout, "printf(%s \");\n", str); // Command to print 1st string
-
-    fprintf(stdout, "printf(\"{\");\n"); // Command to start collection
+    fprintf(stdout, "   cout << \"{\";\n"); // Command to start collection
 
     if (coll[0] == '\"')
     {
@@ -138,7 +137,7 @@ void GenerateColOut(char *str, char *coll)
         do
         {
             if (token)
-                fprintf(stdout, "printf(\"%s%s\");\n", comma, token);
+                fprintf(stdout, "   cout << \"%s%s\" ;\n", comma, token);
             comma = ", ";
             token = strtok(NULL, "@");
         } while (token);
@@ -146,22 +145,18 @@ void GenerateColOut(char *str, char *coll)
     }
     else
     {
-        fprintf(stdout, "{\n");
-        fprintf(stdout, "char* temp = malloc(strlen(%s)+1);\n", coll);
-        fprintf(stdout, "strcpy(temp, %s);\n", coll);
-        fprintf(stdout, "char *token;\n");
-        fprintf(stdout, "token = strtok(temp+1, \"@\");\n");
-        fprintf(stdout, "char* comma=\"\";\n");
-        fprintf(stdout, "do {\n");
-        fprintf(stdout, "\tif (token) printf(\"%%s%%s\", comma, token);\n");
-        fprintf(stdout, "\tcomma=\", \";\n");
-        fprintf(stdout, "\ttoken = strtok(NULL, \"@\");\n");
-        fprintf(stdout, "} while (token);\n");
-        fprintf(stdout, "free(temp);\n");
-        fprintf(stdout, "}\n");
+        fprintf(stdout, "   bool first = true;\n");
+        fprintf(stdout, "   for (const auto& item : %s) {\n", coll);
+        fprintf(stdout, "       if (!first) {\n");
+        fprintf(stdout, "           cout << \", \";\n");
+        fprintf(stdout, "       }\n");
+        fprintf(stdout, "      cout << item;\n");
+        fprintf(stdout, "      first = false;\n");
+        fprintf(stdout, "   }\n");
     }
 
-    fprintf(stdout, "printf(\"}\\n\");\n"); // Command to end collection
+    fprintf(stdout, "   cout << \"}\" << endl;\n"); // Command to end collection
+    printf("}\n");
 }
 
 char *RT_unifyCollections(char *var, char *coll);

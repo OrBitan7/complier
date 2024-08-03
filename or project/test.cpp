@@ -50,23 +50,41 @@ void yyerror(char *s)
 
 int main()
 {
+	// collection a;
 	set<string> a;
-	set<string> b;
+	// a = {"hi", "lol"};
 	{
 		a.insert("hi");
-		a.insert("iii");
+		a.insert("lol");
 	}
+	// collection b;
+	set<string> b;
+	// b = {"hello"};
 	{
-		b = a;
+		b.insert("hello");
 	}
-	cout << "a: ";
-	for (const auto& item : a) {
-        std::cout << item << ",";
-    }
-	cout << endl;
-	cout << "b: ";
-	for (const auto& item : b) {
-        std::cout << item << ",";
-    }
-	cout << endl;
+	// output "a: " a;
+	{
+		cout << "a: ";
+		cout << "{";
+		bool first = true;
+		for (const auto &item : a)
+		{
+			if (!first)
+			{
+				cout << ", ";
+			}
+			cout << item;
+			first = false;
+		}
+		cout << "}" << endl;
+	}
+	// output "new one: " {"or","laodsae"} ;
+	{
+		cout << "new one: ";
+		cout << "{";
+		cout << "or";
+		cout << ", laodsae";
+		cout << "}" << endl;
+	}
 }
