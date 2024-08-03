@@ -1,5 +1,5 @@
 %{
-#include "Collection.tab.h"
+#include "Collection.tab.hpp"
 void yyerror (char *s);
 int yylex();
 %}
@@ -14,10 +14,10 @@ if                      {return t_IF_CMD;}
 else                    {return t_ELSE_CMD;}
 for                     {return t_FOR_CMD;}
 while                   {return t_WHILE_CMD;}
-\>=                      {return t_BIGGER_EQUAL;}
-\<=                      {return t_LOWER_EQUAL;}
+\>=                     {return t_BIGGER_EQUAL;}
+\<=                     {return t_LOWER_EQUAL;}
 ==                      {return t_EQUAL;}
-\!                       {return t_NOT;}
+\!                      {return t_NOT;}
 collection              {return t_COLLECTION_CMD;}
 set                     {return t_SET_CMD;}
 int                     {return t_INT_CMD;}

@@ -68,17 +68,24 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "Collection.y"
+#line 1 "Collection.ypp"
 
-void yyerror (char *s);
+void yyerror (const char *s);
 int yylex();
-#include <stdio.h>     /* C declarations used in actions */
 #include <stdlib.h>
 #include <ctype.h>
+#include <string>
+#include <set>
+#include <iostream>
+using namespace std;
+void GenerateColDef(std::string colVar)
+{
+	cout << "char* "<<colVar<<"=NULL;"<<endl;
+}
 
 
 /* Line 189 of yacc.c  */
-#line 82 "Collection.tab.c"
+#line 89 "Collection.tab.cpp"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -98,6 +105,19 @@ int yylex();
 # define YYTOKEN_TABLE 0
 #endif
 
+/* "%code requires" blocks.  */
+
+/* Line 209 of yacc.c  */
+#line 16 "Collection.ypp"
+
+#include <iostream>
+#include <string>
+#include <set>
+
+
+
+/* Line 209 of yacc.c  */
+#line 121 "Collection.tab.cpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -107,21 +127,21 @@ int yylex();
    enum yytokentype {
      t_STRING = 258,
      t_ID = 259,
-     t_IF_CMD = 260,
-     t_ELSE_CMD = 261,
-     t_FOR_CMD = 262,
-     t_WHILE_CMD = 263,
-     t_BIGGER_EQUAL = 264,
-     t_LOWER_EQUAL = 265,
-     t_EQUAL = 266,
-     t_NOT = 267,
-     t_COLLECTION_CMD = 268,
-     t_SET_CMD = 269,
-     t_INT_CMD = 270,
-     t_STRING_CMD = 271,
-     t_INPUT_CMD = 272,
-     t_OUTPUT_CMD = 273,
-     t_INT = 274
+     t_INT = 260,
+     t_IF_CMD = 261,
+     t_ELSE_CMD = 262,
+     t_FOR_CMD = 263,
+     t_WHILE_CMD = 264,
+     t_BIGGER_EQUAL = 265,
+     t_LOWER_EQUAL = 266,
+     t_EQUAL = 267,
+     t_NOT = 268,
+     t_COLLECTION_CMD = 269,
+     t_SET_CMD = 270,
+     t_INT_CMD = 271,
+     t_STRING_CMD = 272,
+     t_INPUT_CMD = 273,
+     t_OUTPUT_CMD = 274
    };
 #endif
 
@@ -132,12 +152,16 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 9 "Collection.y"
-char *str;
+#line 21 "Collection.ypp"
+std::string type_string;
+		int type_number;
+		std::set<std::string> type_collection;
+		std::set<int> type_set;
+		
 
 
 /* Line 214 of yacc.c  */
-#line 141 "Collection.tab.c"
+#line 165 "Collection.tab.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -149,7 +173,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 153 "Collection.tab.c"
+#line 177 "Collection.tab.cpp"
 
 #ifdef short
 # undef short
@@ -362,18 +386,18 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  3
+#define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   1
+#define YYLAST   11
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  20
+#define YYNTOKENS  21
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  2
+#define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  2
+#define YYNRULES  4
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  4
+#define YYNSTATES  8
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -390,7 +414,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    20,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -420,19 +444,20 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3
+       0,     0,     3,     5,     9
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      21,     0,    -1,     3,    -1
+      22,     0,    -1,     3,    -1,    14,    23,    20,    -1,     4,
+      -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    17,    17
+       0,    34,    34,    35,    37
 };
 #endif
 
@@ -441,11 +466,11 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "t_STRING", "t_ID", "t_IF_CMD",
+  "$end", "error", "$undefined", "t_STRING", "t_ID", "t_INT", "t_IF_CMD",
   "t_ELSE_CMD", "t_FOR_CMD", "t_WHILE_CMD", "t_BIGGER_EQUAL",
   "t_LOWER_EQUAL", "t_EQUAL", "t_NOT", "t_COLLECTION_CMD", "t_SET_CMD",
-  "t_INT_CMD", "t_STRING_CMD", "t_INPUT_CMD", "t_OUTPUT_CMD", "t_INT",
-  "$accept", "SENTENCE", 0
+  "t_INT_CMD", "t_STRING_CMD", "t_INPUT_CMD", "t_OUTPUT_CMD", "';'",
+  "$accept", "SENTENCE", "VAR", 0
 };
 #endif
 
@@ -455,20 +480,21 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271,   272,   273,   274
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+      59
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    20,    21
+       0,    21,    22,    22,    23
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1
+       0,     2,     1,     3,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -476,27 +502,27 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     2,     0,     1
+       0,     2,     0,     0,     4,     0,     1,     3
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2
+      -1,     3,     5
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -4
+#define YYPACT_NINF -18
 static const yytype_int8 yypact[] =
 {
-      -3,    -4,     1,    -4
+      -3,   -18,    -2,     1,   -18,   -17,   -18,   -18
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -4,    -4
+     -18,   -18,   -18
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -506,19 +532,21 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       1,     3
+       1,     6,     4,     7,     0,     0,     0,     0,     0,     0,
+       0,     2
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-       3,     0
+       3,     0,     4,    20,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    14
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,    21,     0
+       0,     3,    14,    22,     4,    23,     0,    20
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1329,10 +1357,24 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 3:
 
 /* Line 1455 of yacc.c  */
-#line 1336 "Collection.tab.c"
+#line 35 "Collection.ypp"
+    {GenerateColDef((yyvsp[(2) - (3)].type_string));;}
+    break;
+
+  case 4:
+
+/* Line 1455 of yacc.c  */
+#line 37 "Collection.ypp"
+    { (yyval.type_string) = (yyvsp[(1) - (1)].type_string); ;}
+    break;
+
+
+
+/* Line 1455 of yacc.c  */
+#line 1378 "Collection.tab.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1544,12 +1586,10 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 19 "Collection.y"
+#line 39 "Collection.ypp"
                      /* C code */
 
 
-int main (void) {
-	return yyparse ( );
-}
+
 
 

@@ -407,10 +407,15 @@ char *yytext;
 #line 1 "Collection.l"
 #define INITIAL 0
 #line 2 "Collection.l"
-#include "Collection.tab.h"
-void yyerror (char *s);
-int yylex();
-#line 414 "lex.yy.c"
+#include "Collection.tab.hpp"
+#include <string>
+#include <set>
+#include <iostream>
+void yyerror(const char *s) {
+    std::cerr << "Error: " << s << std::endl;
+    exit(1);
+}int yylex();
+#line 419 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -561,9 +566,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 6 "Collection.l"
+#line 11 "Collection.l"
 
-#line 567 "lex.yy.c"
+#line 572 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -648,140 +653,140 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 7 "Collection.l"
+#line 12 "Collection.l"
 {return '{';}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 8 "Collection.l"
+#line 13 "Collection.l"
 {return '}';}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 9 "Collection.l"
+#line 14 "Collection.l"
 {return '[';}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 10 "Collection.l"
+#line 15 "Collection.l"
 {return ']';}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 11 "Collection.l"
+#line 16 "Collection.l"
 {return '(';}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 12 "Collection.l"
+#line 17 "Collection.l"
 {return ')';}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 13 "Collection.l"
+#line 18 "Collection.l"
 {return t_IF_CMD;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 14 "Collection.l"
+#line 19 "Collection.l"
 {return t_ELSE_CMD;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 15 "Collection.l"
+#line 20 "Collection.l"
 {return t_FOR_CMD;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 16 "Collection.l"
+#line 21 "Collection.l"
 {return t_WHILE_CMD;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 17 "Collection.l"
+#line 22 "Collection.l"
 {return t_BIGGER_EQUAL;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 18 "Collection.l"
+#line 23 "Collection.l"
 {return t_LOWER_EQUAL;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 19 "Collection.l"
+#line 24 "Collection.l"
 {return t_EQUAL;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 20 "Collection.l"
+#line 25 "Collection.l"
 {return t_NOT;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 21 "Collection.l"
+#line 26 "Collection.l"
 {return t_COLLECTION_CMD;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 22 "Collection.l"
+#line 27 "Collection.l"
 {return t_SET_CMD;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 23 "Collection.l"
+#line 28 "Collection.l"
 {return t_INT_CMD;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 24 "Collection.l"
+#line 29 "Collection.l"
 {return t_STRING_CMD;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 25 "Collection.l"
+#line 30 "Collection.l"
 {return t_INPUT_CMD;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 26 "Collection.l"
+#line 31 "Collection.l"
 {return t_OUTPUT_CMD;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 27 "Collection.l"
+#line 32 "Collection.l"
 {return t_INT;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 28 "Collection.l"
+#line 33 "Collection.l"
 {return t_STRING;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 29 "Collection.l"
+#line 34 "Collection.l"
 {return t_ID;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 30 "Collection.l"
+#line 35 "Collection.l"
 {return yytext[0];}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 31 "Collection.l"
+#line 36 "Collection.l"
 {}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 32 "Collection.l"
+#line 37 "Collection.l"
 {ECHO; yyerror ("unexpected character");}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 34 "Collection.l"
+#line 39 "Collection.l"
 ECHO;
 	YY_BREAK
-#line 785 "lex.yy.c"
+#line 790 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1667,6 +1672,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 34 "Collection.l"
+#line 39 "Collection.l"
 
 int yywrap (void) {return 1;}

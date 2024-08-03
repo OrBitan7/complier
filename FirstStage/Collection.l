@@ -1,7 +1,12 @@
 %{
-#include "Collection.tab.h"
-void yyerror (char *s);
-int yylex();
+#include "Collection.tab.hpp"
+#include <string>
+#include <set>
+#include <iostream>
+void yyerror(const char *s) {
+    std::cerr << "Error: " << s << std::endl;
+    exit(1);
+}int yylex();
 %}
 %%
 \{                      {return '{';}

@@ -32,6 +32,19 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* "%code requires" blocks.  */
+
+/* Line 1676 of yacc.c  */
+#line 16 "Collection.ypp"
+
+#include <iostream>
+#include <string>
+#include <set>
+
+
+
+/* Line 1676 of yacc.c  */
+#line 48 "Collection.tab.hpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -41,21 +54,21 @@
    enum yytokentype {
      t_STRING = 258,
      t_ID = 259,
-     t_IF_CMD = 260,
-     t_ELSE_CMD = 261,
-     t_FOR_CMD = 262,
-     t_WHILE_CMD = 263,
-     t_BIGGER_EQUAL = 264,
-     t_LOWER_EQUAL = 265,
-     t_EQUAL = 266,
-     t_NOT = 267,
-     t_COLLECTION_CMD = 268,
-     t_SET_CMD = 269,
-     t_INT_CMD = 270,
-     t_STRING_CMD = 271,
-     t_INPUT_CMD = 272,
-     t_OUTPUT_CMD = 273,
-     t_INT = 274
+     t_INT = 260,
+     t_IF_CMD = 261,
+     t_ELSE_CMD = 262,
+     t_FOR_CMD = 263,
+     t_WHILE_CMD = 264,
+     t_BIGGER_EQUAL = 265,
+     t_LOWER_EQUAL = 266,
+     t_EQUAL = 267,
+     t_NOT = 268,
+     t_COLLECTION_CMD = 269,
+     t_SET_CMD = 270,
+     t_INT_CMD = 271,
+     t_STRING_CMD = 272,
+     t_INPUT_CMD = 273,
+     t_OUTPUT_CMD = 274
    };
 #endif
 
@@ -66,12 +79,16 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 9 "Collection.y"
-char *str;
+#line 21 "Collection.ypp"
+std::string type_string;
+		int type_number;
+		std::set<std::string> type_collection;
+		std::set<int> type_set;
+		
 
 
 /* Line 1676 of yacc.c  */
-#line 75 "Collection.tab.h"
+#line 92 "Collection.tab.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

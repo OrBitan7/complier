@@ -35,12 +35,16 @@
 /* "%code requires" blocks.  */
 
 /* Line 1676 of yacc.c  */
-#line 296 "Collection.y"
+#line 295 "Collection.ypp"
+
 #include <iostream>
+#include <string>
+#include <set>
+
 
 
 /* Line 1676 of yacc.c  */
-#line 44 "Collection.tab.hpp"
+#line 48 "Collection.tab.hpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -48,23 +52,23 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     t_STRING = 258,
-     t_ID = 259,
-     t_INT = 260,
-     t_IF_CMD = 261,
-     t_ELSE_CMD = 262,
-     t_FOR_CMD = 263,
-     t_WHILE_CMD = 264,
-     t_BIGGER_EQUAL = 265,
-     t_LOWER_EQUAL = 266,
-     t_EQUAL = 267,
-     t_NOT = 268,
-     t_COLLECTION_CMD = 269,
-     t_SET_CMD = 270,
-     t_INT_CMD = 271,
-     t_STRING_CMD = 272,
-     t_INPUT_CMD = 273,
-     t_OUTPUT_CMD = 274
+     t_IF_CMD = 258,
+     t_ELSE_CMD = 259,
+     t_FOR_CMD = 260,
+     t_WHILE_CMD = 261,
+     t_BIGGER_EQUAL = 262,
+     t_LOWER_EQUAL = 263,
+     t_EQUAL = 264,
+     t_NOT = 265,
+     t_COLLECTION_CMD = 266,
+     t_SET_CMD = 267,
+     t_INT_CMD = 268,
+     t_STRING_CMD = 269,
+     t_INPUT_CMD = 270,
+     t_OUTPUT_CMD = 271,
+     t_INT = 272,
+     t_STRING = 273,
+     t_ID = 274
    };
 #endif
 
@@ -75,8 +79,8 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 297 "Collection.y"
-std::string* type_string;
+#line 300 "Collection.ypp"
+std::string type_string;
 		int type_number;
 		std::set<std::string> type_collection;
 		std::set<int> type_set;
@@ -84,7 +88,7 @@ std::string* type_string;
 
 
 /* Line 1676 of yacc.c  */
-#line 88 "Collection.tab.hpp"
+#line 92 "Collection.tab.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

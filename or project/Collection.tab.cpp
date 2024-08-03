@@ -68,16 +68,15 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 1 "Collection.y"
+#line 1 "Collection.ypp"
 
 void yyerror (char *s);
 int yylex();
-#include <iostream>     /* C declarations used in actions */
 #include <stdlib.h>
-#include <string>
 #include <ctype.h>
+#include <string>
 #include <set>
-using namespace std;
+#include <iostream>
 
 #include "symTab.hpp"
 
@@ -366,7 +365,7 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 
 
 /* Line 189 of yacc.c  */
-#line 370 "Collection.tab.cpp"
+#line 369 "Collection.tab.cpp"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -389,12 +388,16 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 /* "%code requires" blocks.  */
 
 /* Line 209 of yacc.c  */
-#line 296 "Collection.y"
+#line 295 "Collection.ypp"
+
 #include <iostream>
+#include <string>
+#include <set>
+
 
 
 /* Line 209 of yacc.c  */
-#line 398 "Collection.tab.cpp"
+#line 401 "Collection.tab.cpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -402,23 +405,23 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     t_STRING = 258,
-     t_ID = 259,
-     t_INT = 260,
-     t_IF_CMD = 261,
-     t_ELSE_CMD = 262,
-     t_FOR_CMD = 263,
-     t_WHILE_CMD = 264,
-     t_BIGGER_EQUAL = 265,
-     t_LOWER_EQUAL = 266,
-     t_EQUAL = 267,
-     t_NOT = 268,
-     t_COLLECTION_CMD = 269,
-     t_SET_CMD = 270,
-     t_INT_CMD = 271,
-     t_STRING_CMD = 272,
-     t_INPUT_CMD = 273,
-     t_OUTPUT_CMD = 274
+     t_IF_CMD = 258,
+     t_ELSE_CMD = 259,
+     t_FOR_CMD = 260,
+     t_WHILE_CMD = 261,
+     t_BIGGER_EQUAL = 262,
+     t_LOWER_EQUAL = 263,
+     t_EQUAL = 264,
+     t_NOT = 265,
+     t_COLLECTION_CMD = 266,
+     t_SET_CMD = 267,
+     t_INT_CMD = 268,
+     t_STRING_CMD = 269,
+     t_INPUT_CMD = 270,
+     t_OUTPUT_CMD = 271,
+     t_INT = 272,
+     t_STRING = 273,
+     t_ID = 274
    };
 #endif
 
@@ -429,8 +432,8 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 297 "Collection.y"
-std::string* type_string;
+#line 300 "Collection.ypp"
+std::string type_string;
 		int type_number;
 		std::set<std::string> type_collection;
 		std::set<int> type_set;
@@ -438,7 +441,7 @@ std::string* type_string;
 
 
 /* Line 214 of yacc.c  */
-#line 442 "Collection.tab.cpp"
+#line 445 "Collection.tab.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -450,7 +453,7 @@ std::string* type_string;
 
 
 /* Line 264 of yacc.c  */
-#line 454 "Collection.tab.cpp"
+#line 457 "Collection.tab.cpp"
 
 #ifdef short
 # undef short
@@ -665,7 +668,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   35
+#define YYLAST   36
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
@@ -728,19 +731,19 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      28,     0,    -1,    29,    -1,    28,    29,    -1,    14,    32,
-      20,    -1,    15,    32,    20,    -1,    32,    21,    31,    20,
-      -1,    -1,    19,     3,    30,    31,    20,    -1,    32,    21,
+      28,     0,    -1,    29,    -1,    28,    29,    -1,    11,    32,
+      20,    -1,    12,    32,    20,    -1,    32,    21,    31,    20,
+      -1,    -1,    16,    18,    30,    31,    20,    -1,    32,    21,
       32,    22,    31,    20,    -1,    32,    21,    32,    23,    31,
       20,    -1,    32,    -1,    24,    25,    -1,    24,    33,    25,
-      -1,     4,    -1,    33,    26,     3,    -1,     3,    -1
+      -1,    19,    -1,    33,    26,    18,    -1,    18,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   312,   312,   313,   314,   315,   316,   317,   317,   318,
-     319,   320,   321,   322,   323,   324,   325
+       0,   315,   315,   316,   317,   318,   319,   320,   320,   321,
+     322,   323,   324,   325,   326,   327,   328
 };
 #endif
 
@@ -749,10 +752,10 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "t_STRING", "t_ID", "t_INT", "t_IF_CMD",
-  "t_ELSE_CMD", "t_FOR_CMD", "t_WHILE_CMD", "t_BIGGER_EQUAL",
-  "t_LOWER_EQUAL", "t_EQUAL", "t_NOT", "t_COLLECTION_CMD", "t_SET_CMD",
-  "t_INT_CMD", "t_STRING_CMD", "t_INPUT_CMD", "t_OUTPUT_CMD", "';'", "'='",
+  "$end", "error", "$undefined", "t_IF_CMD", "t_ELSE_CMD", "t_FOR_CMD",
+  "t_WHILE_CMD", "t_BIGGER_EQUAL", "t_LOWER_EQUAL", "t_EQUAL", "t_NOT",
+  "t_COLLECTION_CMD", "t_SET_CMD", "t_INT_CMD", "t_STRING_CMD",
+  "t_INPUT_CMD", "t_OUTPUT_CMD", "t_INT", "t_STRING", "t_ID", "';'", "'='",
   "'+'", "'-'", "'{'", "'}'", "','", "$accept", "Prog", "SENTENCE", "$@1",
   "COLLECTION", "VAR", "STRING_LIST", 0
 };
@@ -788,7 +791,7 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    14,     0,     0,     0,     0,     2,     0,     0,     0,
+       0,     0,     0,     0,    14,     0,     2,     0,     0,     0,
        7,     1,     3,     0,     4,     5,     0,     0,     0,    11,
        0,    11,    16,    12,     0,     6,     0,     0,     8,    13,
        0,     0,     0,    15,     9,    10
@@ -802,19 +805,19 @@ static const yytype_int8 yydefgoto[] =
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -12
+#define YYPACT_NINF -16
 static const yytype_int8 yypact[] =
 {
-      -2,   -12,     0,     0,     4,     1,   -12,   -11,    -6,     7,
-     -12,   -12,   -12,    -1,   -12,   -12,    -1,    -3,    12,     3,
-      13,   -12,   -12,   -12,     5,   -12,    -1,    -1,   -12,   -12,
-      18,    14,    15,   -12,   -12,   -12
+       9,   -14,   -14,    -8,   -16,     0,   -16,     3,    -7,    10,
+     -16,   -16,   -16,   -15,   -16,   -16,   -15,   -10,    11,     4,
+      12,   -16,   -16,   -16,    -3,   -16,   -15,   -15,   -16,   -16,
+      15,    14,    16,   -16,   -16,   -16
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -12,   -12,    19,   -12,     2,     6,   -12
+     -16,   -16,    24,   -16,    -9,     1,   -16
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -824,28 +827,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      22,    11,     1,     1,     1,     1,     7,    10,     8,     9,
-      13,     7,     2,     3,    14,     2,     3,     4,    20,    19,
-       4,    33,    23,    17,    12,    26,    27,    15,    31,    32,
-      29,    30,    25,    28,    34,    35
+      11,     7,     8,     9,     4,     4,     7,    20,    22,    17,
+      10,     1,     2,    14,    19,    23,     3,    31,    32,     4,
+       1,     2,    29,    30,    13,     3,    26,    27,     4,    12,
+      15,    25,    28,    33,    34,     0,    35
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-       3,     0,     4,     4,     4,     4,     0,     3,     2,     3,
-      21,     5,    14,    15,    20,    14,    15,    19,    16,    13,
-      19,     3,    25,    24,     5,    22,    23,    20,    26,    27,
-      25,    26,    20,    20,    20,    20
+       0,     0,     1,     2,    19,    19,     5,    16,    18,    24,
+      18,    11,    12,    20,    13,    25,    16,    26,    27,    19,
+      11,    12,    25,    26,    21,    16,    22,    23,    19,     5,
+      20,    20,    20,    18,    20,    -1,    20
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     4,    14,    15,    19,    28,    29,    32,    32,    32,
-       3,     0,    29,    21,    20,    20,    30,    24,    31,    32,
-      31,    32,     3,    25,    33,    20,    22,    23,    20,    25,
-      26,    31,    31,     3,    20,    20
+       0,    11,    12,    16,    19,    28,    29,    32,    32,    32,
+      18,     0,    29,    21,    20,    20,    30,    24,    31,    32,
+      31,    32,    18,    25,    33,    20,    22,    23,    20,    25,
+      26,    31,    31,    18,    20,    20
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1659,98 +1662,98 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 314 "Collection.y"
+#line 317 "Collection.ypp"
     {GenerateColDef((yyvsp[(2) - (3)].str));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 315 "Collection.y"
+#line 318 "Collection.ypp"
     {GenerateSetDef((yyvsp[(2) - (3)].str));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 316 "Collection.y"
+#line 319 "Collection.ypp"
     {GenerateColAssign((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].type_collection));;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 317 "Collection.y"
+#line 320 "Collection.ypp"
     {(yyvsp[(2) - (2)].type_string)=CopyStr(yytext);;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 317 "Collection.y"
+#line 320 "Collection.ypp"
     {GenerateColOut((yyvsp[(2) - (5)].type_string), (yyvsp[(4) - (5)].type_collection));;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 318 "Collection.y"
+#line 321 "Collection.ypp"
     {GenerateColUnify((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].type_collection));;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 319 "Collection.y"
+#line 322 "Collection.ypp"
     {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].type_collection));;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 320 "Collection.y"
+#line 323 "Collection.ypp"
     {(yyval.type_collection)=CopyStr((yyvsp[(1) - (1)].str));;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 321 "Collection.y"
+#line 324 "Collection.ypp"
     {(yyval.type_collection) = "\"";;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 322 "Collection.y"
+#line 325 "Collection.ypp"
     {(yyval.type_collection) = (yyvsp[(2) - (3)].type_collection);;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 323 "Collection.y"
+#line 326 "Collection.ypp"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 324 "Collection.y"
+#line 327 "Collection.ypp"
     {(yyval.type_collection) = AddStrToList((yyvsp[(1) - (3)].type_collection), yytext);;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 325 "Collection.y"
+#line 328 "Collection.ypp"
     {(yyval.type_collection) = CopyStr(yytext);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1754 "Collection.tab.cpp"
+#line 1757 "Collection.tab.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
