@@ -204,6 +204,38 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
     fprintf(stdout, "}\n");
 }
 
+void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
+{
+    char msg[32];
+
+    if (getTyp(varResultName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varResultName);
+        yyerror(msg);
+    }
+
+    if (getTyp(varName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varName);
+        yyerror(msg);
+    }
+
+    if (string[0] != '\"')
+    {
+        fprintf(stdout, "{\n");
+        fprintf(stdout, "   %s.insert(%s.begin(), \"%s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
+        fprintf(stdout, "}\n");
+    }
+    else
+    {
+        fprintf(stdout, "{\n");
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
+        fprintf(stdout, "}\n");
+    }
+}
+
 // collection - collection:
 char *RT_RemoveStrToCollection(char *collection, char *str)
 {

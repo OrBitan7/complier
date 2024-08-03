@@ -64,7 +64,6 @@ int main()
 		b.insert("hello");
 		b.insert("hi");
 	}
-
 	//	collection c;
 	set<string> c;
 
@@ -73,10 +72,8 @@ int main()
 		c.insert(a.begin(), a.end());
 		c.insert(b.begin(), b.end());
 	}
-
 	//  collection d;
 	set<string> d;
-
 	//	d = b + {"workinggg","yessss"} ;
 	{
 		d.insert(b.begin(), b.end());
@@ -100,7 +97,7 @@ int main()
 		}
 		cout << "}" << endl;
 	}
-		// output "b: " b;
+	// output "b: " b;
 	{
 		cout << "b: ";
 		cout << "{";

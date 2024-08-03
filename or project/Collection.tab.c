@@ -227,7 +227,7 @@ void GenerateColOut(char *str, char *coll)
     printf("}\n");
 }
 
-
+//GenerateColUnion
 void GenerateColUnion(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
@@ -272,6 +272,38 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
     }
     fprintf(stdout, "}\n");
 }
+void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
+{
+    char msg[32];
+	printf ("%s",string);
+    if (getTyp(varResultName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varResultName);
+        yyerror(msg);
+    }
+
+    if (getTyp(varName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varName);
+        yyerror(msg);
+    }
+
+    if (string[0] != '\"')
+    {
+        fprintf(stdout, "{\n");
+        fprintf(stdout, "   %s.insert(%s.begin(), \"%s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
+        fprintf(stdout, "}\n");
+    }
+    else
+    {
+        fprintf(stdout, "{\n");
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
+        fprintf(stdout, "}\n");
+    }
+}
+
 
 // collection - collection:
 char *RT_RemoveStrToCollection(char *collection, char *str)
@@ -372,7 +404,7 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 
 
 /* Line 189 of yacc.c  */
-#line 376 "Collection.tab.c"
+#line 408 "Collection.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -426,12 +458,12 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 303 "Collection.y"
+#line 335 "Collection.y"
 char *str;
 
 
 /* Line 214 of yacc.c  */
-#line 435 "Collection.tab.c"
+#line 467 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -443,7 +475,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 447 "Collection.tab.c"
+#line 479 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -658,16 +690,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  9
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   31
+#define YYLAST   35
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  7
+#define YYNNTS  8
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  15
+#define YYNRULES  17
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  33
+#define YYNSTATES  36
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -715,25 +747,26 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     8,    12,    17,    18,    24,    31,
-      38,    40,    43,    47,    49,    53
+      32,    40,    47,    49,    52,    56,    58,    62
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      28,     0,    -1,    29,    -1,    28,    29,    -1,    13,    32,
-      20,    -1,    32,    21,    31,    20,    -1,    -1,    18,     3,
-      30,    31,    20,    -1,    32,    21,    32,    22,    31,    20,
-      -1,    32,    21,    32,    23,    31,    20,    -1,    32,    -1,
-      24,    25,    -1,    24,    33,    25,    -1,     4,    -1,    33,
-      26,     3,    -1,     3,    -1
+      28,     0,    -1,    29,    -1,    28,    29,    -1,    13,    33,
+      20,    -1,    33,    21,    32,    20,    -1,    -1,    18,     3,
+      30,    32,    20,    -1,    33,    21,    33,    22,    32,    20,
+      -1,    -1,    33,    21,    33,    22,     3,    31,    20,    -1,
+      33,    21,    33,    23,    32,    20,    -1,    33,    -1,    24,
+      25,    -1,    24,    34,    25,    -1,     4,    -1,    34,    26,
+       3,    -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   312,   312,   313,   314,   315,   316,   316,   317,   318,
-     319,   320,   321,   322,   323,   324
+       0,   344,   344,   345,   346,   347,   348,   348,   349,   350,
+     350,   351,   352,   353,   354,   355,   356,   357
 };
 #endif
 
@@ -747,7 +780,7 @@ static const char *const yytname[] =
   "t_LOWER_EQUAL", "t_EQUAL", "t_NOT", "t_COLLECTION_CMD", "t_SET_CMD",
   "t_INT_CMD", "t_STRING_CMD", "t_INPUT_CMD", "t_OUTPUT_CMD", "t_INT",
   "';'", "'='", "'+'", "'-'", "'{'", "'}'", "','", "$accept", "Prog",
-  "SENTENCE", "$@1", "COLLECTION", "VAR", "STRING_LIST", 0
+  "SENTENCE", "$@1", "$@2", "COLLECTION", "VAR", "STRING_LIST", 0
 };
 #endif
 
@@ -765,15 +798,15 @@ static const yytype_uint16 yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    27,    28,    28,    29,    29,    30,    29,    29,    29,
-      31,    31,    31,    32,    33,    33
+       0,    27,    28,    28,    29,    29,    30,    29,    29,    31,
+      29,    29,    32,    32,    32,    33,    34,    34
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     2,     3,     4,     0,     5,     6,     6,
-       1,     2,     3,     1,     3,     1
+       0,     2,     1,     2,     3,     4,     0,     5,     6,     0,
+       7,     6,     1,     2,     3,     1,     3,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -781,33 +814,33 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    13,     0,     0,     0,     2,     0,     0,     6,     1,
-       3,     0,     4,     0,     0,     0,    10,     0,    10,    15,
-      11,     0,     5,     0,     0,     7,    12,     0,     0,     0,
-      14,     8,     9
+       0,    15,     0,     0,     0,     2,     0,     0,     6,     1,
+       3,     0,     4,     0,     0,     0,    12,     0,    12,    17,
+      13,     0,     5,     0,     0,     7,    14,     0,     9,     0,
+       0,    16,     0,     8,    11,    10
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,    13,    15,    18,    21
+      -1,     4,     5,    13,    32,    15,    18,    21
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -14
+#define YYPACT_NINF -11
 static const yytype_int8 yypact[] =
 {
-      -2,   -14,     8,    10,     1,   -14,     3,     5,   -14,   -14,
-     -14,    -1,   -14,    -1,    -3,     6,   -13,     7,   -14,   -14,
-     -14,    -5,   -14,    -1,    -1,   -14,   -14,    25,     9,    11,
-     -14,   -14,   -14
+       2,   -11,     6,     5,     1,   -11,    -4,     8,   -11,   -11,
+     -11,     0,   -11,     0,    -3,    11,   -10,    12,   -11,   -11,
+     -11,     4,   -11,    -1,     0,   -11,   -11,    18,   -11,    13,
+      14,   -11,    15,   -11,   -11,   -11
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -14,   -14,    26,   -14,    -6,     4,   -14
+     -11,   -11,    21,   -11,   -11,     3,     7,   -11
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -817,28 +850,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      19,     9,     1,     1,     6,     1,     7,    17,     6,    23,
-      24,     2,     1,     8,     2,    16,     3,    28,    29,     3,
-      26,    27,    20,    14,    11,    12,    22,    25,    30,    31,
-      10,    32
+      19,     9,    28,     1,     1,     1,     1,     6,     8,     7,
+       1,     6,    23,    24,     2,     2,    17,    11,    16,     3,
+       3,    31,    20,    14,    14,    10,    29,    30,    12,    26,
+      27,    22,    25,    33,    34,    35
 };
 
 static const yytype_uint8 yycheck[] =
 {
-       3,     0,     4,     4,     0,     4,     2,    13,     4,    22,
-      23,    13,     4,     3,    13,    11,    18,    23,    24,    18,
-      25,    26,    25,    24,    21,    20,    20,    20,     3,    20,
-       4,    20
+       3,     0,     3,     4,     4,     4,     4,     0,     3,     2,
+       4,     4,    22,    23,    13,    13,    13,    21,    11,    18,
+      18,     3,    25,    24,    24,     4,    23,    24,    20,    25,
+      26,    20,    20,    20,    20,    20
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     4,    13,    18,    28,    29,    32,    32,     3,     0,
-      29,    21,    20,    30,    24,    31,    32,    31,    32,     3,
-      25,    33,    20,    22,    23,    20,    25,    26,    31,    31,
-       3,    20,    20
+       0,     4,    13,    18,    28,    29,    33,    33,     3,     0,
+      29,    21,    20,    30,    24,    32,    33,    32,    33,     3,
+      25,    34,    20,    22,    23,    20,    25,    26,     3,    32,
+      32,     3,    31,    20,    20,    20
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1652,91 +1685,105 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 314 "Collection.y"
+#line 346 "Collection.y"
     {GenerateColDef((yyvsp[(2) - (3)].str));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 315 "Collection.y"
+#line 347 "Collection.y"
     {GenerateColAssign((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 316 "Collection.y"
+#line 348 "Collection.y"
     {(yyvsp[(2) - (2)].str)=CopyStr(yytext);;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 316 "Collection.y"
+#line 348 "Collection.y"
     {GenerateColOut((yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].str));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 317 "Collection.y"
+#line 349 "Collection.y"
     {GenerateColUnion((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 318 "Collection.y"
-    {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
+#line 350 "Collection.y"
+    {(yyvsp[(5) - (5)].str)=CopyStr(yytext);;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 319 "Collection.y"
-    {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
+#line 350 "Collection.y"
+    {GenerateColUnionWithString((yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].str), (yyvsp[(5) - (7)].str));;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 320 "Collection.y"
-    {(yyval.str) = "\"";;}
+#line 351 "Collection.y"
+    {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 321 "Collection.y"
-    {(yyval.str) = (yyvsp[(2) - (3)].str);;}
+#line 352 "Collection.y"
+    {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 322 "Collection.y"
-    {(yyval.str) = CopyStr(yytext);}
+#line 353 "Collection.y"
+    {(yyval.str) = "\"";;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 323 "Collection.y"
-    {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
+#line 354 "Collection.y"
+    {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 324 "Collection.y"
+#line 355 "Collection.y"
+    {(yyval.str) = CopyStr(yytext);}
+    break;
+
+  case 16:
+
+/* Line 1455 of yacc.c  */
+#line 356 "Collection.y"
+    {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
+    break;
+
+  case 17:
+
+/* Line 1455 of yacc.c  */
+#line 357 "Collection.y"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1740 "Collection.tab.c"
+#line 1787 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

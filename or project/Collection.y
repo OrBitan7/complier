@@ -201,6 +201,39 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
     }
     fprintf(stdout, "}\n");
 }
+// GenerateColUnionWithString done
+void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
+{
+    char msg[32];
+	printf ("%s",string);
+    if (getTyp(varResultName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varResultName);
+        yyerror(msg);
+    }
+
+    if (getTyp(varName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varName);
+        yyerror(msg);
+    }
+
+    if (string[0] != '\"')
+    {
+        fprintf(stdout, "{\n");
+        fprintf(stdout, "   %s.insert(%s.begin(), \"%s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
+        fprintf(stdout, "}\n");
+    }
+    else
+    {
+        fprintf(stdout, "{\n");
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
+        fprintf(stdout, "}\n");
+    }
+}
+
 
 // collection - collection:
 char *RT_RemoveStrToCollection(char *collection, char *str)
@@ -311,14 +344,15 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 /* descriptions of expected inputs     corresponding actions (in C) */
 Prog :				SENTENCE
 	|				Prog SENTENCE
-SENTENCE :			t_COLLECTION_CMD VAR ';'				{GenerateColDef($2);}
-	|				VAR '=' COLLECTION ';'					{GenerateColAssign($1,$3);}
-	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'			{GenerateColOut($2, $4);}
-	|				VAR '=' VAR '+' COLLECTION ';'			{GenerateColUnion($1, $3, $5);}
-	|				VAR '=' VAR '-' COLLECTION ';'			{GenerateColDifference($1, $3, $5);}
-COLLECTION :		VAR										{$$=CopyStr($1);}
-	|				'{' '}'									{$$ = "\"";}
-	|				'{' STRING_LIST '}'						{$$ = $2;}
-VAR :				t_ID									{$$ = CopyStr(yytext)}
-STRING_LIST :		STRING_LIST ',' t_STRING				{$$ = AddStrToList($1, yytext);}
-	|				t_STRING								{$$ = CopyStr(yytext);}
+SENTENCE :			t_COLLECTION_CMD VAR ';'									{GenerateColDef($2);}
+	|				VAR '=' COLLECTION ';'										{GenerateColAssign($1,$3);}
+	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'	{GenerateColOut($2, $4);}
+	|				VAR '=' VAR '+' COLLECTION ';'								{GenerateColUnion($1, $3, $5);}
+	|				VAR '=' VAR '+' t_STRING {$5=CopyStr(yytext);} ';'			{GenerateColUnionWithString($1, $3, $5);}
+	|				VAR '=' VAR '-' COLLECTION ';'								{GenerateColDifference($1, $3, $5);}
+COLLECTION :		VAR															{$$=CopyStr($1);}
+	|				'{' '}'														{$$ = "\"";}
+	|				'{' STRING_LIST '}'											{$$ = $2;}
+VAR :				t_ID														{$$ = CopyStr(yytext)}
+STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
+	|				t_STRING													{$$ = CopyStr(yytext);}
