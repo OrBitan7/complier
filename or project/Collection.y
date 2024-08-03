@@ -66,12 +66,12 @@ varType getTyp(char* var)
 
 //	===	Code Generation Functions	===========================================
 
-void GenerateColDef(char* colVar)
+void GenerateColDef(char *colVar)
 {
-	//fprintf(stdout, "char* %s=NULL;\n", colVar);
-	fprintf(stdout, "set<string> %s;\n", colVar);
-	insert(colVar, Collection);
+    fprintf(stdout, "set<string> %s;\n", colVar);
+    insert(colVar, Collection);
 }
+
 
 void GenerateColAssign(char *var, char *coll)
 {
