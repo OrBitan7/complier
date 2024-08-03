@@ -112,7 +112,7 @@ void GenerateColAssign(char *var, char *coll)
 
     fprintf(stdout, "}\n");
 }
-//GenerateColOut done
+// GenerateColOut done
 void GenerateColOut(char *str, char *coll)
 {
     char msg[32];
@@ -158,11 +158,8 @@ void GenerateColOut(char *str, char *coll)
     fprintf(stdout, "   cout << \"}\" << endl;\n"); // Command to end collection
     printf("}\n");
 }
-
-char *RT_unifyCollections(char *var, char *coll);
-char *RT_addStrToCollection(char *collection, char *str);
-
-void GenerateColUnify(char *varResultName, char *varName, char *coll)
+// GenerateColUnion done
+void GenerateColUnion(char *varResultName, char *varName, char *coll)
 {
     char msg[32];
 
@@ -186,16 +183,24 @@ void GenerateColUnify(char *varResultName, char *varName, char *coll)
 
     fprintf(stdout, "{\n");
     if (coll[0] == '\"')
-        fprintf(stdout, "char* unified = RT_unifyCollections(%s, \"\\%s\");\n", varName, coll);
+    {
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
+        char *temp = malloc(strlen(coll) + 1);
+        strcpy(temp, coll);
+        char *token;
+        token = strtok(temp + 1, "@");
+        while (token)
+        {
+            fprintf(stdout, "   %s.insert(\"%s\");\n", varResultName, token);
+            token = strtok(NULL, "@");
+        }
+        free(temp);
+    }
     else
-        fprintf(stdout, "char* unified = RT_unifyCollections(%s, %s);\n", varName, coll);
-
-    fprintf(stdout, "int len = strlen(unified);\n");
-
-    fprintf(stdout, "if (%s == NULL)	%s=malloc(len+1);\n", varResultName, varResultName);
-    fprintf(stdout, "else	%s = realloc(%s, strlen(%s)+len+1);\n", varResultName, varResultName, varResultName);
-
-    fprintf(stdout, "strcpy(%s, unified);\n", varResultName);
+    {
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, coll, coll);
+    }
     fprintf(stdout, "}\n");
 }
 
