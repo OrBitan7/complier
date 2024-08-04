@@ -28,7 +28,7 @@ output                  {return t_OUTPUT_CMD;}
 \"[^\"]*\"              {return t_STRING;}
 [a-zA-Z][a-zA-Z0-9]*    {return t_ID;}
 [-+=;,\>\<&\*\|\/\:]    {return yytext[0];}
-[ \t\n]                 {}
+[ \t\n\r]               {}
 .                       {ECHO; yyerror ("unexpected character");}
 
 %%

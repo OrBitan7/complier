@@ -1,10 +1,13 @@
-
 collection a;
 collection b;
 collection c;
+collection d;
 a = {"hi", "lol"};
 b = {"hi", "ldsadaol"};
-c = b + a;
 output "a:" a;
 output "b:" b;
-output "c:" c;
+a = a - "hloww";
+a = a - "hi";
+output "a after remove:" a;
+output "b after remove:" b;
+

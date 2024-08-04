@@ -12,6 +12,7 @@ int main()
 set<string> a;
 set<string> b;
 set<string> c;
+set<string> d;
 {
 a.insert("hi");
 a.insert("lol");
@@ -19,10 +20,6 @@ a.insert("lol");
 {
 b.insert("hi");
 b.insert("ldsadaol");
-}
-{
-   c.insert(b.begin(), b.end());
-   c.insert(a.begin(), a.end());
 }
 { 
    cout << "a:";
@@ -50,11 +47,32 @@ b.insert("ldsadaol");
    }
    cout << "}" << endl;
 }
+{
+   a = a;
+   a.erase("hloww");
+}
+{
+   a = a;
+   a.erase("hi");
+}
 { 
-   cout << "c:";
+   cout << "a after remove:";
    cout << "{";
    bool first = true;
-   for (const auto& item : c) {
+   for (const auto& item : a) {
+       if (!first) {
+           cout << ", ";
+       }
+      cout << item;
+      first = false;
+   }
+   cout << "}" << endl;
+}
+{ 
+   cout << "b after remove:";
+   cout << "{";
+   bool first = true;
+   for (const auto& item : b) {
        if (!first) {
            cout << ", ";
        }

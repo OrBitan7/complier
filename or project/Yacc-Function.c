@@ -283,4 +283,38 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
     fprintf(stdout, "}\n");
 }
 
+void GenerateColDifferenceWithString(char *varResultName, char *varName, char *remove_strint)
+{
+    char msg[32];
 
+    if (getTyp(varResultName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varResultName);
+        yyerror(msg);
+    }
+
+    if (getTyp(varName) != Collection)
+    {
+        sprintf(msg, "%s not defined as a collection", varName);
+        yyerror(msg);
+    }
+
+    if (remove_strint[0] != '\"')
+    {
+        sprintf(msg, "%s not defined as a string", remove_strint);
+        yyerror(msg);
+    }
+
+    fprintf(stdout, "{\n");
+    fprintf(stdout, "   %s = %s;\n", varResultName, varName);
+    if (remove_strint[0] == '\"')
+    {
+        fprintf(stdout, "   %s.erase(%s\");\n", varResultName, remove_strint);
+    }
+    else
+    {
+        fprintf(stdout, "    %s.erase(\"%s\");\n", varResultName, remove_strint);
+    }
+
+    fprintf(stdout, "}\n");
+}
