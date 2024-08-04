@@ -48,12 +48,8 @@ b.insert("ldsadaol");
    cout << "}" << endl;
 }
 {
-   a = a;
-   a.erase("hloww");
-}
-{
-   a = a;
-   a.erase("hi");
+   b.insert(a.begin(), a.end());
+   b.insert("helloeqw");
 }
 { 
    cout << "a after remove:";

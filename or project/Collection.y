@@ -207,7 +207,6 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
 void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
 {
     char msg[32];
-	printf ("%s",string);
     if (getTyp(varResultName) != Collection)
     {
         sprintf(msg, "%s not defined as a collection", varResultName);
@@ -333,8 +332,10 @@ void GenerateColDifferenceWithString(char *varResultName, char *varName, char *r
 /* descriptions of expected inputs     corresponding actions (in C) */
 Prog :				SENTENCE
 	|				Prog SENTENCE
-SENTENCE :			t_COLLECTION_CMD VAR ';'									{GenerateColDef($2);}
-	|				VAR '=' COLLECTION ';'										{GenerateColAssign($1,$3);}
+SENTENCE :			DECLERATION
+    |               OPERATOR
+DECLERATION :       t_COLLECTION_CMD VAR ';'									{GenerateColDef($2);}
+OPERATOR :			VAR '=' COLLECTION ';'										{GenerateColAssign($1,$3);}
 	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'	{GenerateColOut($2, $4);}
 	|				VAR '=' VAR '+' COLLECTION ';'								{GenerateColUnion($1, $3, $5);}
 	|				VAR '=' VAR '+' t_STRING {$5=CopyStr(yytext);} ';'			{GenerateColUnionWithString($1, $3, $5);}

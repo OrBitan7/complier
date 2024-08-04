@@ -203,11 +203,11 @@ void GenerateColUnion(char *varResultName, char *varName, char *coll)
     }
     fprintf(stdout, "}\n");
 }
-// GenerateColUnionWithString done
+// GenerateColUnionWithString fix!!!!!!!!!!
 void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
 {
     char msg[32];
-    printf("%s", string);
+
     if (getTyp(varResultName) != Collection)
     {
         sprintf(msg, "%s not defined as a collection", varResultName);
@@ -219,11 +219,10 @@ void GenerateColUnionWithString(char *varResultName, char *varName, char *string
         sprintf(msg, "%s not defined as a collection", varName);
         yyerror(msg);
     }
-
     if (string[0] != '\"')
     {
         fprintf(stdout, "{\n");
-        fprintf(stdout, "   %s.insert(%s.begin(), \"%s.end());\n", varResultName, varName, varName);
+        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
         fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
         fprintf(stdout, "}\n");
     }
@@ -282,7 +281,7 @@ void GenerateColDifference(char *varResultName, char *varName, char *coll)
 
     fprintf(stdout, "}\n");
 }
-
+// GenerateColDifferenceWithString done
 void GenerateColDifferenceWithString(char *varResultName, char *varName, char *remove_strint)
 {
     char msg[32];

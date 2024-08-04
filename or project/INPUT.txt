@@ -6,8 +6,7 @@ a = {"hi", "lol"};
 b = {"hi", "ldsadaol"};
 output "a:" a;
 output "b:" b;
-a = a - "hloww";
-a = a - "hi";
+b = a + "helloeqw";
 output "a after remove:" a;
 output "b after remove:" b;
 
