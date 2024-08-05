@@ -20,12 +20,17 @@ void insert(char *varName, varType typ);
 varType getTyp(char *var);
 
 void GenerateDef(varType type, char *Vars);
-void GenerateColAssign(char *var, char *coll);
+char *GenerateColAssign(char *input);
 void GenerateColOut(char *str, char *coll);
 void GenerateColUnion(char *varResultName, char *varName, char *coll);
 void GenerateColUnionWithString(char *varResultName, char *varName, char *string);
 void GenerateColDifference(char *varResultName, char *varName, char *coll);
 void GenerateColDifferenceWithString(char *varResultName, char *varName, char *remove_strint);
+
+void CollectionPlusCollection(char *varName, char *remove_strint);
+char *concatenate_strings(const char* first, char middle, const char* last);
+
+
 
 void yyerror(char *s);
 int yylex();

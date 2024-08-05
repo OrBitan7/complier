@@ -14,6 +14,12 @@ int yylex();
 #include "functions.h"
 extern char *yytext;
 
+// if (getTyp(var) != Collection)
+// {
+//     sprintf(msg, "%s not defined as a collection", var);
+//     yyerror(msg);
+// }
+
 //	===	Code Generation Functions	===========================================
 // Generate a definition for a variable
 void GenerateDef(varType type, char *Vars)
@@ -48,42 +54,59 @@ void GenerateDef(varType type, char *Vars)
 }
 
 // GenerateColAssign done
-void GenerateColAssign(char *var, char *coll)
+char *GenerateColAssign(char *input)
 {
     char msg[32];
-
-    if (getTyp(var) != Collection)
+    char *result;
+    if ((input[0] != '\"') && getTyp(input) != Collection)
     {
-        sprintf(msg, "%s not defined as a collection", var);
+        sprintf(msg, "%s not defined as a collection", input);
         yyerror(msg);
     }
 
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
+    if (input[0] == '\"')
     {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-
-    fprintf(stdout, "{\n");
-    if (coll[0] == '\"')
-    {
-        char *temp = malloc(strlen(coll) + 1);
-        strcpy(temp, coll);
+        result = malloc(18);
+        strcpy(result, "make_collection({");
+        if (input[strlen(input) - 1] == '\"')
+        {
+            input[strlen(input) - 1] = '\0';
+        }
+        char *temp = malloc(strlen(input) + 1);
+        strcpy(temp, input);
         char *token;
         token = strtok(temp + 1, "@");
-        while (token)
+        char *comma = "\0";
+        int i = 1;
+        do
         {
-            fprintf(stdout, "%s.insert(\"%s\");\n", var, token);
+            if (token)
+            {
+                result = (char *)realloc(result, (strlen(result) + 3 + strlen(token) + strlen(comma)) * sizeof(char));
+                if (i != 1)
+                {
+                    strcat(result, comma);
+                }
+                strcat(result, "\"");
+                strcat(result, token);
+                strcat(result, "\"");
+                i = 2;
+            }
+            comma = ",";
             token = strtok(NULL, "@");
-        }
+        } while (token);
         free(temp);
+        result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
+        strcat(result, "})");
     }
     else
-        fprintf(stdout, "%s = %s;\n", var, coll);
+    {
+        result = strdup(input);
+    }
+    return result;
 
-    fprintf(stdout, "}\n");
 }
-// GenerateColOut done
+
 void GenerateColOut(char *str, char *coll)
 {
     char msg[32];
@@ -287,4 +310,26 @@ void GenerateColDifferenceWithString(char *varResultName, char *varName, char *r
     }
 
     fprintf(stdout, "}\n");
+}
+
+void CollectionPlusCollection(char *varName, char *remove_strint)
+{
+}
+
+char *concatenate_strings(const char *first, char middle, const char *last)
+{
+    size_t length = strlen(first) + 1 + strlen(last); 
+    char *result = (char *)malloc(length + 1);
+    if (!result)
+        printf("Error: failed to allocate memory\n");
+
+    result[0] = '\0';
+
+    strcat(result, first);
+    int temp = strlen(result);
+    result[temp] = middle;  
+    result[temp + 1] = '\0'; 
+    strcat(result, last);
+    result[strlen(result)] = '\0'; 
+    return result;
 }

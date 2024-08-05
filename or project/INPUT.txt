@@ -1,6 +1,3 @@
-str a , b ,c ,d ;
-set aa , ab , ac , ad ;
-int sa , sb , sc , sd ;
-collection saa , sab ,sac ,sad ;
 
-
+collection a,b,asad;
+a = {"hello","hi"} - a+a&b+{"hiiiii","dsfjk"}+"hiiii";
