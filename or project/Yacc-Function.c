@@ -61,6 +61,14 @@ static int idx = 0;
 
 void insert(char *varName, varType typ)
 {
+    for (int i = 0; i < idx; i++)
+    {
+        if (strcmp(SymTable[i].name, varName) == 0)
+        {
+            yyerror("Variable already defined\n");
+            return;
+        }
+    }
     SymTable[idx].name = malloc(strlen(varName) + 1);
     strcpy(SymTable[idx].name, varName);
     SymTable[idx].typ = typ;
