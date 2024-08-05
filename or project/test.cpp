@@ -15,14 +15,14 @@ string c;
 string d;
 set<int> aa;
 set<int> ab;
-set<int> a;
+set<int> ac;
 set<int> ad;
 int sa;
 int sb;
-int s;
+int sc;
 int sd;
 set<string> saa;
-set<string> sat;
+set<string> sab;
 set<string> sac;
 set<string> sad;
 }

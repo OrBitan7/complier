@@ -1,6 +1,6 @@
 str a , b ,c ,d ;
-set aa , ab ,ac ,ad ;
-int sa , sb ,sc ,sd ;
+set aa , ab , ac , ad ;
+int sa , sb , sc , sd ;
 collection saa , sab ,sac ,sad ;
 
 

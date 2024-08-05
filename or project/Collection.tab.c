@@ -78,7 +78,7 @@ int yylex();
 #include <ctype.h>
 
 #include "symTab.h"
-
+#include "functions.h"
 extern char* yytext;
 
 FILE *outputFile, *inputFile;
@@ -118,7 +118,7 @@ char* AddStrToList(char* list, char* str)
 }
 char *AddToList(char *list, char *str)
 {
-    char *new = realloc(list, strlen(list) + strlen(str));
+    char *new = realloc(list, strlen(list) + strlen(str)+2);
     strcat(new, "@");
     strcat(new, str);
     // printf("\t*NewStrList:%s\n", new);	//DEBUG
@@ -128,6 +128,14 @@ static int idx=0;
 
 void insert(char* varName, varType typ)
 {	
+    for (int i = 0; i < idx; i++)
+    {
+        if (strcmp(SymTable[i].name, varName) == 0)
+        {
+            yyerror("Variable already defined\n");
+            return;
+        }
+    }
 	SymTable[idx].name = malloc(strlen(varName)+1);
 	strcpy(SymTable[idx].name, varName);
     SymTable[idx].typ = typ;
@@ -144,293 +152,11 @@ varType getTyp(char* var)
 }
 
 
-//	===	Code Generation Functions	===========================================
-void GenerateDef(varType type, char *Vars)
-{
-    char *temp = malloc(strlen(Vars) + 1);
-    strcpy(temp, Vars);
-    char *token;
-    token = strtok(temp, "@");
-    while (token)
-    {
-        switch (type)
-        {
-        case Collection:
-            fprintf(stdout, "set<string> %s;\n", token);
-            break;
-        case Set:
-            fprintf(stdout, "set<int> %s;\n", token);
-            break;
-        case Int:
-            fprintf(stdout, "int %s;\n", token);
-            break;
-        case String:
-            fprintf(stdout, "string %s;\n", token);
-            break;
-        default:
-            break;
-        }
-        insert(token, type);
-        token = strtok(NULL, "@");
-    }
-    free(temp);
-}
-//GenerateColDef done
-void GenerateColDef(char *colVar)
-{
-    fprintf(stdout, "set<string> %s;\n", colVar);
-    insert(colVar, Collection);
-}
-
-//GenerateColAssign done
-void GenerateColAssign(char *var, char *coll)
-{
-    char msg[32];
-
-    if (getTyp(var) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", var);
-        yyerror(msg);
-    }
-
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-
-    fprintf(stdout, "{\n");
-    if (coll[0] == '\"')
-    {
-        char *temp = malloc(strlen(coll) + 1);
-        strcpy(temp, coll);
-        char *token;
-        token = strtok(temp + 1, "@");
-        while (token)
-        {
-            fprintf(stdout, "%s.insert(\"%s\");\n", var, token);
-            token = strtok(NULL, "@");
-        }
-        free(temp);
-    }
-    else
-        fprintf(stdout, "%s = %s;\n", var, coll);
-
-    fprintf(stdout, "}\n");
-}
-
-//GenerateColOut done
-void GenerateColOut(char *str, char *coll)
-{
-    char msg[32];
-
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-    printf("{ \n");
-    fprintf(stdout, "   cout << %s\";\n", str); // Command to print 1st string
-
-    fprintf(stdout, "   cout << \"{\";\n"); // Command to start collection
-
-    if (coll[0] == '\"')
-    {
-        char *temp = malloc(strlen(coll) + 1);
-        strcpy(temp, coll);
-        char *token;
-        token = strtok(temp + 1, "@");
-        char *comma = "";
-        do
-        {
-            if (token)
-                fprintf(stdout, "   cout << \"%s%s\" ;\n", comma, token);
-            comma = ", ";
-            token = strtok(NULL, "@");
-        } while (token);
-        free(temp);
-    }
-    else
-    {
-        fprintf(stdout, "   bool first = true;\n");
-        fprintf(stdout, "   for (const auto& item : %s) {\n", coll);
-        fprintf(stdout, "       if (!first) {\n");
-        fprintf(stdout, "           cout << \", \";\n");
-        fprintf(stdout, "       }\n");
-        fprintf(stdout, "      cout << item;\n");
-        fprintf(stdout, "      first = false;\n");
-        fprintf(stdout, "   }\n");
-    }
-
-    fprintf(stdout, "   cout << \"}\" << endl;\n"); // Command to end collection
-    printf("}\n");
-}
-
-//GenerateColUnion
-void GenerateColUnion(char *varResultName, char *varName, char *coll)
-{
-    char msg[32];
-
-    if (getTyp(varResultName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varResultName);
-        yyerror(msg);
-    }
-
-    if (getTyp(varName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varName);
-        yyerror(msg);
-    }
-
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-
-    fprintf(stdout, "{\n");
-    if (coll[0] == '\"')
-    {
-        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
-        char *temp = malloc(strlen(coll) + 1);
-        strcpy(temp, coll);
-        char *token;
-        token = strtok(temp + 1, "@");
-        while (token)
-        {
-            fprintf(stdout, "   %s.insert(\"%s\");\n", varResultName, token);
-            token = strtok(NULL, "@");
-        }
-        free(temp);
-    }
-    else
-    {
-        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
-        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, coll, coll);
-    }
-    fprintf(stdout, "}\n");
-}
-// GenerateColUnionWithString done
-void GenerateColUnionWithString(char *varResultName, char *varName, char *string)
-{
-    char msg[32];
-    if (getTyp(varResultName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varResultName);
-        yyerror(msg);
-    }
-
-    if (getTyp(varName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varName);
-        yyerror(msg);
-    }
-
-    if (string[0] != '\"')
-    {
-        fprintf(stdout, "{\n");
-        fprintf(stdout, "   %s.insert(%s.begin(), \"%s.end());\n", varResultName, varName, varName);
-        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
-        fprintf(stdout, "}\n");
-    }
-    else
-    {
-        fprintf(stdout, "{\n");
-        fprintf(stdout, "   %s.insert(%s.begin(), %s.end());\n", varResultName, varName, varName);
-        fprintf(stdout, "   %s.insert(%s\");\n", varResultName, string);
-        fprintf(stdout, "}\n");
-    }
-}
-// GenerateColDifference done
-void GenerateColDifference(char *varResultName, char *varName, char *coll)
-{
-    char msg[32];
-
-    if (getTyp(varResultName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varResultName);
-        yyerror(msg);
-    }
-
-    if (getTyp(varName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varName);
-        yyerror(msg);
-    }
-
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-
-    fprintf(stdout, "{\n");
-    fprintf(stdout, "   %s = %s;\n", varResultName, varName);
-    if (coll[0] == '\"')
-    {
-        char *temp = malloc(strlen(coll) + 1);
-        strcpy(temp, coll);
-        char *token;
-        token = strtok(temp + 1, "@");
-        while (token)
-        {
-            fprintf(stdout, "   %s.erase(\"%s\");\n", varResultName, token);
-            token = strtok(NULL, "@");
-        }
-        free(temp);
-    }
-    else
-    {
-        fprintf(stdout, "for (const auto& element : %s) {\n", coll);
-        fprintf(stdout, "    %s.erase(element);\n", varResultName);
-        fprintf(stdout, "}\n");
-    }
-
-    fprintf(stdout, "}\n");
-}
-
-void GenerateColDifferenceWithString(char *varResultName, char *varName, char *remove_strint)
-{
-    char msg[32];
-
-    if (getTyp(varResultName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varResultName);
-        yyerror(msg);
-    }
-
-    if (getTyp(varName) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", varName);
-        yyerror(msg);
-    }
-
-    if (remove_strint[0] != '\"')
-    {
-        sprintf(msg, "%s not defined as a string", remove_strint);
-        yyerror(msg);
-    }
-
-    fprintf(stdout, "{\n");
-    fprintf(stdout, "   %s = %s;\n", varResultName, varName);
-    if (remove_strint[0] == '\"')
-    {
-        fprintf(stdout, "   %s.erase(%s\");\n", varResultName, remove_strint);
-    }
-    else
-    {
-        fprintf(stdout, "    %s.erase(\"%s\");\n", varResultName, remove_strint);
-    }
-
-    fprintf(stdout, "}\n");
-}
-
 
 
 
 /* Line 189 of yacc.c  */
-#line 434 "Collection.tab.c"
+#line 160 "Collection.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -484,13 +210,13 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 361 "Collection.y"
+#line 87 "Collection.y"
 char *str;
-        int number
+        int number;
 
 
 /* Line 214 of yacc.c  */
-#line 494 "Collection.tab.c"
+#line 220 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -502,7 +228,7 @@ char *str;
 
 
 /* Line 264 of yacc.c  */
-#line 506 "Collection.tab.c"
+#line 232 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -794,11 +520,11 @@ static const yytype_int8 yyrhs[] =
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,   372,   372,   373,   374,   375,   376,   377,   378,   379,
-     380,   381,   382,   382,   383,   384,   384,   385,   386,   386,
-     387,   388,   389,   390,   391,   392,   393,   394
+       0,    98,    98,    99,   100,   101,   102,   103,   104,   105,
+     106,   107,   108,   108,   109,   110,   110,   111,   112,   112,
+     113,   114,   115,   116,   117,   118,   119,   120
 };
 #endif
 
@@ -1727,161 +1453,161 @@ yyreduce:
         case 6:
 
 /* Line 1455 of yacc.c  */
-#line 376 "Collection.y"
+#line 102 "Collection.y"
     {GenerateDef((yyvsp[(1) - (3)].number),(yyvsp[(2) - (3)].str));;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 377 "Collection.y"
+#line 103 "Collection.y"
     {(yyval.number) = 1;;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 378 "Collection.y"
+#line 104 "Collection.y"
     {(yyval.number) = 2;;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 379 "Collection.y"
+#line 105 "Collection.y"
     {(yyval.number) = 3;;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 380 "Collection.y"
+#line 106 "Collection.y"
     {(yyval.number) = 4;;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 381 "Collection.y"
+#line 107 "Collection.y"
     {GenerateColAssign((yyvsp[(1) - (4)].str),(yyvsp[(3) - (4)].str));;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 382 "Collection.y"
+#line 108 "Collection.y"
     {(yyvsp[(2) - (2)].str)=CopyStr(yytext);;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 382 "Collection.y"
+#line 108 "Collection.y"
     {GenerateColOut((yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].str));;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 383 "Collection.y"
+#line 109 "Collection.y"
     {GenerateColUnion((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 384 "Collection.y"
+#line 110 "Collection.y"
     {(yyvsp[(5) - (5)].str)=CopyStr(yytext);;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 384 "Collection.y"
+#line 110 "Collection.y"
     {GenerateColUnionWithString((yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].str), (yyvsp[(5) - (7)].str));;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 385 "Collection.y"
+#line 111 "Collection.y"
     {GenerateColDifference((yyvsp[(1) - (6)].str), (yyvsp[(3) - (6)].str), (yyvsp[(5) - (6)].str));;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 386 "Collection.y"
+#line 112 "Collection.y"
     {(yyvsp[(5) - (5)].str)=CopyStr(yytext);;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 386 "Collection.y"
+#line 112 "Collection.y"
     {GenerateColDifferenceWithString((yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].str), (yyvsp[(5) - (7)].str));;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 387 "Collection.y"
+#line 113 "Collection.y"
     {(yyval.str)=CopyStr((yyvsp[(1) - (1)].str));;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 388 "Collection.y"
+#line 114 "Collection.y"
     {(yyval.str) = "\"";;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 389 "Collection.y"
+#line 115 "Collection.y"
     {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 390 "Collection.y"
-    {(yyval.str) = AddToList((yyvsp[(1) - (3)].str), yytext);;}
+#line 116 "Collection.y"
+    {(yyval.str) = AddToList((yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].str));;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 391 "Collection.y"
-    {(yyval.str) = CopyStr(yytext);}
+#line 117 "Collection.y"
+    {(yyval.str) = (yyvsp[(1) - (1)].str);}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 392 "Collection.y"
+#line 118 "Collection.y"
     {(yyval.str) = CopyStr(yytext);}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 393 "Collection.y"
+#line 119 "Collection.y"
     {(yyval.str) = AddStrToList((yyvsp[(1) - (3)].str), yytext);;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 394 "Collection.y"
+#line 120 "Collection.y"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1885 "Collection.tab.c"
+#line 1611 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2093,7 +1819,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 399 "Collection.y"
+#line 125 "Collection.y"
 
 
 void yyerror (char *s) {fprintf (stderr, "%s\n", s); exit(1);} 
