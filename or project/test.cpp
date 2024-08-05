@@ -9,72 +9,20 @@ using namespace std;
 
 int main()
 {
-set<string> a;
-set<string> b;
-set<string> c;
-set<string> d;
-{
-a.insert("hi");
-a.insert("lol");
-}
-{
-b.insert("hi");
-b.insert("ldsadaol");
-}
-{ 
-   cout << "a:";
-   cout << "{";
-   bool first = true;
-   for (const auto& item : a) {
-       if (!first) {
-           cout << ", ";
-       }
-      cout << item;
-      first = false;
-   }
-   cout << "}" << endl;
-}
-{ 
-   cout << "b:";
-   cout << "{";
-   bool first = true;
-   for (const auto& item : b) {
-       if (!first) {
-           cout << ", ";
-       }
-      cout << item;
-      first = false;
-   }
-   cout << "}" << endl;
-}
-{
-   b.insert(a.begin(), a.end());
-   b.insert("helloeqw");
-}
-{ 
-   cout << "a after remove:";
-   cout << "{";
-   bool first = true;
-   for (const auto& item : a) {
-       if (!first) {
-           cout << ", ";
-       }
-      cout << item;
-      first = false;
-   }
-   cout << "}" << endl;
-}
-{ 
-   cout << "b after remove:";
-   cout << "{";
-   bool first = true;
-   for (const auto& item : b) {
-       if (!first) {
-           cout << ", ";
-       }
-      cout << item;
-      first = false;
-   }
-   cout << "}" << endl;
-}
+string a;
+string b;
+string c;
+string d;
+set<int> aa;
+set<int> ab;
+set<int> a;
+set<int> ad;
+int sa;
+int sb;
+int s;
+int sd;
+set<string> saa;
+set<string> sat;
+set<string> sac;
+set<string> sad;
 }

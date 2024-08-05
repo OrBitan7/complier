@@ -1,12 +1,6 @@
-collection a;
-collection b;
-collection c;
-collection d;
-a = {"hi", "lol"};
-b = {"hi", "ldsadaol"};
-output "a:" a;
-output "b:" b;
-b = a + "helloeqw";
-output "a after remove:" a;
-output "b after remove:" b;
+str a , b ,c ,d ;
+set aa , ab ,ac ,ad ;
+int sa , sb ,sc ,sd ;
+collection saa , sab ,sac ,sad ;
+
 

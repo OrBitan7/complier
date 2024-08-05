@@ -45,7 +45,14 @@ char* AddStrToList(char* list, char* str)
 	//printf("\t*NewStrList:%s\n", new);	//DEBUG
 	return new;
 }
-
+char *AddToList(char *list, char *str)
+{
+    char *new = realloc(list, strlen(list) + strlen(str));
+    strcat(new, "@");
+    strcat(new, str);
+    // printf("\t*NewStrList:%s\n", new);	//DEBUG
+    return new;
+}
 static int idx=0;
 
 void insert(char* varName, varType typ)
@@ -67,12 +74,37 @@ varType getTyp(char* var)
 
 
 //	===	Code Generation Functions	===========================================
-//GenerateColDef done
-void GenerateColDef(char *colVar)
+void GenerateDef(varType type, char *Vars)
 {
-    fprintf(stdout, "set<string> %s;\n", colVar);
-    insert(colVar, Collection);
+    char *temp = malloc(strlen(Vars) + 1);
+    strcpy(temp, Vars);
+    char *token;
+    token = strtok(temp, "@");
+    while (token)
+    {
+        switch (type)
+        {
+        case Collection:
+            fprintf(stdout, "set<string> %s;\n", token);
+            break;
+        case Set:
+            fprintf(stdout, "set<int> %s;\n", token);
+            break;
+        case Int:
+            fprintf(stdout, "int %s;\n", token);
+            break;
+        case String:
+            fprintf(stdout, "string %s;\n", token);
+            break;
+        default:
+            break;
+        }
+        insert(token, type);
+        token = strtok(NULL, "@");
+    }
+    free(temp);
 }
+
 
 //GenerateColAssign done
 void GenerateColAssign(char *var, char *coll)
@@ -321,11 +353,13 @@ void GenerateColDifferenceWithString(char *varResultName, char *varName, char *r
 
 %}
 
-%union {char *str;}         /* Yacc definitions */
+%union {char *str;
+        int number}         /* Yacc definitions */
 %token <str> t_STRING t_ID
 %token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_INT  
 %type <str> STRING_LIST
-%type <str> VAR COLLECTION
+%type <str> VAR COLLECTION VARS
+%type <number> DECLERATION_CMD
 
 
 %%
@@ -334,7 +368,11 @@ Prog :				SENTENCE
 	|				Prog SENTENCE
 SENTENCE :			DECLERATION
     |               OPERATOR
-DECLERATION :       t_COLLECTION_CMD VAR ';'									{GenerateColDef($2);}
+DECLERATION :       DECLERATION_CMD VARS ';'									    {GenerateDef($1,$2);}
+DECLERATION_CMD :   t_COLLECTION_CMD                                            {$$ = 1;}
+    |               t_SET_CMD                                                   {$$ = 2;}
+    |               t_INT_CMD                                                   {$$ = 3;}
+    |               t_STRING_CMD                                                {$$ = 4;}
 OPERATOR :			VAR '=' COLLECTION ';'										{GenerateColAssign($1,$3);}
 	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'	{GenerateColOut($2, $4);}
 	|				VAR '=' VAR '+' COLLECTION ';'								{GenerateColUnion($1, $3, $5);}
@@ -344,6 +382,8 @@ OPERATOR :			VAR '=' COLLECTION ';'										{GenerateColAssign($1,$3);}
 COLLECTION :		VAR															{$$=CopyStr($1);}
 	|				'{' '}'														{$$ = "\"";}
 	|				'{' STRING_LIST '}'											{$$ = $2;}
+VARS :              VARS ',' VAR                                                {$$ = AddToList($1, yytext);}
+    |               VAR                                                         {$$ = CopyStr(yytext)}
 VAR :				t_ID														{$$ = CopyStr(yytext)}
 STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
 	|				t_STRING													{$$ = CopyStr(yytext);}

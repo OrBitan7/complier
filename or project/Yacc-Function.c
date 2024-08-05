@@ -32,7 +32,7 @@ char *CopyStr(char *str)
     {
         new = malloc(strlen(str) + 1); // Variable Name
         strcpy(new, str);
-        // printf("\t*Copy %s\n", str);	//DEBUG
+        printf("//// \t*Copy %s\n", str); // DEBUG
     }
 
     return new;
@@ -49,7 +49,14 @@ char *AddStrToList(char *list, char *str)
     // printf("\t*NewStrList:%s\n", new);	//DEBUG
     return new;
 }
-
+char *AddToList(char *list, char *str)
+{
+    char *new = realloc(list, strlen(list) + strlen(str));
+    strcat(new, "@");
+    strcat(new, str);
+    // printf("\t*NewStrList:%s\n", new);	//DEBUG
+    return new;
+}
 static int idx = 0;
 
 void insert(char *varName, varType typ)
@@ -71,11 +78,37 @@ varType getTyp(char *var)
 
 //	===	Code Generation Functions	===========================================
 // GenerateColDef done
-void GenerateColDef(char *colVar)
+void GenerateDef(varType type, char *Vars)
 {
-    fprintf(stdout, "set<string> %s;\n", colVar);
-    insert(colVar, Collection);
+    char *temp = malloc(strlen(Vars) + 1);
+    strcpy(temp, Vars);
+    char *token;
+    token = strtok(temp, "@");
+    while (token)
+    {
+        switch (type)
+        {
+        case Collection:
+            fprintf(stdout, "set<string> %s;\n", token);
+            break;
+        case Set:
+            fprintf(stdout, "set<int> %s;\n", token);
+            break;
+        case Int:
+            fprintf(stdout, "int %s;\n", token);
+            break;
+        case String:
+            fprintf(stdout, "string %s;\n", token);
+            break;
+        default:
+            break;
+        }
+        insert(token, type);
+        token = strtok(NULL, "@");
+    }
+    free(temp);
 }
+
 // GenerateColAssign done
 void GenerateColAssign(char *var, char *coll)
 {

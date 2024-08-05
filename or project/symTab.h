@@ -1,4 +1,4 @@
-typedef enum {Collection=1, Set} varType;
+typedef enum {Collection=1, Set=2, Int=3, String=4} varType;
 
 struct {
 	char *name;

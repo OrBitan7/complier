@@ -66,12 +66,13 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 324 "Collection.y"
+#line 361 "Collection.y"
 char *str;
+        int number
 
 
 /* Line 1676 of yacc.c  */
-#line 75 "Collection.tab.h"
+#line 76 "Collection.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
