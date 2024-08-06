@@ -21,13 +21,14 @@ varType getTyp(char *var);
 
 void GenerateDef(varType type, char *Vars);
 char *GenerateColAssign(char *input);
-void GenerateColOut(char *str, char *coll);
+void GenerateOut(char *str, char *element);
 
 char *concatenate_strings(const char *first, char middle, const char *last);
 char *CopyINT(char *str);
 char *GenerateSetAssign(char *input);
 int VarSer_Collection(char *var);
 int VarExist(char *var);
+void GenerateSetOut(char *str, char *set);
 
 void yyerror(char *s);
 int yylex();

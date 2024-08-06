@@ -70,34 +70,39 @@ char *GenerateColAssign(char *input)
         strcpy(result, "make_collection({");
         if (input[strlen(input) - 1] == '\"')
         {
-            input[strlen(input) - 1] = '\0';
+            result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
+            strcat(result, "})");
         }
-        char *temp = malloc(strlen(input) + 1);
-        strcpy(temp, input);
-        char *token;
-        token = strtok(temp + 1, "@");
-        char *comma = "\0";
-        int i = 1;
-        do
+        else
         {
-            if (token)
+
+            char *temp = malloc(strlen(input) + 1);
+            strcpy(temp, input);
+            char *token;
+            token = strtok(temp + 1, "@");
+            char *comma = "\0";
+            int i = 1;
+            do
             {
-                result = (char *)realloc(result, (strlen(result) + 3 + strlen(token) + strlen(comma)) * sizeof(char));
-                if (i != 1)
+                if (token)
                 {
-                    strcat(result, comma);
+                    result = (char *)realloc(result, (strlen(result) + 3 + strlen(token) + strlen(comma)) * sizeof(char));
+                    if (i != 1)
+                    {
+                        strcat(result, comma);
+                    }
+                    strcat(result, "\"");
+                    strcat(result, token);
+                    strcat(result, "\"");
+                    i = 2;
                 }
-                strcat(result, "\"");
-                strcat(result, token);
-                strcat(result, "\"");
-                i = 2;
-            }
-            comma = ",";
-            token = strtok(NULL, "@");
-        } while (token);
-        free(temp);
-        result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
-        strcat(result, "})");
+                comma = ",";
+                token = strtok(NULL, "@");
+            } while (token);
+            free(temp);
+            result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
+            strcat(result, "})");
+        }
     }
     else
     {
@@ -106,50 +111,9 @@ char *GenerateColAssign(char *input)
     return result;
 }
 // print collection:
-void GenerateColOut(char *str, char *coll)
+void GenerateOut(char *str, char *element)
 {
-    char msg[32];
-
-    if ((coll[0] != '\"') && getTyp(coll) != Collection)
-    {
-        sprintf(msg, "%s not defined as a collection", coll);
-        yyerror(msg);
-    }
-    printf("{ \n");
-    fprintf(stdout, "   cout << %s\";\n", str); // Command to print 1st string
-
-    fprintf(stdout, "   cout << \"{\";\n"); // Command to start collection
-
-    if (coll[0] == '\"')
-    {
-        char *temp = malloc(strlen(coll) + 1);
-        strcpy(temp, coll);
-        char *token;
-        token = strtok(temp + 1, "@");
-        char *comma = "";
-        do
-        {
-            if (token)
-                fprintf(stdout, "   cout << \"%s%s\" ;\n", comma, token);
-            comma = ", ";
-            token = strtok(NULL, "@");
-        } while (token);
-        free(temp);
-    }
-    else
-    {
-        fprintf(stdout, "   bool first = true;\n");
-        fprintf(stdout, "   for (const auto& item : %s) {\n", coll);
-        fprintf(stdout, "       if (!first) {\n");
-        fprintf(stdout, "           cout << \", \";\n");
-        fprintf(stdout, "       }\n");
-        fprintf(stdout, "      cout << item;\n");
-        fprintf(stdout, "      first = false;\n");
-        fprintf(stdout, "   }\n");
-    }
-
-    fprintf(stdout, "   cout << \"}\" << endl;\n"); // Command to end collection
-    printf("}\n");
+    printf("printSetWithMessage(%s, \"%s\");\n", element, str+1);
 }
 
 // GenerateColUnion done
@@ -314,12 +278,9 @@ void GenerateColOut(char *str, char *coll)
 //     fprintf(stdout, "}\n");
 // }
 
-void CollectionPlusCollection(char *varName, char *remove_strint)
-{
-}
-
 char *concatenate_strings(const char *first, char middle, const char *last)
 {
+
     size_t length = 1;
     if (first)
         length += strlen(first);
@@ -359,6 +320,7 @@ char *CopyINT(char *str)
 
 char *GenerateSetAssign(char *input)
 {
+    // printf("input in GenerateSetAssign: %s\n", input);
     char msg[32];
     char *result;
     if ((input[0] != '*') && getTyp(input) != Set && VarExist(input) == 0)
@@ -373,37 +335,42 @@ char *GenerateSetAssign(char *input)
         strcpy(result, "make_Set({");
         if (input[strlen(input) - 1] == '\"')
         {
-            input[strlen(input) - 1] = '\0';
+            result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
+            strcat(result, "})");
         }
-        char *temp = malloc(strlen(input) + 1);
-        strcpy(temp, input);
-        char *token;
-        token = strtok(temp + 1, "@");
-        char *comma = "\0";
-        int i = 1;
-        do
+        else
         {
-            if (token)
+            char *temp = malloc(strlen(input) + 1);
+            strcpy(temp, input);
+            char *token;
+            token = strtok(temp + 1, "@");
+            char *comma = "\0";
+            int i = 1;
+            do
             {
-                result = (char *)realloc(result, (strlen(result) + 1 + strlen(token) + strlen(comma)) * sizeof(char));
-                if (i != 1)
+                if (token)
                 {
-                    strcat(result, comma);
+                    result = (char *)realloc(result, (strlen(result) + 1 + strlen(token) + strlen(comma)) * sizeof(char));
+                    if (i != 1)
+                    {
+                        strcat(result, comma);
+                    }
+                    strcat(result, token);
+                    i = 2;
                 }
-                strcat(result, token);
-                i = 2;
-            }
-            comma = ",";
-            token = strtok(NULL, "@");
-        } while (token);
-        free(temp);
-        result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
-        strcat(result, "})");
+                comma = ",";
+                token = strtok(NULL, "@");
+            } while (token);
+            free(temp);
+            result = (char *)realloc(result, (strlen(result) + 2) * sizeof(char));
+            strcat(result, "})");
+        }
     }
     else
     {
         result = strdup(input);
     }
+    // printf("finished GenerateSetAssign result: %s\n", result);
     return result;
 }
 
@@ -426,12 +393,48 @@ int VarExist(char *var)
     }
     return 1;
 }
-// COLL_LEN :          '|' OPERATORCOLL '|'                                        {char* temp = concatenate_strings(NULL,'(',$2);
-//                                                                                 free($2) ;
-//                                                                                 $$ = concatenate_strings(temp,')',".size()");
-//                                                                                 free(temp);}
+void GenerateSetOut(char *str, char *set)
+{
+    char msg[32];
+    printf("in GenerateSetOut\n");
+    if ((set[0] != '\"') && getTyp(set) != Set)
+    {
+        sprintf(msg, "%s not defined as a set", set);
+        yyerror(msg);
+    }
+    printf("{ \n");
+    fprintf(stdout, "   cout << \"%s\";\n", str); // Command to print 1st string
 
-//     |               '|' OPERATORCOLL '|' ';'                                    {char* temp = concatenate_strings(NULL,'(',$2);
-//                                                                                 free($2) ;
-//                                                                                 $$ = concatenate_strings(temp,')',".size();");
-//                                                                                 free(temp);}
+    fprintf(stdout, "   cout << \"[\";\n"); // Command to start set
+
+    if (set[0] == '*')
+    {
+        char *temp = malloc(strlen(set) + 1);
+        strcpy(temp, set);
+        char *token;
+        token = strtok(temp + 1, "@");
+        char *comma = "";
+        do
+        {
+            if (token)
+                fprintf(stdout, "   cout << %s%s ;\n", comma, token);
+            comma = ", ";
+            token = strtok(NULL, "@");
+        } while (token);
+        free(temp);
+    }
+    else
+    {
+        fprintf(stdout, "   bool first = true;\n");
+        fprintf(stdout, "   for (const auto& item : %s) {\n", set);
+        fprintf(stdout, "       if (!first) {\n");
+        fprintf(stdout, "           cout << ,;\n");
+        fprintf(stdout, "       }\n");
+        fprintf(stdout, "      cout << item;\n");
+        fprintf(stdout, "      first = false;\n");
+        fprintf(stdout, "   }\n");
+    }
+
+    fprintf(stdout, "   cout << \"]\" << endl;\n"); // Command to end collection
+    printf("}\n");
+}

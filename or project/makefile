@@ -1,5 +1,5 @@
 parse.exe: lex.yy.c Collection.tab.c functions.c
-	gcc lex.yy.c functions.c Collection.tab.c -o parse.exe
+	gcc -DYYDEBUG=1 lex.yy.c functions.c Collection.tab.c -o parse.exe
 
 lex.yy.c: Collection.tab.c collection.l
 	flex Collection.l

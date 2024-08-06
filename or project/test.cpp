@@ -39,6 +39,19 @@ set<string> operator*(const set<string>& set1, const set<string>& set2) {
     }
     return result;
 }
+void printSetWithMessage(const set<string>& mySet, const string& message) {
+    cout << message << " {";
+    auto it = mySet.begin();
+    if (it != mySet.end()) {
+        cout << "\"" << *it << "\"";
+        ++it;
+    }
+    while (it != mySet.end()) {
+        cout << ", \"" << *it << "\"";
+        ++it;
+    }
+    cout << " }" << endl;
+}
 //SET operators
 set<int> make_Set(initializer_list<int> list) {
     return set<int>(list);
@@ -69,31 +82,112 @@ set<int> operator*(const set<int>& set1, const set<int>& set2) {
     }
     return result;
 }
+void printSetWithMessage(const set<int>& mySet, const string& message) {
+    cout << message << " [";
+    auto it = mySet.begin();
+    if (it != mySet.end()) {
+        cout << *it ;
+        ++it;
+    }
+    while (it != mySet.end()) {
+        cout << "," << *it ;
+        ++it;
+    }
+    cout << " ]" << endl;
+}
 int main()
 {
+// Token: 'collection'
+// Token: 'ID' = a
+// Token: 'symbol' = ,
+// Token: 'ID' = b
+// Token: 'symbol' = ,
+// Token: 'ID' = c
+// Token: 'symbol' = ;
 set<string> a;
 set<string> b;
 set<string> c;
-a=make_collection({"hi","lol"})+make_collection({"my","name"});
-b=make_collection({"hi","m"});
-c=a*b;
-{ 
-   cout << "c:";
-   cout << "{";
-   bool first = true;
-   for (const auto& item : c) {
-       if (!first) {
-           cout << ", ";
-       }
-      cout << item;
-      first = false;
-   }
-   cout << "}" << endl;
-}
+// Token: 'set'
+// Token: 'ID' = x
+// Token: 'symbol' = ;
 set<int> x;
-set<int> y;
-set<int> z;
-x=make_Set({1,2,3,4,5,6});
-y=x-make_Set({1,2,3,4});
-z=x*y;
+// Token: 'ID' = a
+// Token: 'symbol' = =
+// Token: '{'
+// Token: 'string' = "hi"
+// Token: 'symbol' = ,
+// Token: 'string' = "lol"
+// Token: '}'
+// Token: 'symbol' = +
+// Token: '{'
+// Token: 'string' = "my"
+// Token: 'symbol' = ,
+// Token: 'string' = "name"
+// Token: '}'
+// Token: 'symbol' = ;
+// Token: 'ID' = b
+a=make_collection({"hi","lol"})+make_collection({"my","name"});
+// Token: 'symbol' = =
+// Token: '{'
+// Token: 'string' = "hi"
+// Token: 'symbol' = ,
+// Token: 'string' = "m"
+// Token: '}'
+// Token: 'symbol' = ;
+// Token: 'ID' = c
+b=make_collection({"hi","m"});
+// Token: 'symbol' = =
+// Token: 'ID' = a
+// Token: 'symbol' = &
+// Token: 'ID' = b
+// Token: 'symbol' = ;
+// Token: 'ID' = x
+c=a*b;
+// Token: 'symbol' = =
+// Token: '['
+// Token: 'int' = 1
+// Token: 'symbol' = ,
+// Token: 'int' = 2
+// Token: 'symbol' = ,
+// Token: 'int' = 3
+// Token: 'symbol' = ,
+// Token: 'int' = 4
+// Token: 'symbol' = ,
+// Token: 'int' = 1
+// Token: 'symbol' = ,
+// Token: 'int' = 2
+// Token: ']'
+// Token: 'symbol' = ;
+// Token: 'ID' = c
+x=make_Set({1,2,3,4,1,2});
+// Token: 'symbol' = =
+// Token: 'ID' = a
+// Token: 'symbol' = +
+// Token: 'ID' = a
+// Token: 'symbol' = +
+// Token: 'ID' = a
+// Token: 'symbol' = +
+// Token: 'ID' = b
+// Token: 'symbol' = +
+// Token: 'ID' = b
+// Token: 'symbol' = +
+// Token: 'ID' = a
+// Token: 'symbol' = ;
+// Token: 'ID' = c
+c=a+a+a+b+b+a;
+// Token: 'symbol' = =
+// Token: '{'
+// Token: '}'
+// Token: 'symbol' = ;
+// Token: 'symbol' = |
+c=make_collection({});
+// Token: 'ID' = c
+// Token: 'symbol' = |
+// Token: 'symbol' = ;
+(c).size();
+// Token: 'output'
+// Token: 'string' = "hess"
+// Token: 'ID' = x
+// Token: 'symbol' = ;
+printSetWithMessage(x, "hess");
 }
