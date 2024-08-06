@@ -1,3 +1,10 @@
 
-collection a,b,asad;
-a = {"hello","hi"} - a+a&b+{"hiiiii","dsfjk"}+"hiiii";
+collection a,b,c;
+a = {"hi","lol"}+{"my","name"};
+b = {"hi","m"};
+c = a&b;
+output "c:"c;
+set x,y,z;
+x=[1,2,3,4,5,6];
+y=x-[1,2,3,4];
+z=x&y;
