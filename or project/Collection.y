@@ -138,12 +138,13 @@ control:
     |               t_FOR_CMD '(' identifier ':' identifier ')' block
     ;
 condition:
-                    operation t_BIGGER operation
-    |               operation t_LOWER operation
-    |               operation t_BIGGER_EQUAL operation
-    |               operation t_LOWER_EQUAL operation
-    |               operation t_EQUAL operation
-    |               t_NOT operation
+                    condition t_BIGGER operation
+    |               condition t_LOWER operation
+    |               condition t_BIGGER_EQUAL operation
+    |               condition t_LOWER_EQUAL operation
+    |               condition t_EQUAL operation
+    |               t_NOT condition
+    |               '(' condition ')'
     |               operation
     ;
 io:
