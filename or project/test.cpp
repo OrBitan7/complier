@@ -104,7 +104,7 @@ int main()
 // Token: 'symbol' = ,
 // Token: 'ID' = c
 // Token: 'symbol' = ;
-set<string> a;
+set<string> temp;
 set<string> b;
 set<string> c;
 // Token: 'ID' = a
@@ -172,4 +172,7 @@ c=c-make_collection({"lol"});
 // Token: 'ID' = b
 // Token: 'symbol' = ;
 printSetWithMessage(c-b, "hess");
+
+
+
 }

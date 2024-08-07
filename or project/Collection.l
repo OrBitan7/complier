@@ -22,6 +22,8 @@ for                     { printf("// Token: 'for'\n"); return t_FOR_CMD; }
 while                   { printf("// Token: 'while'\n"); return t_WHILE_CMD; }
 \>=                     { printf("// Token: '>='\n"); return t_BIGGER_EQUAL; }
 \<=                     { printf("// Token: '<='\n"); return t_LOWER_EQUAL; }
+\>                      { printf("// Token: '>'\n"); return t_BIGGER; } 
+\<                      { printf("// Token: '<'\n"); return t_LOWER; }
 ==                      { printf("// Token: '=='\n"); return t_EQUAL; }
 \!                      { printf("// Token: '!'\n"); return t_NOT; }
 collection              { printf("// Token: 'collection'\n"); return t_COLLECTION_CMD; }
@@ -33,7 +35,7 @@ output                  { printf("// Token: 'output'\n"); return t_OUTPUT_CMD; }
 [+-]?[1-9][0-9]*        { printf("// Token: 'int' = %s\n", yytext); return t_INT; }
 \"[^\"]*\"              { printf("// Token: 'string' = %s\n", yytext); return t_STRING; }
 [a-zA-Z][a-zA-Z0-9]*    { printf("// Token: 'ID' = %s\n", yytext); return t_ID; }
-[-+=;,\>\<&\*\|\/\:]    { printf("// Token: 'symbol' = %c\n", yytext[0]); return yytext[0]; }
+[-+=;,&\*\|\/\:]    { printf("// Token: 'symbol' = %c\n", yytext[0]); return yytext[0]; }
 [ \t\n\r]                 { /* Ignore whitespace */ }
 .                       { printf("// Unexpected character: %c\n", yytext[0]); yyerror("unexpected character"); }
 
