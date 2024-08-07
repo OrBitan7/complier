@@ -251,7 +251,7 @@ CONDITIONSET :
 CONDITIONSTR : 
 CONDITION_OP :       */
 
-SET :		       
+/* SET :		       
 					'[' ']'														{$$ = "*";}
 	|				'[' INT_LIST ']'											{$$ = concatenate_strings(NULL,'*',$2);}
     |                VAR															{if(getTyp($1)==Set)
@@ -277,7 +277,7 @@ STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
 ;
 INT_LIST :		    INT_LIST ',' t_INT									        {$$ = AddToList($1, yytext);}
 	|				t_INT													    {$$ = CopyINT(yytext);}
-; */
+; */ 
 
 %%
 extern int yylineno;

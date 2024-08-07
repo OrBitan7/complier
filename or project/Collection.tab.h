@@ -55,7 +55,9 @@
      t_INT_CMD = 271,
      t_STRING_CMD = 272,
      t_INPUT_CMD = 273,
-     t_OUTPUT_CMD = 274
+     t_OUTPUT_CMD = 274,
+     t_LOWER = 275,
+     t_BIGGER = 276
    };
 #endif
 
@@ -72,7 +74,7 @@ char *str;
 
 
 /* Line 1676 of yacc.c  */
-#line 76 "Collection.tab.h"
+#line 78 "Collection.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

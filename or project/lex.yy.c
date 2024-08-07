@@ -286,24 +286,24 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 27
-#define YY_END_OF_BUFFER 28
+#define YY_NUM_RULES 29
+#define YY_END_OF_BUFFER 30
 static yyconst short int yy_acclist[124] =
     {   0,
-       28,   26,   27,   25,   26,   27,   25,   27,   14,   26,
-       27,   26,   27,   24,   26,   27,    5,   26,   27,    6,
-       26,   27,   24,   26,   27,   21,   26,   27,   24,   26,
-       27,   24,   26,   27,   24,   26,   27,   23,   26,   27,
-        3,   26,   27,    4,   26,   27,   23,   26,   27,   23,
-       26,   27,   23,   26,   27,   23,   26,   27,   23,   26,
-       27,   23,   26,   27,   23,   26,   27,    1,   26,   27,
-        2,   26,   27,   22,   21,   21,   12,   13,   11,   23,
-       23,   23,   23,    7,   23,   23,   23,   23,   23,   23,
-       23,   23,    9,   23,   23,   17,   23,   23,   16,   23,
+       30,   28,   29,   27,   28,   29,   27,   29,   16,   28,
+       29,   28,   29,   26,   28,   29,    5,   28,   29,    6,
+       28,   29,   26,   28,   29,   23,   28,   29,   14,   28,
+       29,   26,   28,   29,   13,   28,   29,   25,   28,   29,
+        3,   28,   29,    4,   28,   29,   25,   28,   29,   25,
+       28,   29,   25,   28,   29,   25,   28,   29,   25,   28,
+       29,   25,   28,   29,   25,   28,   29,    1,   28,   29,
+        2,   28,   29,   24,   23,   23,   12,   15,   11,   25,
+       25,   25,   25,    7,   25,   25,   25,   25,   25,   25,
+       25,   25,    9,   25,   25,   19,   25,   25,   18,   25,
 
-       18,   23,   23,   23,    8,   23,   23,   23,   23,   23,
-       19,   23,   23,   10,   23,   23,   20,   23,   23,   23,
-       23,   15,   23
+       20,   25,   25,   25,    8,   25,   25,   25,   25,   25,
+       21,   25,   25,   10,   25,   25,   22,   25,   25,   25,
+       25,   17,   25
     } ;
 
 static yyconst short int yy_accept[72] =
@@ -746,79 +746,89 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 25 "Collection.l"
-{ printf("// Token: '=='\n"); return t_EQUAL; }
+{ printf("// Token: '>'\n"); return t_BIGGER; } 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 26 "Collection.l"
-{ printf("// Token: '!'\n"); return t_NOT; }
+{ printf("// Token: '<'\n"); return t_LOWER; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 27 "Collection.l"
-{ printf("// Token: 'collection'\n"); return t_COLLECTION_CMD; }
+{ printf("// Token: '=='\n"); return t_EQUAL; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 28 "Collection.l"
-{ printf("// Token: 'set'\n"); return t_SET_CMD; }
+{ printf("// Token: '!'\n"); return t_NOT; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 29 "Collection.l"
-{ printf("// Token: 'int'\n"); return t_INT_CMD; }
+{ printf("// Token: 'collection'\n"); return t_COLLECTION_CMD; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 30 "Collection.l"
-{ printf("// Token: 'str'\n"); return t_STRING_CMD; }
+{ printf("// Token: 'set'\n"); return t_SET_CMD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 31 "Collection.l"
-{ printf("// Token: 'input'\n"); return t_INPUT_CMD; }
+{ printf("// Token: 'int'\n"); return t_INT_CMD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 32 "Collection.l"
-{ printf("// Token: 'output'\n"); return t_OUTPUT_CMD; }
+{ printf("// Token: 'str'\n"); return t_STRING_CMD; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 33 "Collection.l"
-{ printf("// Token: 'int' = %s\n", yytext); return t_INT; }
+{ printf("// Token: 'input'\n"); return t_INPUT_CMD; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 34 "Collection.l"
-{ printf("// Token: 'string' = %s\n", yytext); return t_STRING; }
+{ printf("// Token: 'output'\n"); return t_OUTPUT_CMD; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 35 "Collection.l"
-{ printf("// Token: 'ID' = %s\n", yytext); return t_ID; }
+{ printf("// Token: 'int' = %s\n", yytext); return t_INT; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 36 "Collection.l"
-{ printf("// Token: 'symbol' = %c\n", yytext[0]); return yytext[0]; }
+{ printf("// Token: 'string' = %s\n", yytext); return t_STRING; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 37 "Collection.l"
-{ /* Ignore whitespace */ }
+{ printf("// Token: 'ID' = %s\n", yytext); return t_ID; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 38 "Collection.l"
-{ printf("// Unexpected character: %c\n", yytext[0]); yyerror("unexpected character"); }
+{ printf("// Token: 'symbol' = %c\n", yytext[0]); return yytext[0]; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
+#line 39 "Collection.l"
+{ /* Ignore whitespace */ }
+	YY_BREAK
+case 28:
+YY_RULE_SETUP
 #line 40 "Collection.l"
+{ printf("// Unexpected character: %c\n", yytext[0]); yyerror("unexpected character"); }
+	YY_BREAK
+case 29:
+YY_RULE_SETUP
+#line 42 "Collection.l"
 ECHO;
 	YY_BREAK
-#line 822 "lex.yy.c"
+#line 832 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -1702,6 +1712,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 40 "Collection.l"
+#line 42 "Collection.l"
 
 int yywrap (void) {return 1;}

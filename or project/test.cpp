@@ -104,9 +104,6 @@ int main()
 // Token: 'symbol' = ,
 // Token: 'ID' = c
 // Token: 'symbol' = ;
-set<string> temp;
-set<string> b;
-set<string> c;
 // Token: 'ID' = a
 // Token: 'symbol' = =
 // Token: '{'
@@ -122,7 +119,6 @@ set<string> c;
 // Token: '}'
 // Token: 'symbol' = ;
 // Token: 'ID' = b
-a=make_collection({"hi","lol"})+make_collection({"my","name"});
 // Token: 'symbol' = =
 // Token: '{'
 // Token: 'string' = "hi"
@@ -131,14 +127,12 @@ a=make_collection({"hi","lol"})+make_collection({"my","name"});
 // Token: '}'
 // Token: 'symbol' = ;
 // Token: 'ID' = c
-b=make_collection({"hi","m"});
 // Token: 'symbol' = =
 // Token: 'ID' = a
 // Token: 'symbol' = &
 // Token: 'ID' = b
 // Token: 'symbol' = ;
 // Token: 'ID' = c
-c=a*b;
 // Token: 'symbol' = =
 // Token: 'ID' = a
 // Token: 'symbol' = +
@@ -153,11 +147,9 @@ c=a*b;
 // Token: 'ID' = a
 // Token: 'symbol' = ;
 // Token: 'symbol' = |
-c=a+a+a+b+b+a;
 // Token: 'ID' = c
 // Token: 'symbol' = |
 // Token: 'symbol' = ;
-(c).size();
 // Token: 'ID' = c
 // Token: 'symbol' = =
 // Token: 'ID' = c
@@ -165,14 +157,9 @@ c=a+a+a+b+b+a;
 // Token: 'string' = "lol"
 // Token: 'symbol' = ;
 // Token: 'output'
-c=c-make_collection({"lol"});
 // Token: 'string' = "hess"
 // Token: 'ID' = c
 // Token: 'symbol' = -
 // Token: 'ID' = b
 // Token: 'symbol' = ;
-printSetWithMessage(c-b, "hess");
-
-
-
 }
