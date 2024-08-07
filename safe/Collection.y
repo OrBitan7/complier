@@ -7,8 +7,10 @@ int yylex();
 #include <ctype.h>
 
 #include "symTab.h"
-
+#include "functions.h"
 extern char* yytext;
+
+FILE *outputFile, *inputFile;
 
 //	===	YACC Helper Functions	============================
 
@@ -40,14 +42,27 @@ char* AddStrToList(char* list, char* str)
     if ((p = strchr(str+1, '\"')))
         *p = '\0';
     strcat(new, str+1);
-	//printf("\t*NewStrList:%s\n", new);	//DEBUG
 	return new;
 }
-
+char *AddToList(char *list, char *str)
+{
+    char *new = realloc(list, strlen(list) + strlen(str)+2);
+    strcat(new, "@");
+    strcat(new, str);
+    return new;
+}
 static int idx=0;
 
 void insert(char* varName, varType typ)
 {	
+    for (int i = 0; i < idx; i++)
+    {
+        if (strcmp(SymTable[i].name, varName) == 0)
+        {
+            yyerror("Variable already defined\n");
+            return;
+        }
+    }
 	SymTable[idx].name = malloc(strlen(varName)+1);
 	strcpy(SymTable[idx].name, varName);
     SymTable[idx].typ = typ;
@@ -64,165 +79,252 @@ varType getTyp(char* var)
 }
 
 
-//	===	Code Generation Functions	===========================================
-
-void GenerateColDef(char* colVar)
-{
-	fprintf(stdout, "char* %s=NULL;\n", colVar);
-	insert(colVar, Collection);
-}
-
-void GenerateSetDef(char* setVar)
-{
-	fprintf(stdout, "char* %s=NULL;\n", setVar);
-	insert(setVar, Set);
-}
-
-void GenerateColAssign(char* var, char* coll)
-{
-	char msg[32];
-	
-	if (getTyp(var)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", var);
-		yyerror(msg);
-	}
-
-	if ((coll[0]!='\"') && getTyp(coll)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", coll);
-		yyerror(msg);
-	}
-
-	fprintf(stdout, "{\n");
-	fprintf(stdout, "int len;\n");
-
-	if (coll[0]=='\"')
-		fprintf(stdout, "len = strlen(\"\\%s\");\n", coll);
-	else
-		fprintf(stdout, "len = strlen(%s);\n", coll);
-
-	fprintf(stdout, "if (%s == NULL) %s=malloc(len+1);\n", var, var);
-	fprintf(stdout, "else 	%s=realloc(%s, len+1);\n", var, var);
-
-	if (coll[0]=='\"')
-		fprintf(stdout, "strcpy(%s,\"\\%s\");\n", var, coll);
-	else
-		fprintf(stdout, "strcpy(%s, %s);\n", var, coll);
-
-	fprintf(stdout, "}\n");
-}
-
-void GenerateColOut(char* str, char* coll)
-{
-	char msg[32];
-
-	if ((coll[0]!='\"') && getTyp(coll)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", coll);
-		yyerror(msg);
-	}
-
-	fprintf(stdout, "printf(%s \");\n", str);	//Command to print 1st string
-
-	fprintf(stdout, "printf(\"{\");\n");		//Command to start collection
-
-	if (coll[0] == '\"') {
-		char* temp = malloc(strlen(coll)+1);
-		strcpy(temp, coll);
-		char *token;
-		token = strtok(temp+1, "@");
-		char* comma="";
-		do {
-			if (token) fprintf(stdout, "printf(\"%s%s\");\n", comma, token);
-			comma=", ";
-			token = strtok(NULL, "@");
-		} while (token);
-    	free(temp);
-	}
-	else {
-        fprintf(stdout, "{\n");
-		fprintf(stdout, "char* temp = malloc(strlen(%s)+1);\n", coll);
-		fprintf(stdout, "strcpy(temp, %s);\n", coll);
-		fprintf(stdout, "char *token;\n");
-		fprintf(stdout, "token = strtok(temp+1, \"@\");\n");
-		fprintf(stdout, "char* comma=\"\";\n");
-		fprintf(stdout, "do {\n");
-		fprintf(stdout, "\tif (token) printf(\"%%s%%s\", comma, token);\n");
-		fprintf(stdout, "\tcomma=\", \";\n");
-		fprintf(stdout, "\ttoken = strtok(NULL, \"@\");\n");
-		fprintf(stdout, "} while (token);\n");
-    	fprintf(stdout, "free(temp);\n");
-        fprintf(stdout, "}\n");
-	}
-
-    fprintf(stdout, "printf(\"}\\n\");\n");		//Command to end collection
-}
-
-char* RT_unifyCollections(char* var, char* coll);
-char* RT_addStrToCollection(char* collection, char* str);
-
-void GenerateColUnify(char* varResultName, char* varName, char* coll)
-{
-	char msg[32];
-
-	if (getTyp(varResultName)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", varResultName);
-		yyerror(msg);
-	}
-
-	if (getTyp(varName)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", varName);
-		yyerror(msg);
-	}
-
-	if ((coll[0]!='\"') && getTyp(coll)!=Collection) {
-		sprintf(msg, "%s not defined as a collection", coll);
-		yyerror(msg);
-	}
-
-	fprintf(stdout, "{\n");
-	if (coll[0]=='\"')
-		fprintf(stdout, "char* unified = RT_unifyCollections(%s, \"\\%s\");\n", varName, coll);
-	else
-		fprintf(stdout, "char* unified = RT_unifyCollections(%s, %s);\n", varName, coll);
-
-	fprintf(stdout, "int len = strlen(unified);\n");
-
-	fprintf(stdout, "if (%s == NULL)	%s=malloc(len+1);\n", varResultName, varResultName);
-	fprintf(stdout, "else	%s = realloc(%s, strlen(%s)+len+1);\n", varResultName, varResultName, varResultName);
-
-	fprintf(stdout, "strcpy(%s, unified);\n", varResultName);
-	fprintf(stdout, "}\n");
-}
 
 %}
 
-%union {char *str;int number;}         /* Yacc definitions */
-%token <str> t_STRING t_ID
-%token <number> t_INT
-%token t_COLLECTION_CMD t_OUTPUT_CMD t_SET_CMD
-%type <str> STRING_LIST
-%type <str> VAR COLLECTION 
-// %type <str> SET
+%union {char *str;
+        int number;}         /* Yacc definitions */
+%token <str> t_STRING t_ID t_INT
+%token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD   
+%type <str> STRING_LIST INT_LIST STRING_
+%type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
+%type <number> DECLERATION_CMD
 
 
 %%
 /* descriptions of expected inputs     corresponding actions (in C) */
 Prog :				SENTENCE
 	|				Prog SENTENCE
-SENTENCE :			t_COLLECTION_CMD VAR ';'				{GenerateColDef($2);}
-	|				t_SET_CMD VAR ';'						{GenerateSetDef($2);}
-	|				VAR '=' COLLECTION ';'					{GenerateColAssign($1,$3);}
-//	|				VAR '=' SET ';'							
-	|				t_OUTPUT_CMD t_STRING {$2=CopyStr(yytext);} COLLECTION ';'			{GenerateColOut($2, $4);}
-	|				VAR '=' VAR '+' COLLECTION ';'			{GenerateColUnify($1, $3, $5);}
-	|				VAR '=' VAR '-' COLLECTION ';'			{GenerateColDifference($1, $3, $5);}
-COLLECTION :		VAR										{$$=CopyStr($1);}
-	|				'{' '}'									{$$ = "\"";}
-	|				'{' STRING_LIST '}'						{$$ = $2;}
-// SET :				VAR										{$$=CopyStr($1);}
-//	|				'[' ']'									{$$ = "\"";}
-//	|				'[' INT_LIST ']'						{$$ = $2;}
-VAR :				t_ID									{$$ = CopyStr(yytext);}
-STRING_LIST :		STRING_LIST ',' t_STRING				{$$ = AddStrToList($1, yytext);}
-	|				t_STRING								{$$ = CopyStr(yytext);}
-// INT_LIST :			INT_LIST ',' t_INT
-//	|				t_INT	
+SENTENCE :			DECLERATION
+    |               OPERATOR   
+;                                                 
+DECLERATION :       DECLERATION_CMD VARS ';'									{GenerateDef($1,$2);}
+DECLERATION_CMD :   t_COLLECTION_CMD                                            {$$ = 1;}
+    |               t_SET_CMD                                                   {$$ = 2;}
+    |               t_INT_CMD                                                   {$$ = 3;}
+    |               t_STRING_CMD                                                {$$ = 4;}
+;
+OPERATOR :          OPERATORCOLL                                                {printf("%s\n",$1);}
+    |               PRINT
+    |               OPERATORSET                                                 {printf("%s\n",$1);}
+    |               LEN                                                         {printf("%s\n",$1);}    
+;
+LEN :               '|' VAR '|'                                                 {VarSer_Collection($2);
+                                                                                char* temp = concatenate_strings(NULL,'(',$2);
+                                                                                
+                                                                                $$ = concatenate_strings(temp,')',".size()");
+                                                                               }
+    |               '|' VAR '|' ';'                                             {VarSer_Collection($2);
+                                                                                char* temp = concatenate_strings(NULL,'(',$2);
+                                                                                 
+                                                                                $$ = concatenate_strings(temp,')',".size();");
+                                                                                }  
+;
+PRINT :		        t_OUTPUT_CMD STRING_  OPERATORCOLL ';'                      {GenerateOut($2, $3);}
+    |       		t_OUTPUT_CMD STRING_  OPERATORSET ';'                       {GenerateOut($2, $3);}
+    |       		t_OUTPUT_CMD STRING_  LEN ';'                               {GenerateOut($2, $3);}
+;
+OPERATORCOLL :		VAR '=' OPERATORCOLL ';'                                    {char* temp =  concatenate_strings($1,'=',$3);
+                                                                                $$ = concatenate_strings(temp,';',NULL);}
+	|				OPERATORCOLL '+' COLLECTION              					{$3=GenerateColAssign($3) ;$$ = concatenate_strings($1,'+',$3);}
+	|				OPERATORCOLL '-' COLLECTION 					            {$3 =GenerateColAssign($3) ;$$ = concatenate_strings($1,'-',$3);}
+	|				OPERATORCOLL '&' COLLECTION 					            {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'*',$3);}
+	|				OPERATORCOLL '-' STRING_  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
+	|				OPERATORCOLL '+' STRING_  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
+    |               COLLECTION 										            {$$ = GenerateColAssign($1);}
+;
+OPERATORSET :		VAR '=' OPERATORSET ';'                                    {char* temp =  concatenate_strings($1,'=',$3);
+                                                                                $$ = concatenate_strings(temp,';',NULL);}
+    |               SET										                    {$$ = GenerateSetAssign($1);}
+	|				OPERATORSET '+' SET              	        				{$3 =GenerateSetAssign($3);  $$ = concatenate_strings($1,'+',$3);}
+	|				OPERATORSET '+' t_INT {$3=concatenate_strings(NULL,'*',yytext); char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
+	|				OPERATORSET '-' SET 		        			            {char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
+	|				OPERATORSET '-' t_INT  {$3=concatenate_strings(NULL,'*',yytext); char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
+	|				OPERATORSET '&' SET         					            {$3 =GenerateSetAssign($3);  $$ = concatenate_strings($1,'*',$3);}
+;
+STRING_ :           t_STRING                                                    {$$ = CopyStr(yytext);}
+;
+/* CONDITIONS :        CONDITIONS  CONDITION
+    |               CONDITION 
+CONDITION :         CONDITIONINT         
+    |               CONDITIONCOLL
+    |               CONDITIONSET
+    |               CONDITIONSTR
+CONDITIONINT : 
+     
+CONDITIONCOLL :     CONDITIONCOLL CONDITION_OP COLLECTION
+    |               CONDITION
+CONDITIONSET :
+CONDITIONSTR : 
+CONDITION_OP :       */
+
+SET :		       
+					'[' ']'														{$$ = "*";}
+	|				'[' INT_LIST ']'											{$$ = concatenate_strings(NULL,'*',$2);}
+    |                VAR															{if(getTyp($1)==Set)
+                                                                                    $$=CopyStr($1);
+                                                                                else {
+                                                                                    yyerrok;  
+                                                                                }}
+;
+COLLECTION :		VAR															{if(getTyp($1)==Collection)
+                                                                                    $$=CopyStr($1);
+                                                                                else
+                                                                                    yyerrok;}
+	|				'{' '}'														{$$ = "\"";}
+	|				'{' STRING_LIST '}'											{$$ = $2;}
+;
+VARS :              VARS ',' VAR                                                {$$ = AddToList($1, $3);}
+    |               VAR                                                         {$$ = $1}
+;
+VAR :				t_ID														{$$ = CopyStr(yytext)}
+;
+STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
+	|				t_STRING													{$$ = CopyStr(yytext);}
+;
+INT_LIST :		    INT_LIST ',' t_INT									        {$$ = AddToList($1, yytext);}
+	|				t_INT													    {$$ = CopyINT(yytext);}
+;
+
+%%
+extern int yylineno;
+
+void yyerror(char *s) {
+    fprintf(stderr, "Error: %s at line %d\n", s, yylineno);
+}
+int main(void) {
+
+
+    outputFile = freopen("test.cpp", "w", stdout);
+    if (outputFile == NULL) {
+        fprintf(stderr, "Error opening output file.\n");
+        return 1;
+    }
+
+    inputFile = freopen("INPUT.txt", "r", stdin);
+    if (inputFile == NULL) {
+        fprintf(stderr, "Error opening input file.\n");
+        return 1;
+    }
+
+    fprintf(stdout, "#include <stdio.h>\n");
+    fprintf(stdout, "#include <stdlib.h>\n");
+    fprintf(stdout, "#include <string.h>\n");
+    fprintf(stdout, "#include <iostream>\n");
+    fprintf(stdout, "#include <string>\n");
+    fprintf(stdout, "#include <set>\n\n");
+    fprintf(stdout, "#include <initializer_list>\n\n");
+    
+    fprintf(stdout, "using namespace std;\n\n");
+
+    fprintf(stdout, "//COLLECTION operators\n");
+    fprintf(stdout, "set<string> make_collection(initializer_list<string> list) {\n");
+    fprintf(stdout, "    return set<string>(list);\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "set<string> operator-(const set<string>& set1, const set<string>& set2) {\n");
+    fprintf(stdout, "    set<string> result = set1;\n");
+    fprintf(stdout, "    for (const string& elem : set2) {\n");
+    fprintf(stdout, "        result.erase(elem);\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+    
+    fprintf(stdout, "set<string> operator+(const set<string>& set1, const set<string>& set2) {\n");
+    fprintf(stdout, "    set<string> result = set1;\n");
+    fprintf(stdout, "    result.insert(set2.begin(), set2.end());\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "set<string> operator+(const set<string>& set1, const string& str) {\n");
+    fprintf(stdout, "    set<string> result = set1;\n");
+    fprintf(stdout, "    result.insert(str);\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "set<string> operator*(const set<string>& set1, const set<string>& set2) {\n");
+    fprintf(stdout, "    set<string> result;\n");
+    fprintf(stdout, "    for (const string& elem : set1) {\n");
+    fprintf(stdout, "        if (set2.find(elem) != set2.end()) {\n");
+    fprintf(stdout, "            result.insert(elem);\n");
+    fprintf(stdout, "        }\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "void printSetWithMessage(const set<string>& mySet, const string& message) {\n");
+    fprintf(stdout, "    cout << message << \" {\";\n");
+    fprintf(stdout, "    auto it = mySet.begin();\n");
+    fprintf(stdout, "    if (it != mySet.end()) {\n");
+    fprintf(stdout, "        cout << \"\\\"\" << *it << \"\\\"\";\n");
+    fprintf(stdout, "        ++it;\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    while (it != mySet.end()) {\n");
+    fprintf(stdout, "        cout << \", \\\"\" << *it << \"\\\"\";\n");
+    fprintf(stdout, "        ++it;\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    cout << \"}\" << endl;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "//SET operators\n");
+    fprintf(stdout, "set<int> make_Set(initializer_list<int> list) {\n");
+    fprintf(stdout, "    return set<int>(list);\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "set<int> operator-(const set<int>& set1, const set<int>& set2) {\n");
+    fprintf(stdout, "    set<int> result = set1;\n");
+    fprintf(stdout, "    for (const int& elem : set2) {\n");
+    fprintf(stdout, "        result.erase(elem);\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+    
+    fprintf(stdout, "set<int> operator+(const set<int>& set1, const set<int>& set2) {\n");
+    fprintf(stdout, "    set<int> result = set1;\n");
+    fprintf(stdout, "    result.insert(set2.begin(), set2.end());\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "set<int> operator+(const set<int>& set1, const int& str) {\n");
+    fprintf(stdout, "    set<int> result = set1;\n");
+    fprintf(stdout, "    result.insert(str);\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "set<int> operator*(const set<int>& set1, const set<int>& set2) {\n");
+    fprintf(stdout, "    set<int> result;\n");
+    fprintf(stdout, "    for (const int& elem : set1) {\n");
+    fprintf(stdout, "        if (set2.find(elem) != set2.end()) {\n");
+    fprintf(stdout, "            result.insert(elem);\n");
+    fprintf(stdout, "        }\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    return result;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "void printSetWithMessage(const set<int>& mySet, const string& message) {\n");
+    fprintf(stdout, "    cout << message << \" [\";\n");
+    fprintf(stdout, "    auto it = mySet.begin();\n");
+    fprintf(stdout, "    if (it != mySet.end()) {\n");
+    fprintf(stdout, "        cout << *it ;\n");
+    fprintf(stdout, "        ++it;\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    while (it != mySet.end()) {\n");
+    fprintf(stdout, "        cout << \",\" << *it ;\n");
+    fprintf(stdout, "        ++it;\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    cout << \"]\" << endl;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "int main()\n");
+    fprintf(stdout, "{\n");
+    yyparse();
+
+    fprintf(stdout, "}\n");
+    if (fclose(outputFile) != 0) {
+        fprintf(stderr, "Error closing output file.\n");
+    }
+    if (fclose(inputFile) != 0) {
+        fprintf(stderr, "Error closing input file.\n");
+    }
+
+}
