@@ -34,7 +34,7 @@ output                  { printf("// Token: 'output'\n"); return t_OUTPUT_CMD; }
 \"[^\"]*\"              { printf("// Token: 'string' = %s\n", yytext); return t_STRING; }
 [a-zA-Z][a-zA-Z0-9]*    { printf("// Token: 'ID' = %s\n", yytext); return t_ID; }
 [-+=;,\>\<&\*\|\/\:]    { printf("// Token: 'symbol' = %c\n", yytext[0]); return yytext[0]; }
-[ \t\n]                 { /* Ignore whitespace */ }
+[ \t\n\r]                 { /* Ignore whitespace */ }
 .                       { printf("// Unexpected character: %c\n", yytext[0]); yyerror("unexpected character"); }
 
 %%

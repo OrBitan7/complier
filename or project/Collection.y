@@ -86,7 +86,7 @@ varType getTyp(char* var)
         int number;}         /* Yacc definitions */
 %token <str> t_STRING t_ID t_INT
 %token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD   
-%type <str> STRING_LIST INT_LIST _STRING
+%type <str> STRING_LIST INT_LIST STRING_
 %type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
 %type <number> DECLERATION_CMD
 
@@ -96,18 +96,19 @@ varType getTyp(char* var)
 Prog :				SENTENCE
 	|				Prog SENTENCE
 SENTENCE :			DECLERATION
-    |               OPERATOR
+    |               OPERATOR   
+;                                                 
 DECLERATION :       DECLERATION_CMD VARS ';'									{GenerateDef($1,$2);}
 DECLERATION_CMD :   t_COLLECTION_CMD                                            {$$ = 1;}
     |               t_SET_CMD                                                   {$$ = 2;}
     |               t_INT_CMD                                                   {$$ = 3;}
     |               t_STRING_CMD                                                {$$ = 4;}
-
+;
 OPERATOR :          OPERATORCOLL                                                {printf("%s\n",$1);}
     |               PRINT
     |               OPERATORSET                                                 {printf("%s\n",$1);}
     |               LEN                                                         {printf("%s\n",$1);}    
-
+;
 LEN :               '|' VAR '|'                                                 {VarSer_Collection($2);
                                                                                 char* temp = concatenate_strings(NULL,'(',$2);
                                                                                 
@@ -118,59 +119,72 @@ LEN :               '|' VAR '|'                                                 
                                                                                  
                                                                                 $$ = concatenate_strings(temp,')',".size();");
                                                                                 }  
-
-PRINT :		        t_OUTPUT_CMD _STRING  OPERATORCOLL ';'                      {GenerateOut($2, $3);}
-    |       		t_OUTPUT_CMD _STRING  OPERATORSET ';'                       {GenerateOut($2, $3);}
-    |       		t_OUTPUT_CMD _STRING  LEN ';'                               {GenerateOut($2, $3);}
-
+;
+PRINT :		        t_OUTPUT_CMD STRING_  OPERATORCOLL ';'                      {GenerateOut($2, $3);}
+    |       		t_OUTPUT_CMD STRING_  OPERATORSET ';'                       {GenerateOut($2, $3);}
+    |       		t_OUTPUT_CMD STRING_  LEN ';'                               {GenerateOut($2, $3);}
+;
 OPERATORCOLL :		VAR '=' OPERATORCOLL ';'                                    {char* temp =  concatenate_strings($1,'=',$3);
                                                                                 $$ = concatenate_strings(temp,';',NULL);}
 	|				OPERATORCOLL '+' COLLECTION              					{$3=GenerateColAssign($3) ;$$ = concatenate_strings($1,'+',$3);}
 	|				OPERATORCOLL '-' COLLECTION 					            {$3 =GenerateColAssign($3) ;$$ = concatenate_strings($1,'-',$3);}
 	|				OPERATORCOLL '&' COLLECTION 					            {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'*',$3);}
-	|				OPERATORCOLL '-' _STRING  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
-	|				OPERATORCOLL '+' _STRING  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
+	|				OPERATORCOLL '-' STRING_  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
+	|				OPERATORCOLL '+' STRING_  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
     |               COLLECTION 										            {$$ = GenerateColAssign($1);}
-
+;
 OPERATORSET :		VAR '=' OPERATORSET ';'                                    {char* temp =  concatenate_strings($1,'=',$3);
                                                                                 $$ = concatenate_strings(temp,';',NULL);}
     |               SET										                    {$$ = GenerateSetAssign($1);}
 	|				OPERATORSET '+' SET              	        				{$3 =GenerateSetAssign($3);  $$ = concatenate_strings($1,'+',$3);}
-	|				OPERATORSET '+' t_INT {$3=concatenate_strings(NULL,'*',yytext);} 			        {char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
+	|				OPERATORSET '+' t_INT {$3=concatenate_strings(NULL,'*',yytext); char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
 	|				OPERATORSET '-' SET 		        			            {char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
-	|				OPERATORSET '-' t_INT  {$3=concatenate_strings(NULL,'*',yytext);}			        {char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
+	|				OPERATORSET '-' t_INT  {$3=concatenate_strings(NULL,'*',yytext); char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
 	|				OPERATORSET '&' SET         					            {$3 =GenerateSetAssign($3);  $$ = concatenate_strings($1,'*',$3);}
-_STRING :           t_STRING                                                    {$$ = CopyStr(yytext);}
-//CONDITIONS :        CONDITIONS  CONDITION
-//    |               CONDITION 
-//CONDITION :         CONDITIONINT         
-//    |               CONDITIONCOLL
-//    |               CONDITIONSET
-//    |               CONDITIONSTR
-//CONDITIONINT : 
-//     
-//CONDITIONCOLL :     CONDITIONCOLL CONDITION_OP COLLECTION
-//    |               CONDITION
-//CONDITIONSET :
-//CONDITIONSTR : 
-//CONDITION_OP :      
+;
+STRING_ :           t_STRING                                                    {$$ = CopyStr(yytext);}
+;
+/* CONDITIONS :        CONDITIONS  CONDITION
+    |               CONDITION 
+CONDITION :         CONDITIONINT         
+    |               CONDITIONCOLL
+    |               CONDITIONSET
+    |               CONDITIONSTR
+CONDITIONINT : 
+     
+CONDITIONCOLL :     CONDITIONCOLL CONDITION_OP COLLECTION
+    |               CONDITION
+CONDITIONSET :
+CONDITIONSTR : 
+CONDITION_OP :       */
 
-SET :		        VAR															{if(getTyp($1)==Set)
-                                                                                    $$=CopyStr($1);}
-	|				'[' ']'														{$$ = "*";}
+SET :		       
+					'[' ']'														{$$ = "*";}
 	|				'[' INT_LIST ']'											{$$ = concatenate_strings(NULL,'*',$2);}
-
-COLLECTION :		VAR															{if(getTyp($1)==Collection)$$=CopyStr($1);}
+    |                VAR															{if(getTyp($1)==Set)
+                                                                                    $$=CopyStr($1);
+                                                                                else {
+                                                                                    yyerrok;  
+                                                                                }}
+;
+COLLECTION :		VAR															{if(getTyp($1)==Collection)
+                                                                                    $$=CopyStr($1);
+                                                                                else
+                                                                                    yyerrok;}
 	|				'{' '}'														{$$ = "\"";}
 	|				'{' STRING_LIST '}'											{$$ = $2;}
+;
 VARS :              VARS ',' VAR                                                {$$ = AddToList($1, $3);}
     |               VAR                                                         {$$ = $1}
+;
 VAR :				t_ID														{$$ = CopyStr(yytext)}
+;
 STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
 	|				t_STRING													{$$ = CopyStr(yytext);}
+;
 INT_LIST :		    INT_LIST ',' t_INT									        {$$ = AddToList($1, yytext);}
 	|				t_INT													    {$$ = CopyINT(yytext);}
-
+;
 
 %%
 extern int yylineno;
@@ -306,4 +320,11 @@ int main(void) {
     yyparse();
 
     fprintf(stdout, "}\n");
+    if (fclose(outputFile) != 0) {
+        fprintf(stderr, "Error closing output file.\n");
+    }
+    if (fclose(inputFile) != 0) {
+        fprintf(stderr, "Error closing input file.\n");
+    }
+
 }

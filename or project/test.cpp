@@ -50,7 +50,7 @@ void printSetWithMessage(const set<string>& mySet, const string& message) {
         cout << ", \"" << *it << "\"";
         ++it;
     }
-    cout << " }" << endl;
+    cout << "}" << endl;
 }
 //SET operators
 set<int> make_Set(initializer_list<int> list) {
@@ -93,7 +93,7 @@ void printSetWithMessage(const set<int>& mySet, const string& message) {
         cout << "," << *it ;
         ++it;
     }
-    cout << " ]" << endl;
+    cout << "]" << endl;
 }
 int main()
 {
@@ -107,10 +107,6 @@ int main()
 set<string> a;
 set<string> b;
 set<string> c;
-// Token: 'set'
-// Token: 'ID' = x
-// Token: 'symbol' = ;
-set<int> x;
 // Token: 'ID' = a
 // Token: 'symbol' = =
 // Token: '{'
@@ -141,26 +137,9 @@ b=make_collection({"hi","m"});
 // Token: 'symbol' = &
 // Token: 'ID' = b
 // Token: 'symbol' = ;
-// Token: 'ID' = x
+// Token: 'ID' = c
 c=a*b;
 // Token: 'symbol' = =
-// Token: '['
-// Token: 'int' = 1
-// Token: 'symbol' = ,
-// Token: 'int' = 2
-// Token: 'symbol' = ,
-// Token: 'int' = 3
-// Token: 'symbol' = ,
-// Token: 'int' = 4
-// Token: 'symbol' = ,
-// Token: 'int' = 1
-// Token: 'symbol' = ,
-// Token: 'int' = 2
-// Token: ']'
-// Token: 'symbol' = ;
-// Token: 'ID' = c
-x=make_Set({1,2,3,4,1,2});
-// Token: 'symbol' = =
 // Token: 'ID' = a
 // Token: 'symbol' = +
 // Token: 'ID' = a
@@ -172,22 +151,25 @@ x=make_Set({1,2,3,4,1,2});
 // Token: 'ID' = b
 // Token: 'symbol' = +
 // Token: 'ID' = a
-// Token: 'symbol' = ;
-// Token: 'ID' = c
-c=a+a+a+b+b+a;
-// Token: 'symbol' = =
-// Token: '{'
-// Token: '}'
 // Token: 'symbol' = ;
 // Token: 'symbol' = |
-c=make_collection({});
+c=a+a+a+b+b+a;
 // Token: 'ID' = c
 // Token: 'symbol' = |
 // Token: 'symbol' = ;
 (c).size();
-// Token: 'output'
-// Token: 'string' = "hess"
-// Token: 'ID' = x
+// Token: 'ID' = c
+// Token: 'symbol' = =
+// Token: 'ID' = c
+// Token: 'symbol' = -
+// Token: 'string' = "lol"
 // Token: 'symbol' = ;
-printSetWithMessage(x, "hess");
+// Token: 'output'
+c=c-make_collection({"lol"});
+// Token: 'string' = "hess"
+// Token: 'ID' = c
+// Token: 'symbol' = -
+// Token: 'ID' = b
+// Token: 'symbol' = ;
+printSetWithMessage(c-b, "hess");
 }

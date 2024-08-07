@@ -1,10 +1,8 @@
 collection a,b,c;
-set x;
 a = {"hi","lol"} + {"my","name"};
 b = {"hi","m"};
 c = a & b;
-x = [1,2,3,4,1,2];
 c = a  + a + a + b + b + a ;
-c = {};
 |c|;
-output "hess" x;
+c = c - "lol";
+output "hess" c-b;
