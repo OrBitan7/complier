@@ -68,7 +68,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 85 "Collection.y"
+#line 87 "Collection.y"
 char *str;
         int number;
 

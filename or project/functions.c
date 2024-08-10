@@ -14,8 +14,185 @@ int yylex();
 #include "functions.h"
 extern char *yytext;
 
+int size = 0;
+ops_link_list **global_ops_lists = NULL;
 
+// link list functions  ===========================================
 
+void add_new_ops_link_list(ops_tag tag, char *operation)
+{
+    size++;
+    if (size == 1)
+    {
+        global_ops_lists = malloc(size * sizeof(ops_link_list *));
+    }
+    else
+    {
+        global_ops_lists = realloc(global_ops_lists, size * sizeof(ops_link_list *));
+    }
+    if (global_ops_lists == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for global_ops_lists\n");
+        yyerror(msg);
+    }
+
+    ops_link_list *new_list = (ops_link_list *)malloc(sizeof(ops_link_list));
+    if (new_list == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for global_ops_lists\n");
+        yyerror(msg);
+    }
+
+    new_list->typ = tag;
+    new_list->op = strdup(operation);
+    new_list->head = new_list->tail = NULL;
+
+    global_ops_lists[size - 1] = new_list;
+}
+
+void add_node_to_last_ops_list_tail(char *operation)
+{
+    if (size == 0)
+    {
+        char msg[32];
+        sprintf(msg, "No ops_link_list exists in global_ops_lists\n");
+        yyerror(msg);
+    }
+
+    ops_link_list *last_list = global_ops_lists[size - 1];
+    ops *new_node = (ops *)malloc(sizeof(ops));
+    if (new_node == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for new ops_node\n");
+        yyerror(msg);
+    }
+
+    new_node->op = strdup(operation);
+    new_node->next = NULL;
+
+    if (last_list->tail == NULL)
+    {
+        last_list->head = last_list->tail = new_node;
+    }
+    else
+    {
+        last_list->tail->next = new_node;
+        last_list->tail = new_node;
+    }
+}
+
+void add_node_to_last_ops_list_head(char *operation)
+{
+    if (size == 0)
+    {
+        char msg[32];
+        sprintf(msg, "No ops_link_list exists in global_ops_lists\n");
+        yyerror(msg);
+    }
+
+    ops_link_list *last_list = global_ops_lists[size - 1];
+    ops *new_node = (ops *)malloc(sizeof(ops));
+    if (new_node == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for new ops_node\n");
+        yyerror(msg);
+    }
+
+    new_node->op = strdup(operation);
+    new_node->next = last_list->head;
+    last_list->head = new_node;
+
+    if (last_list->tail == NULL)
+    {
+        last_list->tail = new_node;
+    }
+}
+void free_global_ops_lists()
+{
+    for (int i = 0; i < size; i++)
+    {
+        ops_link_list *list = global_ops_lists[i];
+        ops *current = list->head;
+        ops *next_node;
+
+        while (current != NULL)
+        {
+            next_node = current->next;
+            free(current->op);
+            free(current);
+            current = next_node;
+        }
+
+        free(list->op);
+        free(list);
+    }
+
+    free(global_ops_lists);
+    global_ops_lists = NULL;
+    size = 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void add_node_head(ops_link_list *list, char *operation)
+{
+    char msg[32];
+    ops *new_node = (ops *)malloc(sizeof(ops));
+    if (new_node == NULL)
+    {
+        sprintf(msg, "malloc problem in op:%s\n", operation);
+        yyerror(msg);
+    }
+
+    new_node->op = operation;
+    new_node->next = list->head;
+    list->head = new_node;
+
+    if (list->tail == NULL)
+    {
+        list->tail = new_node;
+    }
+}
+void add_node_tail(ops_link_list *list, char *operation)
+{
+    char msg[32];
+    ops *new_node = (ops *)malloc(sizeof(ops));
+    if (new_node == NULL)
+    {
+        sprintf(msg, "malloc problem in op:%s\n", operation);
+        yyerror(msg);
+    }
+
+    new_node->op = operation;
+    new_node->next = NULL;
+
+    if (list->tail == NULL)
+    {
+        list->head = list->tail = new_node;
+    }
+    else
+    {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+}
+void free_list(ops_link_list *list)
+{
+    ops *current = list->head;
+    ops *next_node;
+    while (current != NULL)
+    {
+        next_node = current->next;
+        free(current->op);
+        free(current);
+        current = next_node;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+}
 //	===	Code Generation Functions	===========================================
 // Generate a definition for a variable
 void GenerateDef(varType type, char *Vars)
@@ -109,7 +286,7 @@ char *GenerateColAssign(char *input)
 // print collection:
 void GenerateOut(char *str, char *element)
 {
-    printf("printSetWithMessage(%s, \"%s\");\n", element, str+1);
+    printf("printSetWithMessage(%s, \"%s\");\n", element, str + 1);
 }
 
 char *concatenate_strings(const char *first, char middle, const char *last)
@@ -230,7 +407,7 @@ int VarExist(char *var)
 void GenerateSetOut(char *str, char *set)
 {
     char msg[32];
-    printf("in GenerateSetOut\n");
+    // printf("in GenerateSetOut\n");
     if ((set[0] != '\"') && getTyp(set) != Set)
     {
         sprintf(msg, "%s not defined as a set", set);
@@ -271,4 +448,79 @@ void GenerateSetOut(char *str, char *set)
 
     fprintf(stdout, "   cout << \"]\" << endl;\n"); // Command to end collection
     printf("}\n");
+}
+
+
+
+
+
+void declaration(char *identifier_list, varType type)
+{
+    switch (type)
+    {
+    case Collection:
+        printf("set<string> ");
+        break;
+    case Set:
+        printf("set<int> ");
+        break;
+    case Int:
+        printf("int ");
+        break;
+    case String:
+        printf("string ");
+        break;
+    default:
+        break;
+    }
+    char *temp = malloc(strlen(identifier_list) + 1);
+    strcpy(temp, identifier_list);
+    char *token;
+    token = strtok(temp, "@");
+    int comma = 0;
+    while (token)
+    {
+        if (strcmp(token, ""))
+        {
+
+            if (VarExist(token))
+            {
+                char msg[32];
+                sprintf(msg, "%s already defined", token);
+                yyerror(msg);
+            }
+            if (comma)
+            {
+                printf(", ");
+            }
+            switch (type)
+            {
+            case Collection:
+                insert(token, Collection);
+                printf("%s", token);
+                comma = 1;
+                break;
+            case Set:
+                insert(token, Set);
+                printf("%s", token);
+                comma = 1;
+                break;
+            case Int:
+                insert(token, Int);
+                printf("%s", token);
+                comma = 1;
+                break;
+            case String:
+                insert(token, String);
+                printf("%s", token);
+                comma = 1;
+                break;
+            default:
+                break;
+            }
+        }
+        token = strtok(NULL, "@");
+    }
+    free(temp);
+    printf(";\n");
 }

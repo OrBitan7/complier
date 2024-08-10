@@ -1,4 +1,8 @@
 collection a,b,c;
+int x;
+int y,u;
+str o,afdsd;
+set lpqwe,gggg;
 a = {"hi","lol"} + {"my","name"};
 b = {"hi","m"};
 c = a & b;
@@ -6,3 +10,4 @@ c = a  + a + a + b + b + a ;
 |c|;
 c = c - "lol";
 output "hess" c-b;
+

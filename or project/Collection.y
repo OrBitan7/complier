@@ -9,6 +9,8 @@ int yylex();
 #include "symTab.h"
 #include "functions.h"
 extern char* yytext;
+extern int size;
+extern ops_link_list** global_ops_lists;
 
 FILE *outputFile, *inputFile;
 
@@ -86,116 +88,119 @@ varType getTyp(char* var)
         int number;}         /* Yacc definitions */
 %token <str> t_STRING t_ID t_INT
 %token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_LOWER t_BIGGER  
-/* %type <str> STRING_LIST INT_LIST STRING_
-%type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
-%type <number> DECLERATION_CMD */
+%type <str> STRING_LIST INT_LIST identifier identifier_list
+/* %type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
+%type <number> DECLERATION_CMD  */
 
 
 %%
 /* descriptions of expected inputs     corresponding actions (in C) */
-srog :				srog statement
-    |				statement
+
+
+
+prog :
+                    prog statement                          {}
+    |				statement                               {}
+    ;
 statement:
-                    declaration
-    |               assignment
-    |               operation_statement
-    |               control
-    |               io
+                    declaration                             {}
+    |               assignment                              {}
+    |               operation_statement                     {}
+    |               control                                 {}
+    |               io                                      {}
+    |               block                                   {}
     ;                                                
-declaration :       t_INT_CMD identifier_list ';'
-    |               t_STRING_CMD identifier_list ';'
-    |               t_SET_CMD identifier_list ';'
-    |               t_COLLECTION_CMD identifier_list ';'
+declaration :       t_INT_CMD identifier_list ';'           {declaration($2, Int);}
+    |               t_STRING_CMD identifier_list ';'        {declaration($2, String);}
+    |               t_SET_CMD identifier_list ';'           {declaration($2, Set);}
+    |               t_COLLECTION_CMD identifier_list ';'    {declaration($2, Collection);}
     ;
 assignment:
-                    identifier '=' operation ';'
+                    identifier '=' operation ';'            {}
     ;
 operation_statement:
-                    operation ';'
+                    operation ';'                           {}
     ;
 operation:
-    |               operation '+' expression
-    |               operation '-' expression
-    |               operation '*' expression
-    |               operation '/' expression
-    |               operation '&' expression
-    |               '|' operation '|'
-    |               expression
+    |               operation '+' expression                {}
+    |               operation '-' expression                {}
+    |               operation '*' expression                {}
+    |               operation '/' expression                {}
+    |               operation '&' expression                {}
+    |               '|' operation '|'                       {}
+    |               expression                              {}
     ;
 expression:
-                    literal
-    |               identifier
-    |               '(' operation ')'
-    ;
-control:
-                    t_IF_CMD '(' condition ')' statement
-    |               t_IF_CMD '(' condition ')' block
-    |               t_IF_CMD '(' condition ')' statement t_ELSE_CMD statement
-    |               t_IF_CMD '(' condition ')' block t_ELSE_CMD block
-    |               t_WHILE_CMD '(' condition ')' statement
-    |               t_WHILE_CMD '(' condition ')' block
-    |               t_FOR_CMD '(' identifier ':' identifier ')' statement
-    |               t_FOR_CMD '(' identifier ':' identifier ')' block
+                    literal                                 {}
+    |               identifier                              {}
+    |               '(' operation ')'                       {}
+    ;       
+control:        
+                    t_IF_CMD '(' condition ')' statement    {}
+    |               t_IF_CMD '(' condition ')' statement t_ELSE_CMD statement   {}
+    |               t_WHILE_CMD '(' condition ')' statement                     {}
+    |               t_FOR_CMD '(' identifier ':' identifier ')' statement       {}
     ;
 condition:
-                    condition t_BIGGER operation
-    |               condition t_LOWER operation
-    |               condition t_BIGGER_EQUAL operation
-    |               condition t_LOWER_EQUAL operation
-    |               condition t_EQUAL operation
-    |               t_NOT condition
-    |               '(' condition ')'
-    |               operation
+                    operation t_BIGGER operation            {}
+    |               operation t_LOWER operation             {}
+    |               operation t_BIGGER_EQUAL operation      {}
+    |               operation t_LOWER_EQUAL operation       {}
+    |               operation t_EQUAL operation             {}
+    |               t_NOT condition                         {}
+    |               operation                               {}
     ;
 io:
-                    t_INPUT_CMD t_STRING identifier ';'
-    |               t_OUTPUT_CMD t_STRING operation ';'
+                    t_INPUT_CMD t_STRING identifier ';'     {}
+    |               t_OUTPUT_CMD t_STRING operation ';'     {}
     ;
 block:
-                    '{' statement_list '}'
+                    '{' statement_list '}'                  {}
     ;
 statement_list:
-                    statement
-    |               statement_list statement
+                    statement                               {}
+    |               statement_list statement                {}
     ;
 identifier:
-                    t_ID
+                    t_ID                                    {$$ = CopyStr(yytext);}
     ;
 identifier_list:
-                    identifier
-    |               identifier_list ',' identifier
+                    identifier                              {$$ = $1}
+    |               identifier_list ',' identifier          {$$ = AddToList($1, $3); free($3);}
     ;
 literal:
-                    number_literal
-    |               string_literal
-    |               set_literal
-    |               collection_literal
+                    number_literal                          {}
+    |               string_literal                          {}
+    |               set_literal                             {}
+    |               collection_literal                      {}
     ;
 number_literal:
-                    t_INT
+                    t_INT                                   {}
     ;
 INT_LIST:
-                    t_INT
-    |               INT_LIST ',' t_INT
+                    t_INT                                   {$$ = CopyINT(yytext);}
+    |               INT_LIST ',' t_INT                      {$$ = AddToList($1, yytext);}
     ;
 STRING_LIST:
-                    t_STRING
-    |               STRING_LIST ',' t_STRING
+                    t_STRING                                {}
+    |               STRING_LIST ',' t_STRING                {}
     ;
 string_literal:
-                    t_STRING
+                    t_STRING                                {}
     ;
 set_literal:
-                    '[' ']'
-    |               '[' INT_LIST ']'
+                    '[' ']'                                 {}
+    |               '[' INT_LIST ']'                        {}
     ;
 collection_literal:
-                    '{' '}'
-    |               '{' STRING_LIST '}'
+                    '{' '}'                                 {}
+    |               '{' STRING_LIST '}'                     {}
     ;
 
 
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 /* OPERATOR :          OPERATORCOLL                                                {printf("%s\n",$1);}
@@ -312,7 +317,7 @@ int main(void) {
     fprintf(stdout, "using namespace std;\n\n");
 
     fprintf(stdout, "//COLLECTION operators\n");
-    fprintf(stdout, "set<string> make_collection(initializer_list<string> list) {\n");
+    fprintf(stdout, "set<string> make_literal(initializer_list<string> list) {\n");
     fprintf(stdout, "    return set<string>(list);\n");
     fprintf(stdout, "}\n");
 
@@ -361,7 +366,7 @@ int main(void) {
     fprintf(stdout, "}\n");
 
     fprintf(stdout, "//SET operators\n");
-    fprintf(stdout, "set<int> make_Set(initializer_list<int> list) {\n");
+    fprintf(stdout, "set<int> make_literal(initializer_list<int> list) {\n");
     fprintf(stdout, "    return set<int>(list);\n");
     fprintf(stdout, "}\n");
 
@@ -407,6 +412,16 @@ int main(void) {
     fprintf(stdout, "        ++it;\n");
     fprintf(stdout, "    }\n");
     fprintf(stdout, "    cout << \"]\" << endl;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "//INT operators\n");
+    fprintf(stdout, "int make_literal(int list) {\n");
+    fprintf(stdout, "    return list;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "//STRING operators\n");
+    fprintf(stdout, "string make_literal(string list) {\n");
+    fprintf(stdout, "    return list;\n");
     fprintf(stdout, "}\n");
 
     fprintf(stdout, "int main()\n");
