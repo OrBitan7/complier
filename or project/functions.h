@@ -30,9 +30,15 @@ typedef struct ops_link_list
 
 typedef struct literal_with_type
 {
-    char *op;
-    varType typ;
+    char *value;
+    varType type;
 } literal_with_type;
+
+typedef struct ops_with_type
+{
+    char *value;
+    varType type;
+} ops_with_type;
 
 
 
@@ -53,18 +59,23 @@ void insert(char *varName, varType typ);
 varType getTyp(char *var);
 
 void GenerateDef(varType type, char *Vars);
-char *GenerateColAssign(char *input);
+// char *GenerateColAssign(char *input);
 void GenerateOut(char *str, char *element);
 
 char *concatenate_strings(const char *first, char middle, const char *last);
 char *CopyINT(char *str);
-char *GenerateSetAssign(char *input);
+// char *GenerateSetAssign(char *input);
 int VarSer_Collection(char *var);
 int VarExist(char *var);
-void GenerateSetOut(char *str, char *set);
+// void GenerateSetOut(char *str, char *set);
 
 
 void declaration(char *identifier_list, varType type);
+char *copy_string_without_quotes(const char *input);
+char * concate_and_free(char *first, char *second,int free_1,int free_2);
+ops_with_type *create_ops_with_type_identifier(char *value);
+void assignment_op(char *identifier, ops_with_type *operation);
+ops_with_type *create_ops_with_type_literal(literal_with_type *literal);
 
 
 void yyerror(char *s);

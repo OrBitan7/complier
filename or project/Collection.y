@@ -84,11 +84,19 @@ varType getTyp(char* var)
 
 %}
 
-%union {char *str;
-        int number;}         /* Yacc definitions */
+%union {
+        struct literal_with_type* literal_struct;
+        struct ops_with_type* ops_struct;
+        char *str;
+        int number;
+        }         /* Yacc definitions */
 %token <str> t_STRING t_ID t_INT
 %token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_LOWER t_BIGGER  
-%type <str> STRING_LIST INT_LIST identifier identifier_list
+%type <str> STRING_LIST INT_LIST identifier identifier_list number_literal string_literal
+%type <str> set_literal collection_literal
+%type <literal_struct> literal
+%type <ops_struct> expression operation
+
 /* %type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
 %type <number> DECLERATION_CMD  */
 
@@ -116,24 +124,24 @@ declaration :       t_INT_CMD identifier_list ';'           {declaration($2, Int
     |               t_COLLECTION_CMD identifier_list ';'    {declaration($2, Collection);}
     ;
 assignment:
-                    identifier '=' operation ';'            {}
+                    identifier '=' operation ';'            {assignment_op($1, $3);}
     ;
 operation_statement:
                     operation ';'                           {}
     ;
 operation:
-    |               operation '+' expression                {}
+                    operation '+' expression                {}
     |               operation '-' expression                {}
     |               operation '*' expression                {}
     |               operation '/' expression                {}
-    |               operation '&' expression                {}
-    |               '|' operation '|'                       {}
-    |               expression                              {}
+    |               operation '&' expression                {}//collection and set onlly
+    |               '|' operation '|'                       {}//collection and set onlly
+    |               '(' operation ')'                       {}
+    |               expression                              {$$ = $1;}
     ;
 expression:
-                    literal                                 {}
-    |               identifier                              {}
-    |               '(' operation ')'                       {}
+                    literal                                 {$$ = create_ops_with_type_literal($1);}
+    |               identifier                              {$$ = create_ops_with_type_identifier($1);}
     ;       
 control:        
                     t_IF_CMD '(' condition ')' statement    {}
@@ -155,7 +163,7 @@ io:
     |               t_OUTPUT_CMD t_STRING operation ';'     {}
     ;
 block:
-                    '{' statement_list '}'                  {}
+                    '{'{printf("{\n")} statement_list '}'{printf("}\n")}    {}
     ;
 statement_list:
                     statement                               {}
@@ -169,32 +177,32 @@ identifier_list:
     |               identifier_list ',' identifier          {$$ = AddToList($1, $3); free($3);}
     ;
 literal:
-                    number_literal                          {}
-    |               string_literal                          {}
-    |               set_literal                             {}
-    |               collection_literal                      {}
+                    number_literal                          {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Int; $$->value = $1; }
+    |               string_literal                          {$$ = malloc(sizeof(struct literal_with_type)); $$->type = String; $$->value = $1; }
+    |               set_literal                             {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Set; $$->value = $1;  }//printf("valu=%s\n",$$->value);
+    |               collection_literal                      {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Collection; $$->value = $1;}
     ;
 number_literal:
-                    t_INT                                   {}
+                    t_INT                                   {$$ = CopyINT(yytext);}
     ;
 INT_LIST:
                     t_INT                                   {$$ = CopyINT(yytext);}
     |               INT_LIST ',' t_INT                      {$$ = AddToList($1, yytext);}
     ;
 STRING_LIST:
-                    t_STRING                                {}
-    |               STRING_LIST ',' t_STRING                {}
+                    t_STRING                                {$$ = copy_string_without_quotes(yytext);}
+    |               STRING_LIST ',' t_STRING                {$$ = AddToList($1, copy_string_without_quotes(yytext));}
     ;
 string_literal:
-                    t_STRING                                {}
+                    t_STRING                                {$$ = copy_string_without_quotes(yytext);}
     ;
 set_literal:
-                    '[' ']'                                 {}
-    |               '[' INT_LIST ']'                        {}
+                    '[' ']'                                 {$$ = CopyINT("\0");}
+    |               '[' INT_LIST ']'                        {$$ = $2;}
     ;
 collection_literal:
-                    '{' '}'                                 {}
-    |               '{' STRING_LIST '}'                     {}
+                    '{' '}'                                 {$$ = CopyINT("\0");}
+    |               '{' STRING_LIST '}'                     {$$ = $2;}
     ;
 
 
@@ -316,10 +324,15 @@ int main(void) {
     
     fprintf(stdout, "using namespace std;\n\n");
 
-    fprintf(stdout, "//COLLECTION operators\n");
-    fprintf(stdout, "set<string> make_literal(initializer_list<string> list) {\n");
-    fprintf(stdout, "    return set<string>(list);\n");
+    fprintf(stdout, "template<typename T>\n");
+    fprintf(stdout, "set<T> make_literal(initializer_list<T> list) {\n");
+    fprintf(stdout, "    return set<T>(list);\n");
     fprintf(stdout, "}\n");
+
+    fprintf(stdout, "//COLLECTION operators\n");
+    /* fprintf(stdout, "set<string> make_literal(initializer_list<string> list) {\n");
+    fprintf(stdout, "    return set<string>(list);\n");
+    fprintf(stdout, "}\n"); */
 
     fprintf(stdout, "set<string> operator-(const set<string>& set1, const set<string>& set2) {\n");
     fprintf(stdout, "    set<string> result = set1;\n");
@@ -366,9 +379,9 @@ int main(void) {
     fprintf(stdout, "}\n");
 
     fprintf(stdout, "//SET operators\n");
-    fprintf(stdout, "set<int> make_literal(initializer_list<int> list) {\n");
+    /* fprintf(stdout, "set<int> make_literal(initializer_list<int> list) {\n");
     fprintf(stdout, "    return set<int>(list);\n");
-    fprintf(stdout, "}\n");
+    fprintf(stdout, "}\n"); */
 
     fprintf(stdout, "set<int> operator-(const set<int>& set1, const set<int>& set2) {\n");
     fprintf(stdout, "    set<int> result = set1;\n");
@@ -419,9 +432,17 @@ int main(void) {
     fprintf(stdout, "    return list;\n");
     fprintf(stdout, "}\n");
 
+    fprintf(stdout, "void printSetWithMessage(const int& myINT, const string& message) {\n");
+    fprintf(stdout, "    cout << message << \" \" << myINT << endl;\n");
+    fprintf(stdout, "}\n");
+
     fprintf(stdout, "//STRING operators\n");
     fprintf(stdout, "string make_literal(string list) {\n");
     fprintf(stdout, "    return list;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "void printSetWithMessage(const string& mySTR, const string& message) {\n");
+    fprintf(stdout, "    cout << message << \" \\\"\" << mySTR << \"\\\"\" << endl;\n");
     fprintf(stdout, "}\n");
 
     fprintf(stdout, "int main()\n");

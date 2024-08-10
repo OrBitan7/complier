@@ -69,12 +69,16 @@ typedef union YYSTYPE
 
 /* Line 1676 of yacc.c  */
 #line 87 "Collection.y"
-char *str;
+
+        struct literal_with_type* literal_struct;
+        struct ops_with_type* ops_struct;
+        char *str;
         int number;
+        
 
 
 /* Line 1676 of yacc.c  */
-#line 78 "Collection.tab.h"
+#line 82 "Collection.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
