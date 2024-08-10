@@ -81,7 +81,6 @@ int yylex();
 #include "functions.h"
 extern char* yytext;
 extern int size;
-extern ops_link_list** global_ops_lists;
 
 FILE *outputFile, *inputFile;
 
@@ -156,7 +155,7 @@ varType getTyp(char* var)
 
 
 /* Line 189 of yacc.c  */
-#line 160 "Collection.tab.c"
+#line 159 "Collection.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -212,7 +211,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 87 "Collection.y"
+#line 86 "Collection.y"
 
         struct literal_with_type* literal_struct;
         struct ops_with_type* ops_struct;
@@ -222,7 +221,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 226 "Collection.tab.c"
+#line 225 "Collection.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -234,7 +233,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 238 "Collection.tab.c"
+#line 237 "Collection.tab.c"
 
 #ifdef short
 # undef short
@@ -543,13 +542,13 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   110,   110,   111,   114,   115,   116,   117,   118,   119,
-     121,   122,   123,   124,   127,   130,   133,   134,   135,   136,
-     137,   138,   139,   140,   143,   144,   147,   148,   149,   150,
-     153,   154,   155,   156,   157,   158,   159,   162,   163,   166,
-     169,   169,   169,   172,   173,   176,   179,   180,   183,   184,
-     185,   186,   189,   192,   193,   196,   197,   200,   203,   204,
-     207,   208
+       0,   109,   109,   110,   113,   114,   115,   116,   117,   118,
+     120,   121,   122,   123,   126,   129,   132,   133,   134,   135,
+     136,   137,   138,   139,   142,   143,   146,   147,   148,   149,
+     152,   153,   154,   155,   156,   157,   158,   161,   162,   165,
+     168,   168,   168,   171,   172,   175,   178,   179,   182,   183,
+     184,   185,   188,   191,   192,   195,   196,   199,   202,   203,
+     206,   207
 };
 #endif
 
@@ -1550,427 +1549,427 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 110 "Collection.y"
+#line 109 "Collection.y"
     {;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 111 "Collection.y"
+#line 110 "Collection.y"
     {;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 114 "Collection.y"
+#line 113 "Collection.y"
     {;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 115 "Collection.y"
+#line 114 "Collection.y"
     {;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 116 "Collection.y"
+#line 115 "Collection.y"
     {;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 117 "Collection.y"
+#line 116 "Collection.y"
     {;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 118 "Collection.y"
+#line 117 "Collection.y"
     {;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 119 "Collection.y"
+#line 118 "Collection.y"
     {;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 121 "Collection.y"
+#line 120 "Collection.y"
     {declaration((yyvsp[(2) - (3)].str), Int);;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 122 "Collection.y"
+#line 121 "Collection.y"
     {declaration((yyvsp[(2) - (3)].str), String);;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 123 "Collection.y"
+#line 122 "Collection.y"
     {declaration((yyvsp[(2) - (3)].str), Set);;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 124 "Collection.y"
+#line 123 "Collection.y"
     {declaration((yyvsp[(2) - (3)].str), Collection);;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 127 "Collection.y"
+#line 126 "Collection.y"
     {assignment_op((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].ops_struct));;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 130 "Collection.y"
-    {;}
+#line 129 "Collection.y"
+    {printf("%s;\n", (yyvsp[(1) - (2)].ops_struct)->value);;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 133 "Collection.y"
-    {;}
+#line 132 "Collection.y"
+    {(yyval.ops_struct) = operation_with_command((yyvsp[(1) - (3)].ops_struct),'+',(yyvsp[(3) - (3)].ops_struct));;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 134 "Collection.y"
-    {;}
+#line 133 "Collection.y"
+    {(yyval.ops_struct) = operation_with_command((yyvsp[(1) - (3)].ops_struct),'-',(yyvsp[(3) - (3)].ops_struct));;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 135 "Collection.y"
-    {;}
+#line 134 "Collection.y"
+    {(yyval.ops_struct) = operation_with_command((yyvsp[(1) - (3)].ops_struct),'*',(yyvsp[(3) - (3)].ops_struct));;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 136 "Collection.y"
-    {;}
+#line 135 "Collection.y"
+    {(yyval.ops_struct) = operation_with_command((yyvsp[(1) - (3)].ops_struct),'/',(yyvsp[(3) - (3)].ops_struct));;}
     break;
 
   case 20:
+
+/* Line 1455 of yacc.c  */
+#line 136 "Collection.y"
+    {(yyval.ops_struct) = operation_with_command((yyvsp[(1) - (3)].ops_struct),'&',(yyvsp[(3) - (3)].ops_struct));;}
+    break;
+
+  case 21:
 
 /* Line 1455 of yacc.c  */
 #line 137 "Collection.y"
     {;}
     break;
 
-  case 21:
+  case 22:
 
 /* Line 1455 of yacc.c  */
 #line 138 "Collection.y"
     {;}
     break;
 
-  case 22:
-
-/* Line 1455 of yacc.c  */
-#line 139 "Collection.y"
-    {;}
-    break;
-
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 140 "Collection.y"
+#line 139 "Collection.y"
     {(yyval.ops_struct) = (yyvsp[(1) - (1)].ops_struct);;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 143 "Collection.y"
+#line 142 "Collection.y"
     {(yyval.ops_struct) = create_ops_with_type_literal((yyvsp[(1) - (1)].literal_struct));;}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 144 "Collection.y"
+#line 143 "Collection.y"
     {(yyval.ops_struct) = create_ops_with_type_identifier((yyvsp[(1) - (1)].str));;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 147 "Collection.y"
+#line 146 "Collection.y"
     {;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 148 "Collection.y"
+#line 147 "Collection.y"
     {;}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 149 "Collection.y"
+#line 148 "Collection.y"
     {;}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 150 "Collection.y"
+#line 149 "Collection.y"
     {;}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 153 "Collection.y"
+#line 152 "Collection.y"
     {;}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 154 "Collection.y"
+#line 153 "Collection.y"
     {;}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 155 "Collection.y"
+#line 154 "Collection.y"
     {;}
     break;
 
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 156 "Collection.y"
+#line 155 "Collection.y"
     {;}
     break;
 
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 157 "Collection.y"
+#line 156 "Collection.y"
     {;}
     break;
 
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 158 "Collection.y"
+#line 157 "Collection.y"
     {;}
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 159 "Collection.y"
+#line 158 "Collection.y"
     {;}
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 162 "Collection.y"
+#line 161 "Collection.y"
     {;}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 163 "Collection.y"
+#line 162 "Collection.y"
     {GenerateOut((yyvsp[(2) - (4)].str), (yyvsp[(3) - (4)].ops_struct)->value);;}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 166 "Collection.y"
+#line 165 "Collection.y"
     {(yyval.str) = copy_string_without_quotes(yytext);;}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 169 "Collection.y"
+#line 168 "Collection.y"
     {printf("{\n");}
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 169 "Collection.y"
+#line 168 "Collection.y"
     {printf("}\n");}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 169 "Collection.y"
+#line 168 "Collection.y"
     {;}
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 172 "Collection.y"
+#line 171 "Collection.y"
     {;}
     break;
 
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 173 "Collection.y"
+#line 172 "Collection.y"
     {;}
     break;
 
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 176 "Collection.y"
+#line 175 "Collection.y"
     {(yyval.str) = CopyStr(yytext);;}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 179 "Collection.y"
+#line 178 "Collection.y"
     {(yyval.str) = (yyvsp[(1) - (1)].str);}
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 180 "Collection.y"
+#line 179 "Collection.y"
     {(yyval.str) = AddToList((yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].str)); free((yyvsp[(3) - (3)].str));;}
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 183 "Collection.y"
+#line 182 "Collection.y"
     {(yyval.literal_struct) = malloc(sizeof(struct literal_with_type)); (yyval.literal_struct)->type = Int; (yyval.literal_struct)->value = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 184 "Collection.y"
+#line 183 "Collection.y"
     {(yyval.literal_struct) = malloc(sizeof(struct literal_with_type)); (yyval.literal_struct)->type = String; (yyval.literal_struct)->value = (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 185 "Collection.y"
+#line 184 "Collection.y"
     {(yyval.literal_struct) = malloc(sizeof(struct literal_with_type)); (yyval.literal_struct)->type = Set; (yyval.literal_struct)->value = (yyvsp[(1) - (1)].str);  ;}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 186 "Collection.y"
+#line 185 "Collection.y"
     {(yyval.literal_struct) = malloc(sizeof(struct literal_with_type)); (yyval.literal_struct)->type = Collection; (yyval.literal_struct)->value = (yyvsp[(1) - (1)].str);;}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 189 "Collection.y"
+#line 188 "Collection.y"
     {(yyval.str) = CopyINT(yytext);;}
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 192 "Collection.y"
+#line 191 "Collection.y"
     {(yyval.str) = CopyINT(yytext);;}
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 193 "Collection.y"
+#line 192 "Collection.y"
     {(yyval.str) = AddToList((yyvsp[(1) - (3)].str), yytext);;}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 196 "Collection.y"
+#line 195 "Collection.y"
     {(yyval.str) = copy_string_without_quotes(yytext);;}
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 197 "Collection.y"
+#line 196 "Collection.y"
     {(yyval.str) = AddToList((yyvsp[(1) - (3)].str), copy_string_without_quotes(yytext));;}
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 200 "Collection.y"
+#line 199 "Collection.y"
     {(yyval.str) = copy_string_without_quotes(yytext);;}
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 203 "Collection.y"
+#line 202 "Collection.y"
     {(yyval.str) = CopyINT("\0");;}
     break;
 
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 204 "Collection.y"
+#line 203 "Collection.y"
     {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 207 "Collection.y"
+#line 206 "Collection.y"
     {(yyval.str) = CopyINT("\0");;}
     break;
 
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 208 "Collection.y"
+#line 207 "Collection.y"
     {(yyval.str) = (yyvsp[(2) - (3)].str);;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1974 "Collection.tab.c"
+#line 1973 "Collection.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2182,7 +2181,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 299 "Collection.y"
+#line 298 "Collection.y"
 
 extern int yylineno;
 

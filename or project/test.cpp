@@ -115,8 +115,10 @@ int main()
 // Token: 'ID' = b
 // Token: 'symbol' = ,
 // Token: 'ID' = c
+// Token: 'symbol' = ,
+// Token: 'ID' = d
 // Token: 'symbol' = ;
-set<string> a, b, c;
+set<string> a, b, c, d;
 // Token: 'int'
 // Token: 'ID' = x
 // Token: 'symbol' = ;
@@ -146,14 +148,28 @@ set<int> l, g;
 // Token: 'symbol' = ,
 // Token: 'string' = "lol"
 // Token: '}'
+// Token: 'symbol' = +
+// Token: 'string' = "sdfsdfsf"
 // Token: 'symbol' = ;
-a = (make_literal<string>({"hi", "lol"}));
+a = (make_literal<string>({"hi", "lol"})) + (make_literal<string>({(make_literal("sdfsdfsf"))}));
 // Token: 'ID' = b
 // Token: 'symbol' = =
+// Token: 'string' = "asdknajksdhja"
+// Token: 'symbol' = +
+// Token: 'ID' = a
+// Token: 'symbol' = ;
+b = (make_literal<string>({(make_literal("asdknajksdhja"))})) + a;
+// Token: 'ID' = c
+// Token: 'symbol' = =
 // Token: '{'
+// Token: 'string' = "asda"
+// Token: 'symbol' = ,
+// Token: 'string' = "asdad"
+// Token: 'symbol' = ,
+// Token: 'string' = "lol"
 // Token: '}'
 // Token: 'symbol' = ;
-b = (make_literal<string>({}));
+c = (make_literal<string>({"asda", "asdad", "lol"}));
 // Token: 'ID' = x
 // Token: 'symbol' = =
 // Token: 'int' = 5
@@ -172,14 +188,39 @@ x = (make_literal(5));
 // Token: 'symbol' = ,
 // Token: 'int' = 6
 // Token: ']'
+// Token: 'symbol' = -
+// Token: 'int' = 6
 // Token: 'symbol' = ;
-g = (make_literal<int>({1, 2, 4, 5, 6}));
-// Token: 'ID' = g
+g = (make_literal<int>({1, 2, 4, 5, 6})) - (make_literal<int>({(make_literal(6))}));
+// Token: 'ID' = d
 // Token: 'symbol' = =
-// Token: '['
-// Token: ']'
+// Token: 'ID' = c
+// Token: 'symbol' = &
+// Token: 'ID' = a
 // Token: 'symbol' = ;
-g = (make_literal<int>({}));
+d = c * a;
+// Token: '{'
+// Token: 'string' = "hee"
+// Token: 'symbol' = ,
+// Token: 'string' = "rea"
+// Token: '}'
+// Token: 'symbol' = ;
+(make_literal<string>({"hee", "rea"}));
+// Token: 'output'
+// Token: 'string' = "a:  "
+// Token: 'ID' = a
+// Token: 'symbol' = ;
+printSetWithMessage(a, "a:  ");
+// Token: 'output'
+// Token: 'string' = "b:  "
+// Token: 'ID' = b
+// Token: 'symbol' = ;
+printSetWithMessage(b, "b:  ");
+// Token: 'output'
+// Token: 'string' = "d:  "
+// Token: 'ID' = d
+// Token: 'symbol' = ;
+printSetWithMessage(d, "d:  ");
 // Token: 'output'
 // Token: 'string' = "g:  "
 // Token: 'ID' = g

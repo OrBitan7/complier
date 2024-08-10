@@ -68,7 +68,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 87 "Collection.y"
+#line 86 "Collection.y"
 
         struct literal_with_type* literal_struct;
         struct ops_with_type* ops_struct;

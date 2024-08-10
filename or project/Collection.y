@@ -10,7 +10,6 @@ int yylex();
 #include "functions.h"
 extern char* yytext;
 extern int size;
-extern ops_link_list** global_ops_lists;
 
 FILE *outputFile, *inputFile;
 
@@ -127,14 +126,14 @@ assignment:
                     identifier '=' operation ';'            {assignment_op($1, $3);}
     ;
 operation_statement:
-                    operation ';'                           {}
+                    operation ';'                           {printf("%s;\n", $1->value);}
     ;
 operation:
-                    operation '+' expression                {}
-    |               operation '-' expression                {}
-    |               operation '*' expression                {}
-    |               operation '/' expression                {}
-    |               operation '&' expression                {}//collection and set onlly
+                    operation '+' expression                {$$ = operation_with_command($1,'+',$3);}
+    |               operation '-' expression                {$$ = operation_with_command($1,'-',$3);}
+    |               operation '*' expression                {$$ = operation_with_command($1,'*',$3);}
+    |               operation '/' expression                {$$ = operation_with_command($1,'/',$3);}
+    |               operation '&' expression                {$$ = operation_with_command($1,'&',$3);}//collection and set onlly
     |               '|' operation '|'                       {}//collection and set onlly
     |               '(' operation ')'                       {}
     |               expression                              {$$ = $1;}

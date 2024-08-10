@@ -14,128 +14,6 @@ int yylex();
 #include "functions.h"
 extern char *yytext;
 
-int size = 0;
-ops_link_list **global_ops_lists = NULL;
-
-// link list functions  ===========================================
-
-void add_new_ops_link_list(ops_tag tag, char *operation)
-{
-    size++;
-    if (size == 1)
-    {
-        global_ops_lists = malloc(size * sizeof(ops_link_list *));
-    }
-    else
-    {
-        global_ops_lists = realloc(global_ops_lists, size * sizeof(ops_link_list *));
-    }
-    if (global_ops_lists == NULL)
-    {
-        char msg[32];
-        sprintf(msg, "Failed to allocate memory for global_ops_lists\n");
-        yyerror(msg);
-    }
-
-    ops_link_list *new_list = (ops_link_list *)malloc(sizeof(ops_link_list));
-    if (new_list == NULL)
-    {
-        char msg[32];
-        sprintf(msg, "Failed to allocate memory for global_ops_lists\n");
-        yyerror(msg);
-    }
-
-    new_list->typ = tag;
-    new_list->op = strdup(operation);
-    new_list->head = new_list->tail = NULL;
-
-    global_ops_lists[size - 1] = new_list;
-}
-
-void add_node_to_last_ops_list_tail(char *operation)
-{
-    if (size == 0)
-    {
-        char msg[32];
-        sprintf(msg, "No ops_link_list exists in global_ops_lists\n");
-        yyerror(msg);
-    }
-
-    ops_link_list *last_list = global_ops_lists[size - 1];
-    ops *new_node = (ops *)malloc(sizeof(ops));
-    if (new_node == NULL)
-    {
-        char msg[32];
-        sprintf(msg, "Failed to allocate memory for new ops_node\n");
-        yyerror(msg);
-    }
-
-    new_node->op = strdup(operation);
-    new_node->next = NULL;
-
-    if (last_list->tail == NULL)
-    {
-        last_list->head = last_list->tail = new_node;
-    }
-    else
-    {
-        last_list->tail->next = new_node;
-        last_list->tail = new_node;
-    }
-}
-
-void add_node_to_last_ops_list_head(char *operation)
-{
-    if (size == 0)
-    {
-        char msg[32];
-        sprintf(msg, "No ops_link_list exists in global_ops_lists\n");
-        yyerror(msg);
-    }
-
-    ops_link_list *last_list = global_ops_lists[size - 1];
-    ops *new_node = (ops *)malloc(sizeof(ops));
-    if (new_node == NULL)
-    {
-        char msg[32];
-        sprintf(msg, "Failed to allocate memory for new ops_node\n");
-        yyerror(msg);
-    }
-
-    new_node->op = strdup(operation);
-    new_node->next = last_list->head;
-    last_list->head = new_node;
-
-    if (last_list->tail == NULL)
-    {
-        last_list->tail = new_node;
-    }
-}
-void free_global_ops_lists()
-{
-    for (int i = 0; i < size; i++)
-    {
-        ops_link_list *list = global_ops_lists[i];
-        ops *current = list->head;
-        ops *next_node;
-
-        while (current != NULL)
-        {
-            next_node = current->next;
-            free(current->op);
-            free(current);
-            current = next_node;
-        }
-
-        free(list->op);
-        free(list);
-    }
-
-    free(global_ops_lists);
-    global_ops_lists = NULL;
-    size = 0;
-}
-
 //	===	Code Generation Functions	===========================================
 // Generate a definition for a variable
 void GenerateDef(varType type, char *Vars)
@@ -635,3 +513,142 @@ ops_with_type *create_ops_with_type_literal(literal_with_type *literal)
     free(literal);
     return new_ops_with_type;
 }
+
+ops_with_type *operation_with_command(ops_with_type *first, char op, ops_with_type *seccond)
+{
+    char *new_op = malloc(4);
+    strcpy(new_op, " \0");
+    switch (op)
+    {
+    case '+':
+        if (first->type == String && seccond->type == String)
+        {
+            char msg[32];
+            sprintf(msg, "cant do + between Strings\n");
+            yyerror(msg);
+        }
+        new_op = concate_and_free(new_op, "+ ", 1, 0);
+        break;
+    case '-':
+        if (first->type == String && seccond->type == String)
+        {
+            char msg[32];
+            sprintf(msg, "cant do - between Strings\n");
+            yyerror(msg);
+        }
+        new_op = concate_and_free(new_op, "- ", 1, 0);
+        break;
+    case '*':
+        if (first->type == Set && seccond->type == Set)
+        {
+            char msg[32];
+            sprintf(msg, "cant do * between Set\n");
+            yyerror(msg);
+        }
+        if (first->type == Collection && seccond->type == Collection)
+        {
+            char msg[32];
+            sprintf(msg, "cant do * between Collection\n");
+            yyerror(msg);
+        }
+        if (first->type == String && seccond->type == String)
+        {
+            char msg[32];
+            sprintf(msg, "cant do * between String\n");
+            yyerror(msg);
+        }
+        new_op = concate_and_free(new_op, "* ", 1, 0);
+        break;
+    case '/':
+        if (first->type == Collection && seccond->type == Collection)
+        {
+            char msg[32];
+            sprintf(msg, "cant do / between Collection\n");
+            yyerror(msg);
+        }
+        if (first->type == Set && seccond->type == Set)
+        {
+            char msg[32];
+            sprintf(msg, "cant do / between Set\n");
+            yyerror(msg);
+        }
+        if (first->type == String && seccond->type == String)
+        {
+            char msg[32];
+            sprintf(msg, "cant do / between String\n");
+            yyerror(msg);
+        }
+        new_op = concate_and_free(new_op, "/ ", 1, 0);
+        break;
+    case '&':
+        if (first->type == String && seccond->type == String)
+        {
+            char msg[32];
+            sprintf(msg, "cant do & between String\n");
+            yyerror(msg);
+        }
+        if (first->type == Int && seccond->type == Int)
+        {
+            char msg[32];
+            sprintf(msg, "cant do & between Int\n");
+            yyerror(msg);
+        }
+        new_op = concate_and_free(new_op, "* ", 1, 0);
+        break;
+    default:
+        break;
+    }
+    ops_with_type *new_ops_with_type = (ops_with_type *)malloc(sizeof(ops_with_type));
+    if (new_ops_with_type == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for new ops_with_type\n");
+        yyerror(msg);
+    }
+    if ((first->type != seccond->type) && ((first->type + seccond->type) != 5))
+    {
+        char msg[32];
+        sprintf(msg, "Type mismatch in operation");
+        yyerror(msg);
+    }
+    if (((first->type == String) && (seccond->type == Collection)) || ((first->type == Collection) && (seccond->type == String)))
+    {
+        new_ops_with_type->type = Collection;
+        if (first->type == String) // change the first to collection
+        {
+            first->value = concate_and_free("(make_literal<string>({", first->value, 0, 1);
+            first->value = concate_and_free(first->value, "}))", 1, 0);
+        }
+        else // change the seccond to collection
+        {
+            seccond->value = concate_and_free("(make_literal<string>({", seccond->value, 0, 1);
+            seccond->value = concate_and_free(seccond->value, "}))", 1, 0);
+        }
+    }
+    else if (((first->type == Set) && (seccond->type == Int)) || ((first->type == Int) && (seccond->type == Set)))
+    {
+        new_ops_with_type->type = Set;
+        if (first->type == Int) // change the first to Set
+        {
+            first->value = concate_and_free("(make_literal<int>({", first->value, 0, 1);
+            first->value = concate_and_free(first->value, "}))", 1, 0);
+        }
+        else // change the seccond to Set
+        {
+            seccond->value = concate_and_free("(make_literal<int>({", seccond->value, 0, 1);
+            seccond->value = concate_and_free(seccond->value, "}))", 1, 0);
+        }
+    }
+    else
+    {
+        new_ops_with_type->type = first->type;
+    }
+
+    new_ops_with_type->value = malloc(2);
+    strcpy(new_ops_with_type->value, "\0");
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, first->value, 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, new_op, 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, seccond->value, 1, 0);
+    return new_ops_with_type;
+}
+
