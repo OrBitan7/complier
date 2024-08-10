@@ -16,7 +16,7 @@ output "d:  " d;
 output "g:  " g;
 output "g size:" |g|;
 
-if ( {"heaasd"} )
+if ( {"heaasd"} == a )
 {
     a = a;
     a = a ; 

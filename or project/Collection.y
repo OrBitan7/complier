@@ -96,12 +96,10 @@ varType getTyp(char* var)
 %type <literal_struct> literal
 %type <ops_struct> expression operation condition
 
-/* %type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
-%type <number> DECLERATION_CMD  */
+
 
 
 %%
-/* descriptions of expected inputs     corresponding actions (in C) */
 
 
 
@@ -116,6 +114,7 @@ statement:
     |               control                                 {}
     |               io                                      {}
     |               block                                   {}
+    |               else_                                   {}
     ;                                                
 declaration :       t_INT_CMD identifier_list ';'           {declaration($2, Int);}
     |               t_STRING_CMD identifier_list ';'        {declaration($2, String);}
@@ -133,8 +132,8 @@ operation:
     |               operation '-' expression                {$$ = operation_with_command($1,'-',$3);}
     |               operation '*' expression                {$$ = operation_with_command($1,'*',$3);}
     |               operation '/' expression                {$$ = operation_with_command($1,'/',$3);}
-    |               operation '&' expression                {$$ = operation_with_command($1,'&',$3);}//collection and set onlly
-    |               '|' operation '|'                       {$$ = size_set_or_collection($2);}//collection and set onlly
+    |               operation '&' expression                {$$ = operation_with_command($1,'&',$3);} //collection and set onlly
+    |               '|' operation '|'                       {$$ = size_set_or_collection($2);}        //collection and set onlly
     |               '(' operation ')'                       {$$ = add_bracets_to_op($2);}
     |               expression                              {$$ = $1;}
     ;
@@ -144,9 +143,12 @@ expression:
     ;       
 control:        
                     t_IF_CMD '(' condition ')'{printf("if(%s)\n",$3->value)} statement      {}
-    |               t_IF_CMD '(' condition ')'{printf("if(%s\n)",$3->value)} statement t_ELSE_CMD {printf("else\n",$3->value)} statement  {}
+    /* |               t_IF_CMD '(' condition ')'{printf("if(%s\n)",$3->value)} statement t_ELSE_CMD {printf("else\n")} statement  {} */
     |               t_WHILE_CMD '(' condition ')'{printf("while(%s)\n",$3->value);} statement                     {}
-    |               t_FOR_CMD '(' identifier ':' identifier ')' statement       {}
+    |               t_FOR_CMD '(' identifier ':' identifier ')' {for_loop($3,$5)} statement       {}
+    ;
+else_:
+                    t_ELSE_CMD {printf("else\n")}statement                   {}
     ;
 condition:
                     operation t_BIGGER operation            {$$ = condition_op($1, ">", $3);}
@@ -159,7 +161,7 @@ condition:
     |               operation                               {if($1->type == Set || $1->type == Collection) $$ = size_set_or_collection($1); else $$ = $1;}
     ;
 io:
-                    t_INPUT_CMD String_ identifier ';'     {}
+                    t_INPUT_CMD String_ identifier ';'     {printf("input_from_user($2,$3);\n");}
     |               t_OUTPUT_CMD String_ operation ';'     {GenerateOut($2, $3->value);}
     ;
 String_:
@@ -210,91 +212,6 @@ collection_literal:
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-/* OPERATOR :          OPERATORCOLL                                                {printf("%s\n",$1);}
-    |               PRINT
-    |               OPERATORSET                                                 {printf("%s\n",$1);}
-    |               LEN                                                         {printf("%s\n",$1);}    
-;
-LEN :               '|' VAR '|'                                                 {VarSer_Collection($2);
-                                                                                char* temp = concatenate_strings(NULL,'(',$2);
-                                                                                
-                                                                                $$ = concatenate_strings(temp,')',".size()");
-                                                                               }
-    |               '|' VAR '|' ';'                                             {VarSer_Collection($2);
-                                                                                char* temp = concatenate_strings(NULL,'(',$2);
-                                                                                 
-                                                                                $$ = concatenate_strings(temp,')',".size();");
-                                                                                }  
-;
-PRINT :		        t_OUTPUT_CMD STRING_  OPERATORCOLL ';'                      {GenerateOut($2, $3);}
-    |       		t_OUTPUT_CMD STRING_  OPERATORSET ';'                       {GenerateOut($2, $3);}
-    |       		t_OUTPUT_CMD STRING_  LEN ';'                               {GenerateOut($2, $3);}
-;
-OPERATORCOLL :		VAR '=' OPERATORCOLL ';'                                    {char* temp =  concatenate_strings($1,'=',$3);
-                                                                                $$ = concatenate_strings(temp,';',NULL);}
-	|				OPERATORCOLL '+' COLLECTION              					{$3=GenerateColAssign($3) ;$$ = concatenate_strings($1,'+',$3);}
-	|				OPERATORCOLL '-' COLLECTION 					            {$3 =GenerateColAssign($3) ;$$ = concatenate_strings($1,'-',$3);}
-	|				OPERATORCOLL '&' COLLECTION 					            {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'*',$3);}
-	|				OPERATORCOLL '-' STRING_  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
-	|				OPERATORCOLL '+' STRING_  			                        {char* temp =GenerateColAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
-    |               COLLECTION 										            {$$ = GenerateColAssign($1);}
-;
-OPERATORSET :		VAR '=' OPERATORSET ';'                                    {char* temp =  concatenate_strings($1,'=',$3);
-                                                                                $$ = concatenate_strings(temp,';',NULL);}
-    |               SET										                    {$$ = GenerateSetAssign($1);}
-	|				OPERATORSET '+' SET              	        				{$3 =GenerateSetAssign($3);  $$ = concatenate_strings($1,'+',$3);}
-	|				OPERATORSET '+' t_INT {$3=concatenate_strings(NULL,'*',yytext); char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'+',$3);}
-	|				OPERATORSET '-' SET 		        			            {char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
-	|				OPERATORSET '-' t_INT  {$3=concatenate_strings(NULL,'*',yytext); char* temp =GenerateSetAssign($3) ;$3 = temp;  $$ = concatenate_strings($1,'-',$3);}
-	|				OPERATORSET '&' SET         					            {$3 =GenerateSetAssign($3);  $$ = concatenate_strings($1,'*',$3);}
-;
-STRING_ :           t_STRING                                                    {$$ = CopyStr(yytext);}
-;
-/* CONDITIONS :        CONDITIONS  CONDITION
-    |               CONDITION 
-CONDITION :         CONDITIONINT         
-    |               CONDITIONCOLL
-    |               CONDITIONSET
-    |               CONDITIONSTR
-CONDITIONINT : 
-     
-CONDITIONCOLL :     CONDITIONCOLL CONDITION_OP COLLECTION
-    |               CONDITION
-CONDITIONSET :
-CONDITIONSTR : 
-CONDITION_OP :       */
-
-/* SET :		       
-					'[' ']'														{$$ = "*";}
-	|				'[' INT_LIST ']'											{$$ = concatenate_strings(NULL,'*',$2);}
-    |                VAR															{if(getTyp($1)==Set)
-                                                                                    $$=CopyStr($1);
-                                                                                else {
-                                                                                    yyerrok;  
-                                                                                }}
-;
-COLLECTION :		VAR															{if(getTyp($1)==Collection)
-                                                                                    $$=CopyStr($1);
-                                                                                else
-                                                                                    yyerrok;}
-	|				'{' '}'														{$$ = "\"";}
-	|				'{' STRING_LIST '}'											{$$ = $2;}
-;
-VARS :              VARS ',' VAR                                                {$$ = AddToList($1, $3);}
-    |               VAR                                                         {$$ = $1}
-;
-VAR :				t_ID														{$$ = CopyStr(yytext)}
-;
-STRING_LIST :		STRING_LIST ',' t_STRING									{$$ = AddStrToList($1, yytext);}
-	|				t_STRING													{$$ = CopyStr(yytext);}
-;
-INT_LIST :		    INT_LIST ',' t_INT									        {$$ = AddToList($1, yytext);}
-	|				t_INT													    {$$ = CopyINT(yytext);}
-; */ 
 
 %%
 extern int yylineno;
@@ -447,6 +364,19 @@ int main(void) {
     fprintf(stdout, "void printSetWithMessage(const string& mySTR, const string& message) {\n");
     fprintf(stdout, "    cout << message << \" \\\"\" << mySTR << \"\\\"\" << endl;\n");
     fprintf(stdout, "}\n");
+
+    
+    fprintf(stdout, "//input from the user for each identifier type\n");
+    fprintf(stdout, "void input_from_user(const string &massage, int &identifier) {\n");
+    fprintf(stdout, "    cout << massage;\n");
+    fprintf(stdout, "    cin >> identifier;\n");
+    fprintf(stdout, "}\n");
+
+    fprintf(stdout, "void input_from_user(const string &massage, string &identifier) {\n");
+    fprintf(stdout, "    cout << massage;\n");
+    fprintf(stdout, "    cin >> identifier;\n");
+    fprintf(stdout, "}\n");
+
 
     fprintf(stdout, "int main()\n");
     fprintf(stdout, "{\n");
