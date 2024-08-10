@@ -93,7 +93,7 @@ varType getTyp(char* var)
 %token <str> t_STRING t_ID t_INT
 %token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_LOWER t_BIGGER  
 %type <str> STRING_LIST INT_LIST identifier identifier_list number_literal string_literal
-%type <str> set_literal collection_literal
+%type <str> set_literal collection_literal String_
 %type <literal_struct> literal
 %type <ops_struct> expression operation
 
@@ -159,8 +159,11 @@ condition:
     |               operation                               {}
     ;
 io:
-                    t_INPUT_CMD t_STRING identifier ';'     {}
-    |               t_OUTPUT_CMD t_STRING operation ';'     {}
+                    t_INPUT_CMD String_ identifier ';'     {}
+    |               t_OUTPUT_CMD String_ operation ';'     {GenerateOut($2, $3->value);}
+    ;
+String_:
+                    t_STRING                                {$$ = copy_string_without_quotes(yytext);}
     ;
 block:
                     '{'{printf("{\n")} statement_list '}'{printf("}\n")}    {}

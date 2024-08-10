@@ -229,7 +229,7 @@ void GenerateDef(varType type, char *Vars)
 // print collection:
 void GenerateOut(char *str, char *element)
 {
-    printf("printSetWithMessage(%s, \"%s\");\n", element, str + 1);
+    printf("printSetWithMessage(%s, \"%s\");\n", element, str);
 }
 
 char *concatenate_strings(const char *first, char middle, const char *last)
