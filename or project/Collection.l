@@ -26,6 +26,7 @@ while                   { printf("// Token: 'while'\n"); return t_WHILE_CMD; }
 \<                      { printf("// Token: '<'\n"); return t_LOWER; }
 ==                      { printf("// Token: '=='\n"); return t_EQUAL; }
 \!                      { printf("// Token: '!'\n"); return t_NOT; }
+"else if"               { printf("// Token: 'else if'\n"); return t_ELSE_IF_CMD; }
 collection              { printf("// Token: 'collection'\n"); return t_COLLECTION_CMD; }
 set                     { printf("// Token: 'set'\n"); return t_SET_CMD; }
 int                     { printf("// Token: 'int'\n"); return t_INT_CMD; }

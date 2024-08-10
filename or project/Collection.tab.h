@@ -57,7 +57,8 @@
      t_INPUT_CMD = 273,
      t_OUTPUT_CMD = 274,
      t_LOWER = 275,
-     t_BIGGER = 276
+     t_BIGGER = 276,
+     t_ELSE_IF_CMD = 277
    };
 #endif
 
@@ -78,7 +79,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 82 "Collection.tab.h"
+#line 83 "Collection.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

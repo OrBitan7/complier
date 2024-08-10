@@ -674,7 +674,7 @@ ops_with_type * size_set_or_collection(ops_with_type* operation)
         sprintf(msg, "Failed to allocate memory for new ops_with_type\n");
         yyerror(msg);
     }
-    new_ops_with_type->type = operation->type;
+    new_ops_with_type->type = Int;
     new_ops_with_type->value = malloc(2);
     strcpy(new_ops_with_type->value, "\0");
     new_ops_with_type->value = concate_and_free(new_ops_with_type->value, "(", 1, 0);
@@ -735,4 +735,5 @@ ops_with_type * not_condition_op(ops_with_type * first)
     new_ops_with_type->value = concate_and_free(new_ops_with_type->value, " )", 1, 0);
     return new_ops_with_type;
 }
+
 

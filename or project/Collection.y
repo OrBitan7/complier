@@ -90,7 +90,7 @@ varType getTyp(char* var)
         int number;
         }         /* Yacc definitions */
 %token <str> t_STRING t_ID t_INT
-%token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_LOWER t_BIGGER  
+%token t_IF_CMD t_ELSE_CMD t_FOR_CMD t_WHILE_CMD t_BIGGER_EQUAL t_LOWER_EQUAL t_EQUAL t_NOT t_COLLECTION_CMD t_SET_CMD t_INT_CMD t_STRING_CMD t_INPUT_CMD t_OUTPUT_CMD t_LOWER t_BIGGER t_ELSE_IF_CMD 
 %type <str> STRING_LIST INT_LIST identifier identifier_list number_literal string_literal
 %type <str> set_literal collection_literal String_
 %type <literal_struct> literal
@@ -143,8 +143,8 @@ expression:
     |               identifier                              {$$ = create_ops_with_type_identifier($1);}
     ;       
 control:        
-                    t_IF_CMD '(' condition ')'{printf("if(%s)\n",$3->value);} statement    
-    |               t_IF_CMD '(' condition ')'{printf("if(%s\n)",$3->value);} statement t_ELSE_CMD {printf("else\n",$3->value);} statement  
+                    t_IF_CMD '(' condition ')'{printf("if(%s)\n",$3->value)} statement      {}
+    |               t_IF_CMD '(' condition ')'{printf("if(%s\n)",$3->value)} statement t_ELSE_CMD {printf("else\n",$3->value)} statement  {}
     |               t_WHILE_CMD '(' condition ')'{printf("while(%s)\n",$3->value);} statement                     {}
     |               t_FOR_CMD '(' identifier ':' identifier ')' statement       {}
     ;
@@ -156,7 +156,7 @@ condition:
     |               operation t_EQUAL operation             {$$ = condition_op($1, "==", $3);}
     |               t_NOT condition                         {$$ = not_condition_op($2);}
     |               '(' condition ')'                       {$$ = add_bracets_to_op($2);}
-    |               operation                               {}
+    |               operation                               {if($1->type == Set || $1->type == Collection) $$ = size_set_or_collection($1); else $$ = $1;}
     ;
 io:
                     t_INPUT_CMD String_ identifier ';'     {}

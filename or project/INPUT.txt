@@ -16,13 +16,15 @@ output "d:  " d;
 output "g:  " g;
 output "g size:" |g|;
 
-if ( 1 > 2 )
+if ( {"heaasd"} )
 {
     a = a;
     a = a ; 
 }
-while( ! (b == b) )
+else
 {
-b = b;
+a=a;
+
 }
-    
+
+a+a;

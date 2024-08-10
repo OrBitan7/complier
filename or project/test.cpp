@@ -243,11 +243,11 @@ printSetWithMessage(g, "g:  ");
 printSetWithMessage((g).size(), "g size:");
 // Token: 'if'
 // Token: '('
-// Token: 'int' = 1
-// Token: '>'
-// Token: 'int' = 2
+// Token: '{'
+// Token: 'string' = "heaasd"
+// Token: '}'
 // Token: ')'
-if((make_literal(1)) > (make_literal(2)))
+if(((make_literal<string>({"heaasd"}))).size())
 // Token: '{'
 // Token: 'ID' = a
 {
@@ -262,23 +262,5 @@ a = a;
 a = a;
 // Token: '}'
 }
-// Token: 'while'
-// Token: '('
-// Token: '!'
-// Token: '('
-// Token: 'ID' = b
-// Token: '=='
-// Token: 'ID' = b
-// Token: ')'
-// Token: ')'
-while(!( ( b == b ) ))
-// Token: '{'
-// Token: 'ID' = b
-{
-// Token: 'symbol' = =
-// Token: 'ID' = b
-// Token: 'symbol' = ;
-b = b;
-// Token: '}'
-}
+// Token: 'else'
 }
