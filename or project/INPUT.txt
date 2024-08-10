@@ -3,8 +3,8 @@ int x;
 int y,u;
 str o,afdsd;
 set l,g;
-a = {"hi","lol"} + "sdfsdfsf";
-b = "asdknajksdhja" + a;
+a = {"hi","lol"} + "sdfsdfsf" + {"hiiiiii","sdadasdasdsdsdaddsd"};
+b = ("asdknajksdhja" + a);
 c = {"asda","asdad","lol"};
 x = 5;
 g = [1,2,4,5,6] - 6;
@@ -14,3 +14,15 @@ output "a:  " a;
 output "b:  " b;
 output "d:  " d;
 output "g:  " g;
+output "g size:" |g|;
+
+if ( 1 > 2 )
+{
+    a = a;
+    a = a ; 
+}
+while( ! (b == b) )
+{
+b = b;
+}
+    

@@ -32,11 +32,11 @@ char *AddToList(char *list, char *str);
 void insert(char *varName, varType typ);
 varType getTyp(char *var);
 
-void GenerateDef(varType type, char *Vars);
+// void GenerateDef(varType type, char *Vars);
 // char *GenerateColAssign(char *input);
 void GenerateOut(char *str, char *element);
 
-char *concatenate_strings(const char *first, char middle, const char *last);
+// char *concatenate_strings(const char *first, char middle, const char *last);
 char *CopyINT(char *str);
 // char *GenerateSetAssign(char *input);
 int VarSer_Collection(char *var);
@@ -51,6 +51,12 @@ ops_with_type *create_ops_with_type_identifier(char *value);
 void assignment_op(char *identifier, ops_with_type *operation);
 ops_with_type *create_ops_with_type_literal(literal_with_type *literal);
 ops_with_type *operation_with_command(ops_with_type *first, char op, ops_with_type *seccond);
+ops_with_type * add_bracets_to_op(ops_with_type *operation);
+ops_with_type * size_set_or_collection(ops_with_type* operation);
+ops_with_type * condition_op(ops_with_type * first,char * op,ops_with_type * seccond);
+ops_with_type * not_condition_op(ops_with_type * first);
+
+
 
 
 void yyerror(char *s);

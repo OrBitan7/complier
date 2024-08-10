@@ -16,36 +16,36 @@ extern char *yytext;
 
 //	===	Code Generation Functions	===========================================
 // Generate a definition for a variable
-void GenerateDef(varType type, char *Vars)
-{
-    char *temp = malloc(strlen(Vars) + 1);
-    strcpy(temp, Vars);
-    char *token;
-    token = strtok(temp, "@");
-    while (token)
-    {
-        switch (type)
-        {
-        case Collection:
-            fprintf(stdout, "set<string> %s;\n", token);
-            break;
-        case Set:
-            fprintf(stdout, "set<int> %s;\n", token);
-            break;
-        case Int:
-            fprintf(stdout, "int %s;\n", token);
-            break;
-        case String:
-            fprintf(stdout, "string %s;\n", token);
-            break;
-        default:
-            break;
-        }
-        insert(token, type);
-        token = strtok(NULL, "@");
-    }
-    free(temp);
-}
+// void GenerateDef(varType type, char *Vars)
+// {
+//     char *temp = malloc(strlen(Vars) + 1);
+//     strcpy(temp, Vars);
+//     char *token;
+//     token = strtok(temp, "@");
+//     while (token)
+//     {
+//         switch (type)
+//         {
+//         case Collection:
+//             fprintf(stdout, "set<string> %s;\n", token);
+//             break;
+//         case Set:
+//             fprintf(stdout, "set<int> %s;\n", token);
+//             break;
+//         case Int:
+//             fprintf(stdout, "int %s;\n", token);
+//             break;
+//         case String:
+//             fprintf(stdout, "string %s;\n", token);
+//             break;
+//         default:
+//             break;
+//         }
+//         insert(token, type);
+//         token = strtok(NULL, "@");
+//     }
+//     free(temp);
+// }
 
 // GenerateColAssign done
 // char *GenerateColAssign(char *input)
@@ -110,34 +110,34 @@ void GenerateOut(char *str, char *element)
     printf("printSetWithMessage(%s, \"%s\");\n", element, str);
 }
 
-char *concatenate_strings(const char *first, char middle, const char *last)
-{
+// char *concatenate_strings(const char *first, char middle, const char *last)
+// {
 
-    size_t length = 1;
-    if (first)
-        length += strlen(first);
-    if (last)
-        length += strlen(last);
-    char *result = (char *)malloc(length + 1);
-    if (!result)
-        return NULL;
+//     size_t length = 1;
+//     if (first)
+//         length += strlen(first);
+//     if (last)
+//         length += strlen(last);
+//     char *result = (char *)malloc(length + 1);
+//     if (!result)
+//         return NULL;
 
-    result[0] = '\0';
+//     result[0] = '\0';
 
-    if (first)
-        strcat(result, first);
+//     if (first)
+//         strcat(result, first);
 
-    int temp = strlen(result);
-    result[temp] = middle;
-    result[temp + 1] = '\0';
+//     int temp = strlen(result);
+//     result[temp] = middle;
+//     result[temp + 1] = '\0';
 
-    if (last)
-        strcat(result, last);
+//     if (last)
+//         strcat(result, last);
 
-    result[strlen(result)] = '\0';
+//     result[strlen(result)] = '\0';
 
-    return result;
-}
+//     return result;
+// }
 
 char *CopyINT(char *str)
 {
@@ -649,6 +649,90 @@ ops_with_type *operation_with_command(ops_with_type *first, char op, ops_with_ty
     new_ops_with_type->value = concate_and_free(new_ops_with_type->value, first->value, 1, 0);
     new_ops_with_type->value = concate_and_free(new_ops_with_type->value, new_op, 1, 0);
     new_ops_with_type->value = concate_and_free(new_ops_with_type->value, seccond->value, 1, 0);
+    return new_ops_with_type;
+}
+
+ops_with_type * add_bracets_to_op(ops_with_type *operation)
+{
+    operation->value = concate_and_free("( ", operation->value, 0, 1);
+    operation->value = concate_and_free(operation->value, " )", 1, 0);
+    return operation;
+}
+
+ops_with_type * size_set_or_collection(ops_with_type* operation)
+{
+    if (operation->type != Collection && operation->type != Set)
+    {
+        char msg[32];
+        sprintf(msg, "cant do size | | on non collection or set\n");
+        yyerror(msg);
+    }
+    ops_with_type *new_ops_with_type = (ops_with_type *)malloc(sizeof(ops_with_type));
+    if (new_ops_with_type == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for new ops_with_type\n");
+        yyerror(msg);
+    }
+    new_ops_with_type->type = operation->type;
+    new_ops_with_type->value = malloc(2);
+    strcpy(new_ops_with_type->value, "\0");
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, "(", 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, operation->value, 1, 2);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, ").size()", 1, 0);
+    return new_ops_with_type;
+}
+
+ops_with_type * condition_op(ops_with_type * first,char * op,ops_with_type * seccond)
+{
+    if (first->type != seccond->type)
+    {
+        char msg[32];
+        sprintf(msg, "Type mismatch in condition");
+        yyerror(msg);
+    }
+    if (first->type == Collection ||first->type == Set)
+    {
+        if(strcmp(op,"==") != 0)
+        {
+            char msg[32];
+            sprintf(msg, "cant do condition on Collection or Set");
+            yyerror(msg);
+        }
+    }
+    ops_with_type *new_ops_with_type = (ops_with_type *)malloc(sizeof(ops_with_type));
+    if (new_ops_with_type == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for new ops_with_type\n");
+        yyerror(msg);
+    }
+    new_ops_with_type->type = first->type;
+    new_ops_with_type->value = malloc(2);
+    strcpy(new_ops_with_type->value, "\0");
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, first->value, 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, " ", 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, op, 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, " ", 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, seccond->value, 1, 0);
+    return new_ops_with_type;
+}
+
+ops_with_type * not_condition_op(ops_with_type * first)
+{
+    ops_with_type * new_ops_with_type = (ops_with_type *)malloc(sizeof(ops_with_type));
+    if (new_ops_with_type == NULL)
+    {
+        char msg[32];
+        sprintf(msg, "Failed to allocate memory for new ops_with_type\n");
+        yyerror(msg);
+    }
+    new_ops_with_type->type = first->type;
+    new_ops_with_type->value = malloc(2);
+    strcpy(new_ops_with_type->value, "\0");
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, "!( ", 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, first->value, 1, 0);
+    new_ops_with_type->value = concate_and_free(new_ops_with_type->value, " )", 1, 0);
     return new_ops_with_type;
 }
 

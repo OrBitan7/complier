@@ -150,15 +150,23 @@ set<int> l, g;
 // Token: '}'
 // Token: 'symbol' = +
 // Token: 'string' = "sdfsdfsf"
+// Token: 'symbol' = +
+// Token: '{'
+// Token: 'string' = "hiiiiii"
+// Token: 'symbol' = ,
+// Token: 'string' = "sdadasdasdsdsdaddsd"
+// Token: '}'
 // Token: 'symbol' = ;
-a = (make_literal<string>({"hi", "lol"})) + (make_literal<string>({(make_literal("sdfsdfsf"))}));
+a = (make_literal<string>({"hi", "lol"})) + (make_literal<string>({(make_literal("sdfsdfsf"))})) + (make_literal<string>({"hiiiiii", "sdadasdasdsdsdaddsd"}));
 // Token: 'ID' = b
 // Token: 'symbol' = =
+// Token: '('
 // Token: 'string' = "asdknajksdhja"
 // Token: 'symbol' = +
 // Token: 'ID' = a
+// Token: ')'
 // Token: 'symbol' = ;
-b = (make_literal<string>({(make_literal("asdknajksdhja"))})) + a;
+b = ( (make_literal<string>({(make_literal("asdknajksdhja"))})) + a );
 // Token: 'ID' = c
 // Token: 'symbol' = =
 // Token: '{'
@@ -226,4 +234,51 @@ printSetWithMessage(d, "d:  ");
 // Token: 'ID' = g
 // Token: 'symbol' = ;
 printSetWithMessage(g, "g:  ");
+// Token: 'output'
+// Token: 'string' = "g size:"
+// Token: 'symbol' = |
+// Token: 'ID' = g
+// Token: 'symbol' = |
+// Token: 'symbol' = ;
+printSetWithMessage((g).size(), "g size:");
+// Token: 'if'
+// Token: '('
+// Token: 'int' = 1
+// Token: '>'
+// Token: 'int' = 2
+// Token: ')'
+if((make_literal(1)) > (make_literal(2)))
+// Token: '{'
+// Token: 'ID' = a
+{
+// Token: 'symbol' = =
+// Token: 'ID' = a
+// Token: 'symbol' = ;
+a = a;
+// Token: 'ID' = a
+// Token: 'symbol' = =
+// Token: 'ID' = a
+// Token: 'symbol' = ;
+a = a;
+// Token: '}'
+}
+// Token: 'while'
+// Token: '('
+// Token: '!'
+// Token: '('
+// Token: 'ID' = b
+// Token: '=='
+// Token: 'ID' = b
+// Token: ')'
+// Token: ')'
+while(!( ( b == b ) ))
+// Token: '{'
+// Token: 'ID' = b
+{
+// Token: 'symbol' = =
+// Token: 'ID' = b
+// Token: 'symbol' = ;
+b = b;
+// Token: '}'
+}
 }

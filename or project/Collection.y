@@ -94,7 +94,7 @@ varType getTyp(char* var)
 %type <str> STRING_LIST INT_LIST identifier identifier_list number_literal string_literal
 %type <str> set_literal collection_literal String_
 %type <literal_struct> literal
-%type <ops_struct> expression operation
+%type <ops_struct> expression operation condition
 
 /* %type <str> VAR COLLECTION VARS OPERATORCOLL  SET OPERATORSET LEN
 %type <number> DECLERATION_CMD  */
@@ -134,8 +134,8 @@ operation:
     |               operation '*' expression                {$$ = operation_with_command($1,'*',$3);}
     |               operation '/' expression                {$$ = operation_with_command($1,'/',$3);}
     |               operation '&' expression                {$$ = operation_with_command($1,'&',$3);}//collection and set onlly
-    |               '|' operation '|'                       {}//collection and set onlly
-    |               '(' operation ')'                       {}
+    |               '|' operation '|'                       {$$ = size_set_or_collection($2);}//collection and set onlly
+    |               '(' operation ')'                       {$$ = add_bracets_to_op($2);}
     |               expression                              {$$ = $1;}
     ;
 expression:
@@ -143,18 +143,19 @@ expression:
     |               identifier                              {$$ = create_ops_with_type_identifier($1);}
     ;       
 control:        
-                    t_IF_CMD '(' condition ')' statement    {}
-    |               t_IF_CMD '(' condition ')' statement t_ELSE_CMD statement   {}
-    |               t_WHILE_CMD '(' condition ')' statement                     {}
+                    t_IF_CMD '(' condition ')'{printf("if(%s)\n",$3->value);} statement    
+    |               t_IF_CMD '(' condition ')'{printf("if(%s\n)",$3->value);} statement t_ELSE_CMD {printf("else\n",$3->value);} statement  
+    |               t_WHILE_CMD '(' condition ')'{printf("while(%s)\n",$3->value);} statement                     {}
     |               t_FOR_CMD '(' identifier ':' identifier ')' statement       {}
     ;
 condition:
-                    operation t_BIGGER operation            {}
-    |               operation t_LOWER operation             {}
-    |               operation t_BIGGER_EQUAL operation      {}
-    |               operation t_LOWER_EQUAL operation       {}
-    |               operation t_EQUAL operation             {}
-    |               t_NOT condition                         {}
+                    operation t_BIGGER operation            {$$ = condition_op($1, ">", $3);}
+    |               operation t_LOWER operation             {$$ = condition_op($1, "<", $3);}
+    |               operation t_BIGGER_EQUAL operation      {$$ = condition_op($1, ">=", $3);}
+    |               operation t_LOWER_EQUAL operation       {$$ = condition_op($1, "<=", $3);}
+    |               operation t_EQUAL operation             {$$ = condition_op($1, "==", $3);}
+    |               t_NOT condition                         {$$ = not_condition_op($2);}
+    |               '(' condition ')'                       {$$ = add_bracets_to_op($2);}
     |               operation                               {}
     ;
 io:
