@@ -19,7 +19,6 @@ void GenerateOut(char *str, char *element)
     printf("printSetWithMessage(%s, \"%s\");\n", element, str);
 }
 
-
 char *CopyINT(char *str)
 {
     char *new, *p;
@@ -50,7 +49,6 @@ int VarExist(char *var)
     }
     return 1;
 }
-
 
 void declaration(char *identifier_list, varType type)
 {
@@ -216,8 +214,27 @@ ops_with_type *create_ops_with_type_literal(literal_with_type *literal)
         yyerror(msg);
     }
     new_ops_with_type->type = literal->type;
-    new_ops_with_type->value = malloc(15);
-    strcpy(new_ops_with_type->value, "(make_literal");
+    switch (literal->type)
+    {
+    case Collection:
+        new_ops_with_type->value = malloc(39);
+        strcpy(new_ops_with_type->value, "(make_literal");
+        break;
+    case Set:
+        new_ops_with_type->value = malloc(36);
+        strcpy(new_ops_with_type->value, "(make_literal");
+        break;
+    case Int:
+        new_ops_with_type->value = malloc(31);
+        strcpy(new_ops_with_type->value, "(make_literal");
+        break;
+    case String:
+        new_ops_with_type->value = malloc(34);
+        strcpy(new_ops_with_type->value, "(make_literal");
+        break;
+    default:
+        break;
+    }
     char *temp;
     char *token;
     char *comma;
@@ -434,14 +451,14 @@ ops_with_type *operation_with_command(ops_with_type *first, char op, ops_with_ty
     return new_ops_with_type;
 }
 
-ops_with_type * add_bracets_to_op(ops_with_type *operation)
+ops_with_type *add_bracets_to_op(ops_with_type *operation)
 {
     operation->value = concate_and_free("( ", operation->value, 0, 1);
     operation->value = concate_and_free(operation->value, " )", 1, 0);
     return operation;
 }
 
-ops_with_type * size_set_or_collection(ops_with_type* operation)
+ops_with_type *size_set_or_collection(ops_with_type *operation)
 {
     if (operation->type != Collection && operation->type != Set)
     {
@@ -465,7 +482,7 @@ ops_with_type * size_set_or_collection(ops_with_type* operation)
     return new_ops_with_type;
 }
 
-ops_with_type * condition_op(ops_with_type * first,char * op,ops_with_type * seccond)
+ops_with_type *condition_op(ops_with_type *first, char *op, ops_with_type *seccond)
 {
     if (first->type != seccond->type)
     {
@@ -473,9 +490,9 @@ ops_with_type * condition_op(ops_with_type * first,char * op,ops_with_type * sec
         sprintf(msg, "Type mismatch in condition");
         yyerror(msg);
     }
-    if (first->type == Collection ||first->type == Set)
+    if (first->type == Collection || first->type == Set)
     {
-        if(strcmp(op,"==") != 0)
+        if (strcmp(op, "==") != 0)
         {
             char msg[32];
             sprintf(msg, "cant do condition on Collection or Set");
@@ -500,9 +517,9 @@ ops_with_type * condition_op(ops_with_type * first,char * op,ops_with_type * sec
     return new_ops_with_type;
 }
 
-ops_with_type * not_condition_op(ops_with_type * first)
+ops_with_type *not_condition_op(ops_with_type *first)
 {
-    ops_with_type * new_ops_with_type = (ops_with_type *)malloc(sizeof(ops_with_type));
+    ops_with_type *new_ops_with_type = (ops_with_type *)malloc(sizeof(ops_with_type));
     if (new_ops_with_type == NULL)
     {
         char msg[32];
@@ -518,14 +535,24 @@ ops_with_type * not_condition_op(ops_with_type * first)
     return new_ops_with_type;
 }
 
-void for_loop(char * identifier_runner,char * identifier_base)
+void for_loop(char *identifier_runner, char *identifier_base)
 {
-    if((getTyp(identifier_runner) != Int && getTyp(identifier_base) != Set) && (getTyp(identifier_runner) != String && getTyp(identifier_base) != Collection))
+    if ((getTyp(identifier_runner) != Int && getTyp(identifier_base) != Set) && (getTyp(identifier_runner) != String && getTyp(identifier_base) != Collection))
     {
         char msg[32];
         sprintf(msg, "for loop must be on 'int : set' or 'string : collection'\n");
         yyerror(msg);
     }
-    printf("for(%s : %s)\n",identifier_runner,identifier_base);
+    switch (getTyp(identifier_runner))
+    {
+        case Int:
+            printf("for(const int& %s : %s)\n", identifier_runner, identifier_base);
+            break;
+            case String:
+            printf("for(const string& %s : %s)\n", identifier_runner, identifier_base);
+            break;
+    }
 }
-//insert to main YACC
+    // insert to main YACC
+
+

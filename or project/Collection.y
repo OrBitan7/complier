@@ -128,18 +128,18 @@ operation_statement:
                     operation ';'                           {printf("%s;\n", $1->value);}
     ;
 operation:
-                    operation '+' expression                {$$ = operation_with_command($1,'+',$3);}
-    |               operation '-' expression                {$$ = operation_with_command($1,'-',$3);}
-    |               operation '*' expression                {$$ = operation_with_command($1,'*',$3);}
-    |               operation '/' expression                {$$ = operation_with_command($1,'/',$3);}
-    |               operation '&' expression                {$$ = operation_with_command($1,'&',$3);} //collection and set onlly
-    |               '|' operation '|'                       {$$ = size_set_or_collection($2);}        //collection and set onlly
-    |               '(' operation ')'                       {$$ = add_bracets_to_op($2);}
-    |               expression                              {$$ = $1;}
+                    operation '+' expression                 {$$ = operation_with_command($1,'+',$3);}
+    |               operation '-' expression                 {$$ = operation_with_command($1,'-',$3);}
+    |               operation '*' expression                 {$$ = operation_with_command($1,'*',$3);}
+    |               operation '/' expression                 {$$ = operation_with_command($1,'/',$3);}
+    |               operation '&' expression                 {$$ = operation_with_command($1,'&',$3);} //collection and set onlly
+    |               '|' operation '|'                        {$$ = size_set_or_collection($2);}        //collection and set onlly
+    |               expression                               {$$ = $1;}
     ;
 expression:
-                    literal                                 {$$ = create_ops_with_type_literal($1);}
-    |               identifier                              {$$ = create_ops_with_type_identifier($1);}
+                    literal                                  {$$ = create_ops_with_type_literal($1);}
+    |               identifier                               {$$ = create_ops_with_type_identifier($1);}
+    |              '(' operation ')'                         {$$ = add_bracets_to_op($2);}
     ;       
 control:        
                     t_IF_CMD '(' condition ')'{printf("if(%s)\n",$3->value)} statement      {}
@@ -148,7 +148,7 @@ control:
     |               t_FOR_CMD '(' identifier ':' identifier ')' {for_loop($3,$5)} statement       {}
     ;
 else_:
-                    t_ELSE_CMD {printf("else\n")}statement                   {}
+                    t_ELSE_CMD {printf("else\n")}statement  {}
     ;
 condition:
                     operation t_BIGGER operation            {$$ = condition_op($1, ">", $3);}
@@ -161,8 +161,9 @@ condition:
     |               operation                               {if($1->type == Set || $1->type == Collection) $$ = size_set_or_collection($1); else $$ = $1;}
     ;
 io:
-                    t_INPUT_CMD String_ identifier ';'     {printf("input_from_user($2,$3);\n");}
-    |               t_OUTPUT_CMD String_ operation ';'     {GenerateOut($2, $3->value);}
+                    t_INPUT_CMD String_ identifier ';'      {printf("input_from_user(make_literal(\"%s\"),%s);\n",$2,$3);}
+    |               t_OUTPUT_CMD String_ operation ';'      {GenerateOut($2, $3->value);}
+    |               t_OUTPUT_CMD String_  ';'               {printf("printSetWithMessage(\"%s\");\n",$2);}
     ;
 String_:
                     t_STRING                                {$$ = copy_string_without_quotes(yytext);}
@@ -240,6 +241,8 @@ int main(void) {
     fprintf(stdout, "#include <iostream>\n");
     fprintf(stdout, "#include <string>\n");
     fprintf(stdout, "#include <set>\n\n");
+    fprintf(stdout, "#include <sstream>\n\n");
+    fprintf(stdout, "#include <algorithm>\n\n");
     fprintf(stdout, "#include <initializer_list>\n\n");
     
     fprintf(stdout, "using namespace std;\n\n");
@@ -377,7 +380,93 @@ int main(void) {
     fprintf(stdout, "    cin >> identifier;\n");
     fprintf(stdout, "}\n");
 
+    fprintf(stdout, "void input_from_user(const string &message, set<string> &words) {\n");
+    fprintf(stdout, "    cout << message;\n");
+    fprintf(stdout, "    cin.clear();\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    string temp;\n");
+    fprintf(stdout, "    getline(cin, temp);\n");
+    fprintf(stdout, "    words.clear();\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    if (!temp.empty() && (temp.front() == '{' && temp.back() == '}')) {\n");
+    fprintf(stdout, "        temp = temp.substr(1, temp.size() - 2);\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    string temp_word;\n");
+    fprintf(stdout, "    bool in_quotes = false;\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    for (size_t i = 0; i < temp.size(); ++i) {\n");
+    fprintf(stdout, "        if (temp[i] == '\\\"') {\n");
+    fprintf(stdout, "            in_quotes = !in_quotes;\n");
+    fprintf(stdout, "        } else if (temp[i] == ',' && !in_quotes) {\n");
+    fprintf(stdout, "            temp_word.erase(temp_word.find_last_not_of(\" \\t\") + 1);\n");
+    fprintf(stdout, "            if (!temp_word.empty()) {\n");
+    fprintf(stdout, "                if (temp_word.front() != '\\\"' && temp_word.back() != '\\\"') {\n");
+    fprintf(stdout, "                    words.insert(temp_word);\n");
+    fprintf(stdout, "                } else {\n");
+    fprintf(stdout, "                    temp_word.erase(0, temp_word.find_first_not_of('\\\"'));\n");
+    fprintf(stdout, "                    temp_word.erase(temp_word.find_last_not_of('\\\"') + 1);\n");
+    fprintf(stdout, "                    if (!temp_word.empty()) {\n");
+    fprintf(stdout, "                        words.insert(temp_word);\n");
+    fprintf(stdout, "                    }\n");
+    fprintf(stdout, "                }\n");
+    fprintf(stdout, "                temp_word.clear();\n");
+    fprintf(stdout, "            }\n");
+    fprintf(stdout, "        } else if (temp[i] == ' ' && !in_quotes) {\n");
+    fprintf(stdout, "            continue;\n");
+    fprintf(stdout, "        } else {\n");
+    fprintf(stdout, "            temp_word += temp[i];\n");
+    fprintf(stdout, "        }\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    temp_word.erase(temp_word.find_last_not_of(\" \\t\") + 1);\n");
+    fprintf(stdout, "    if (!temp_word.empty()) {\n");
+    fprintf(stdout, "        if (temp_word.front() != '\\\"' && temp_word.back() != '\\\"') {\n");
+    fprintf(stdout, "            words.insert(temp_word);\n");
+    fprintf(stdout, "        } else {\n");
+    fprintf(stdout, "            temp_word.erase(0, temp_word.find_first_not_of('\\\"'));\n");
+    fprintf(stdout, "            temp_word.erase(temp_word.find_last_not_of('\\\"') + 1);\n");
+    fprintf(stdout, "            if (!temp_word.empty()) {\n");
+    fprintf(stdout, "                words.insert(temp_word);\n");
+    fprintf(stdout, "            }\n");
+    fprintf(stdout, "        }\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "}\n");
 
+    fprintf(stdout, "void input_from_user(const string &message, set<int> &numbers) {\n");
+    fprintf(stdout, "    cout << message;\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    cin.clear();\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    string temp;\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    getline(cin, temp);\n");
+    fprintf(stdout, "    numbers.clear();\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    if (!temp.empty() && temp.front() == '[' && temp.back() == ']') {\n");
+    fprintf(stdout, "        temp = temp.substr(1, temp.size() - 2);\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "    string temp_number;\n");
+    fprintf(stdout, "    for (size_t i = 0; i < temp.size(); ++i) {\n");
+    fprintf(stdout, "        if (isdigit(temp[i]) || (temp[i] == '-' && i + 1 < temp.size() && isdigit(temp[i + 1]))) {\n");
+    fprintf(stdout, "            temp_number += temp[i];\n");
+    fprintf(stdout, "        } else if (temp[i] == ',' || temp[i] == ' ') {\n");
+    fprintf(stdout, "            if (!temp_number.empty()) {\n");
+    fprintf(stdout, "                numbers.insert(stoi(temp_number));\n");
+    fprintf(stdout, "                temp_number.clear();\n");
+    fprintf(stdout, "            }\n");
+    fprintf(stdout, "        }\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "    if (!temp_number.empty()) {\n");
+    fprintf(stdout, "        numbers.insert(stoi(temp_number));\n");
+    fprintf(stdout, "    }\n");
+    fprintf(stdout, "}\n");
+
+
+    fprintf(stdout, "void printSetWithMessage(const string& message) {\n");
+    fprintf(stdout, "    cout << message << endl;\n");
+    fprintf(stdout, "}\n");
+    
     fprintf(stdout, "int main()\n");
     fprintf(stdout, "{\n");
     yyparse();
