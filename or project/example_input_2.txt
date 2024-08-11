@@ -1,3 +1,5 @@
+output "=============EXAMPLE 2 :=============";
+{
 collection highTech, gaming;
 collection software, hardware, industrial;
 highTech = {"Apple", "Google", "Microsoft", "Nvidia", "Adobe", "Oracle", "Sap"};
@@ -22,3 +24,4 @@ output "Companies that do software or hardware:" software + hardware;
 if (industrial & software == {})
 output "No industrial companies sell software";
 output "Companies that sell Hardware but not Gaming Software:" hardware - ( software & gaming ) ;
+}

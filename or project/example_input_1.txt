@@ -1,3 +1,5 @@
+output "=============EXAMPLE 1 :=============";
+{
 collection classs, highGradeStudents, lowGradeStudents, avgGradeStudents;
 set grades, gradesHigh;
 int grd;
@@ -27,3 +29,4 @@ for (student : lowGradeStudents)
 output "Get better next time:" student;
 avgGradeStudents = classs - highGradeStudents - lowGradeStudents;
 output "Students with good grades:" avgGradeStudents;
+}

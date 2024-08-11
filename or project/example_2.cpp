@@ -150,7 +150,12 @@ void input_from_user(const string &massage, string &identifier)
 void input_from_user(const string &message, set<string> &words)
 {
     cout << message;
-    cin.clear();
+
+    // Skip any leftover newline characters from previous input
+    if (cin.peek() == '\n')
+    {
+        cin.ignore();
+    }
 
     string temp;
     getline(cin, temp);
@@ -166,7 +171,7 @@ void input_from_user(const string &message, set<string> &words)
 
     for (size_t i = 0; i < temp.size(); ++i)
     {
-        if (temp[i] == '\"')
+        if (temp[i] == '"')
         {
             in_quotes = !in_quotes;
         }
@@ -175,14 +180,14 @@ void input_from_user(const string &message, set<string> &words)
             temp_word.erase(temp_word.find_last_not_of(" \t") + 1);
             if (!temp_word.empty())
             {
-                if (temp_word.front() != '\"' && temp_word.back() != '\"')
+                if (temp_word.front() != '"' && temp_word.back() != '"')
                 {
                     words.insert(temp_word);
                 }
                 else
                 {
-                    temp_word.erase(0, temp_word.find_first_not_of('\"'));
-                    temp_word.erase(temp_word.find_last_not_of('\"') + 1);
+                    temp_word.erase(0, temp_word.find_first_not_of('"'));
+                    temp_word.erase(temp_word.find_last_not_of('"') + 1);
                     if (!temp_word.empty())
                     {
                         words.insert(temp_word);
@@ -203,14 +208,14 @@ void input_from_user(const string &message, set<string> &words)
     temp_word.erase(temp_word.find_last_not_of(" \t") + 1);
     if (!temp_word.empty())
     {
-        if (temp_word.front() != '\"' && temp_word.back() != '\"')
+        if (temp_word.front() != '"' && temp_word.back() != '"')
         {
             words.insert(temp_word);
         }
         else
         {
-            temp_word.erase(0, temp_word.find_first_not_of('\"'));
-            temp_word.erase(temp_word.find_last_not_of('\"') + 1);
+            temp_word.erase(0, temp_word.find_first_not_of('"'));
+            temp_word.erase(temp_word.find_last_not_of('"') + 1);
             if (!temp_word.empty())
             {
                 words.insert(temp_word);
@@ -261,28 +266,31 @@ void printSetWithMessage(const string &message)
 }
 int main()
 {
-    set<string> highTech, gaming;
-    set<string> software, hardware, industrial;
-    highTech = (make_literal<string>({"Apple", "Google", "Microsoft", "Nvidia", "Adobe", "Oracle", "Sap"}));
-    highTech = highTech + (make_literal<string>({"PayPal", "Nice", "Amdocs", "OpenAI", "Ford", "Mercedes"}));
-    gaming = (make_literal<string>({"Sony", "Apple", "Microsoft", "Google", "Nintendo", "Playtika"}));
-    software = (make_literal<string>({"Apple", "Microsoft", "Oracle", "Google", "Sap", "PayPal", "Playtika", "Amdocs", "OpenAI"}));
-    hardware = (make_literal<string>({"Apple", "Nice", "Sony", "Google", "Cummins", "Nucor", "Microsoft", "Nvidia"}));
-    industrial = (make_literal<string>({"Caterpillar", "Cummins", "Nucor"}));
-    printSetWithMessage(software * hardware, "Companies that sell hardware & software:");
-    set<string> highSW;
-    highSW = software * highTech;
-    if (highSW == software)
-        printSetWithMessage(highSW, "All software companies are high-tech companies:");
-    else
-        printSetWithMessage(highSW, "Not all software companies are high-tech companies:");
-    highSW = highSW + (make_literal<string>({(make_literal("Playtika"))}));
-    if (highSW == software)
-        printSetWithMessage(highSW, "Now all software companies are high-tech companies:");
-    else
-        printSetWithMessage(highSW, "Not all software companies are high-tech companies:");
-    printSetWithMessage(software + hardware, "Companies that do software or hardware:");
-    if (industrial * software == (make_literal<string>({})))
-        printSetWithMessage("No industrial companies sell software");
-    printSetWithMessage(hardware - (software * gaming), "Companies that sell Hardware but not Gaming Software:");
+    printSetWithMessage("=============EXAMPLE 2 :=============");
+    {
+        set<string> highTech, gaming;
+        set<string> software, hardware, industrial;
+        highTech = (make_literal<string>({"Apple", "Google", "Microsoft", "Nvidia", "Adobe", "Oracle", "Sap"}));
+        highTech = highTech + (make_literal<string>({"PayPal", "Nice", "Amdocs", "OpenAI", "Ford", "Mercedes"}));
+        gaming = (make_literal<string>({"Sony", "Apple", "Microsoft", "Google", "Nintendo", "Playtika"}));
+        software = (make_literal<string>({"Apple", "Microsoft", "Oracle", "Google", "Sap", "PayPal", "Playtika", "Amdocs", "OpenAI"}));
+        hardware = (make_literal<string>({"Apple", "Nice", "Sony", "Google", "Cummins", "Nucor", "Microsoft", "Nvidia"}));
+        industrial = (make_literal<string>({"Caterpillar", "Cummins", "Nucor"}));
+        printSetWithMessage(software * hardware, "Companies that sell hardware & software:");
+        set<string> highSW;
+        highSW = software * highTech;
+        if (highSW == software)
+            printSetWithMessage(highSW, "All software companies are high-tech companies:");
+        else
+            printSetWithMessage(highSW, "Not all software companies are high-tech companies:");
+        highSW = highSW + (make_literal<string>({(make_literal("Playtika"))}));
+        if (highSW == software)
+            printSetWithMessage(highSW, "Now all software companies are high-tech companies:");
+        else
+            printSetWithMessage(highSW, "Not all software companies are high-tech companies:");
+        printSetWithMessage(software + hardware, "Companies that do software or hardware:");
+        if (industrial * software == (make_literal<string>({})))
+            printSetWithMessage("No industrial companies sell software");
+        printSetWithMessage(hardware - (software * gaming), "Companies that sell Hardware but not Gaming Software:");
+    }
 }

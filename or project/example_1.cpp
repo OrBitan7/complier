@@ -150,7 +150,12 @@ void input_from_user(const string &massage, string &identifier)
 void input_from_user(const string &message, set<string> &words)
 {
     cout << message;
-    cin.clear();
+
+    // Skip any leftover newline characters from previous input
+    if (cin.peek() == '\n')
+    {
+        cin.ignore();
+    }
 
     string temp;
     getline(cin, temp);
@@ -166,7 +171,7 @@ void input_from_user(const string &message, set<string> &words)
 
     for (size_t i = 0; i < temp.size(); ++i)
     {
-        if (temp[i] == '\"')
+        if (temp[i] == '"')
         {
             in_quotes = !in_quotes;
         }
@@ -175,14 +180,14 @@ void input_from_user(const string &message, set<string> &words)
             temp_word.erase(temp_word.find_last_not_of(" \t") + 1);
             if (!temp_word.empty())
             {
-                if (temp_word.front() != '\"' && temp_word.back() != '\"')
+                if (temp_word.front() != '"' && temp_word.back() != '"')
                 {
                     words.insert(temp_word);
                 }
                 else
                 {
-                    temp_word.erase(0, temp_word.find_first_not_of('\"'));
-                    temp_word.erase(temp_word.find_last_not_of('\"') + 1);
+                    temp_word.erase(0, temp_word.find_first_not_of('"'));
+                    temp_word.erase(temp_word.find_last_not_of('"') + 1);
                     if (!temp_word.empty())
                     {
                         words.insert(temp_word);
@@ -203,14 +208,14 @@ void input_from_user(const string &message, set<string> &words)
     temp_word.erase(temp_word.find_last_not_of(" \t") + 1);
     if (!temp_word.empty())
     {
-        if (temp_word.front() != '\"' && temp_word.back() != '\"')
+        if (temp_word.front() != '"' && temp_word.back() != '"')
         {
             words.insert(temp_word);
         }
         else
         {
-            temp_word.erase(0, temp_word.find_first_not_of('\"'));
-            temp_word.erase(temp_word.find_last_not_of('\"') + 1);
+            temp_word.erase(0, temp_word.find_first_not_of('"'));
+            temp_word.erase(temp_word.find_last_not_of('"') + 1);
             if (!temp_word.empty())
             {
                 words.insert(temp_word);
@@ -261,33 +266,36 @@ void printSetWithMessage(const string &message)
 }
 int main()
 {
-    set<string> classs, highGradeStudents, lowGradeStudents, avgGradeStudents;
-    set<int> grades, gradesHigh;
-    int grd;
-    string student;
-    classs = (make_literal<string>({"Rafi_Suisa", "Tamar_Even", "Avi_Maoz", "Eli_Kamer", "Shlomit_Raz", "Haim_Mizrachi", "Moshe_Samocha", "Tali_Raban", "Sharon_Tal", "Gal_Elbaz"}));
-    gradesHigh = (make_literal<int>({}));
-    highGradeStudents = (make_literal<string>({}));
-    for (const string &student : classs)
+    printSetWithMessage("=============EXAMPLE 1 :=============");
     {
-        printSetWithMessage(student, "Grade for:");
-        input_from_user(make_literal(">"), grd);
-        grades = grades + (make_literal<int>({grd}));
-        if (grd >= (make_literal(90)))
+        set<string> classs, highGradeStudents, lowGradeStudents, avgGradeStudents;
+        set<int> grades, gradesHigh;
+        int grd;
+        string student;
+        classs = (make_literal<string>({"Rafi_Suisa", "Tamar_Even", "Avi_Maoz", "Eli_Kamer", "Shlomit_Raz", "Haim_Mizrachi", "Moshe_Samocha", "Tali_Raban", "Sharon_Tal", "Gal_Elbaz"}));
+        gradesHigh = (make_literal<int>({}));
+        highGradeStudents = (make_literal<string>({}));
+        for (const string &student : classs)
         {
-            gradesHigh = gradesHigh + (make_literal<int>({grd}));
-            highGradeStudents = highGradeStudents + (make_literal<string>({student}));
+            printSetWithMessage(student, "Grade for:");
+            input_from_user(make_literal(">"), grd);
+            grades = grades + (make_literal<int>({grd}));
+            if (grd >= (make_literal(90)))
+            {
+                gradesHigh = gradesHigh + (make_literal<int>({grd}));
+                highGradeStudents = highGradeStudents + (make_literal<string>({student}));
+            }
         }
+        if ((gradesHigh).size())
+        {
+            printSetWithMessage((gradesHigh).size(), "Number of top grades:");
+            printSetWithMessage(gradesHigh, "Top Grades are:");
+            printSetWithMessage(highGradeStudents, "High Grade Students are:");
+        }
+        input_from_user(make_literal("Low-grade students >"), lowGradeStudents);
+        for (const string &student : lowGradeStudents)
+            printSetWithMessage(student, "Get better next time:");
+        avgGradeStudents = classs - highGradeStudents - lowGradeStudents;
+        printSetWithMessage(avgGradeStudents, "Students with good grades:");
     }
-    if ((gradesHigh).size())
-    {
-        printSetWithMessage((gradesHigh).size(), "Number of top grades:");
-        printSetWithMessage(gradesHigh, "Top Grades are:");
-        printSetWithMessage(highGradeStudents, "High Grade Students are:");
-    }
-    input_from_user(make_literal("Low-grade students >"), lowGradeStudents);
-    for (const string &student : lowGradeStudents)
-        printSetWithMessage(student, "Get better next time:");
-    avgGradeStudents = classs - highGradeStudents - lowGradeStudents;
-    printSetWithMessage(avgGradeStudents, "Students with good grades:");
 }
