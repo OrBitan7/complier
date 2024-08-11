@@ -1,7 +1,7 @@
 %{
 void yyerror (char *s);
 int yylex();
-#include <stdio.h>     /* C declarations used in actions */
+#include <stdio.h>     
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -19,17 +19,15 @@ char* CopyStr(char* str)
 {
     char *new, *p;
 
-    if (str[0] == '\"') {               //Literal
+    if (str[0] == '\"') {           
         new = malloc(strlen(str));
         if ((p = strchr(str+1, '\"')))
             *p = '\0';
         strcpy(new, str);
-        //printf("\t*Copy %s\n", str);	//DEBUG
     }
     else {
-        new = malloc(strlen(str)+1);    //Variable Name
+        new = malloc(strlen(str)+1);   
         strcpy(new, str);
-        //printf("\t*Copy %s\n", str);	//DEBUG
     }
 
     return new;
@@ -67,7 +65,6 @@ void insert(char* varName, varType typ)
 	SymTable[idx].name = malloc(strlen(varName)+1);
 	strcpy(SymTable[idx].name, varName);
     SymTable[idx].typ = typ;
-	//printf("\t*Insert \"%s\" in to symtab; typ:%d\n", varName, typ); //DEBUG
 	++idx;
 }
 
@@ -143,7 +140,6 @@ expression:
     ;       
 control:        
                     t_IF_CMD '(' condition ')'{printf("if(%s)\n",$3->value)} statement      {}
-    /* |               t_IF_CMD '(' condition ')'{printf("if(%s\n)",$3->value)} statement t_ELSE_CMD {printf("else\n")} statement  {} */
     |               t_WHILE_CMD '(' condition ')'{printf("while(%s)\n",$3->value);} statement                     {}
     |               t_FOR_CMD '(' identifier ':' identifier ')' {for_loop($3,$5)} statement       {}
     ;
@@ -162,8 +158,8 @@ condition:
     ;
 io:
                     t_INPUT_CMD String_ identifier ';'      {printf("input_from_user(make_literal(\"%s\"),%s);\n",$2,$3);}
-    |               t_OUTPUT_CMD String_ operation ';'      {GenerateOut($2, $3->value);}
     |               t_OUTPUT_CMD String_  ';'               {printf("printSetWithMessage(\"%s\");\n",$2);}
+    |               t_OUTPUT_CMD String_ operation ';'      {GenerateOut($2, $3->value);}
     ;
 String_:
                     t_STRING                                {$$ = copy_string_without_quotes(yytext);}
@@ -185,7 +181,7 @@ identifier_list:
 literal:
                     number_literal                          {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Int; $$->value = $1; }
     |               string_literal                          {$$ = malloc(sizeof(struct literal_with_type)); $$->type = String; $$->value = $1; }
-    |               set_literal                             {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Set; $$->value = $1;  }//printf("valu=%s\n",$$->value);
+    |               set_literal                             {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Set; $$->value = $1;  }
     |               collection_literal                      {$$ = malloc(sizeof(struct literal_with_type)); $$->type = Collection; $$->value = $1;}
     ;
 number_literal:
@@ -253,10 +249,6 @@ int main(void) {
     fprintf(stdout, "}\n");
 
     fprintf(stdout, "//COLLECTION operators\n");
-    /* fprintf(stdout, "set<string> make_literal(initializer_list<string> list) {\n");
-    fprintf(stdout, "    return set<string>(list);\n");
-    fprintf(stdout, "}\n"); */
-
     fprintf(stdout, "set<string> operator-(const set<string>& set1, const set<string>& set2) {\n");
     fprintf(stdout, "    set<string> result = set1;\n");
     fprintf(stdout, "    for (const string& elem : set2) {\n");
@@ -302,10 +294,6 @@ int main(void) {
     fprintf(stdout, "}\n");
 
     fprintf(stdout, "//SET operators\n");
-    /* fprintf(stdout, "set<int> make_literal(initializer_list<int> list) {\n");
-    fprintf(stdout, "    return set<int>(list);\n");
-    fprintf(stdout, "}\n"); */
-
     fprintf(stdout, "set<int> operator-(const set<int>& set1, const set<int>& set2) {\n");
     fprintf(stdout, "    set<int> result = set1;\n");
     fprintf(stdout, "    for (const int& elem : set2) {\n");

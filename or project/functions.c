@@ -24,9 +24,6 @@ char *CopyINT(char *str)
     char *new, *p;
     new = malloc(strlen(str) + 2);
     strcpy(new, str);
-    // printf("\tCopy: %s\n", str);	//DEBUG
-    // new = concatenate_strings(NULL, '*', p);
-    // free(p);
     return new;
 }
 
@@ -553,6 +550,5 @@ void for_loop(char *identifier_runner, char *identifier_base)
             break;
     }
 }
-    // insert to main YACC
 
 
